@@ -562,6 +562,8 @@ def build_html(D, expand=False):
                    % (sid, " open" if is_open else "", html.escape(t), '<span class="hint">%s</span>' % hint if hint else "", "\n".join(part)))
     toc = ('<aside class="side"><nav class="toc" aria-label="Report sections"><p class="side-title">In this report</p><div class="toc-links">%s</div><div class="toc-tools">'
            '<button type="button" data-all="open">Expand all</button><button type="button" data-all="close">Collapse all</button></div></nav></aside>' % "".join(nav))
+    if intro and re.match(r"\s*<div[^>]*><p>\s*Evaluation date", intro[0]):  # the opening line already states the provenance
+        head = [h for h in head if not h.startswith("<dl")]
     page = ['<div class="layout">', toc, "<main>", "<header>"] + head + ["</header>"] + _verdict_html(D) + intro + out + ["</main>", "</div>"]
     return ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
             "<title>%s</title><style>%s</style></head><body>%s<script>%s</script></body></html>\n"

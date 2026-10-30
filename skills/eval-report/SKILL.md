@@ -28,13 +28,15 @@ Final step of the eval chain: define, analyze, discover, compare, report. Reads 
 4. **Be honest about the recommendation.** If the top two options are within the tie margin, or the result flips under sensitivity, say the choice is not clear-cut and name what would settle it. Never present a narrow win as decisive.
 5. **Review with the user.** Present the recommendation and the decision table. Apply requested edits to wording; changes to scores or weights go back through eval-analyze or eval-compare.
 6. **Save the record.** Run `python scripts/eval_calc.py complete eval report`, which records the report date in `eval/status.json`. The evaluation stays active in `eval/` until a new evaluation starts, at which point it is archived to `eval-archive/<solution-slug>-<YYYY-MM-DD>/`.
-7. **Export.** Offer HTML, a spreadsheet, and PDF. On a yes, run `python scripts/export_report.py eval --formats html,xlsx,pdf` (drop the formats the user did not ask for). It writes `eval/export/report.html`, `report.xlsx`, and `report.pdf` from the computed files. The spreadsheet keeps the weights as editable cells and the totals as live formulas, so the user can retune the ranking. The PDF is printed from the HTML by Edge or Chrome; if neither is installed the script says so, and you tell the user to open the HTML and print it to PDF. Report which files were written. Exports are generated from the evaluation files and are not edited by hand.
+7. **Export.** Offer HTML, a spreadsheet, and PDF. On a yes, run `python scripts/export_report.py eval --formats html,xlsx,pdf` (drop the formats the user did not ask for). It writes `eval/export/report.html`, `report.xlsx`, and `report.pdf` from the computed files. The spreadsheet keeps the weights as editable cells and the totals as live formulas, so the user can retune the ranking. The HTML is collapsible, with a section index and a source filter. The PDF is printed from a fully expanded copy of it by Edge or Chrome; if neither is installed the script says so, and you tell the user to open the HTML and print it to PDF. Report which files were written. Exports are generated from the evaluation files and are not edited by hand.
 
 ## Quality rules
 
 - The report adds no facts that are not in the evidence file, apart from context the user supplied in the solution file.
 - Keep the recommendation and the evidence consistent. Anything marked UNVERIFIED that the recommendation depends on appears under risks.
 - Quote sources briefly. Do not reproduce long passages.
+- The exporter rebuilds the decision table, matrices, cost, sensitivity, excluded and sources sections from the computed files and drops the Markdown tables under those headings, so write the prose (recommendation, context, next steps, risks) and never fix a number in the report by hand: change the evaluation files and rerun the step.
+- Open the report's first line with `Evaluation date <date>. Scale 0 to <n>. Cost mode: <mode>.` followed by the reruns and how the evidence was gathered; the HTML shows that line as its opening note.
 
 ## Output
 
