@@ -79,10 +79,10 @@ def _inline(s):
 def _md_table(rows):
     cells = [[c.strip() for c in re.split(r"(?<!\\)\|", r.strip().strip("|"))] for r in rows]
     cells = [r for r in cells if not all(re.fullmatch(r":?-{2,}:?", c) for c in r)]
-    out = ["<table>", "<thead><tr>" + "".join("<th>%s</th>" % _inline(c) for c in cells[0]) + "</tr></thead>", "<tbody>"]
+    out = ['<div class="table-wrap"><table>', "<thead><tr>" + "".join("<th>%s</th>" % _inline(c) for c in cells[0]) + "</tr></thead>", "<tbody>"]
     for r in cells[1:]:
         out.append("<tr>" + "".join("<td>%s</td>" % _inline(c) for c in r) + "</tr>")
-    return "\n".join(out + ["</tbody></table>"])
+    return "\n".join(out + ["</tbody></table></div>"])
 
 
 def md_to_html(md):
