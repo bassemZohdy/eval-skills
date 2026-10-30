@@ -1,0 +1,8 @@
+[
+  {"id": "F-01", "type": "functional", "category": "Core", "text": "At-least-once delivery of jobs", "priority": "must", "gate": true, "gate_scope": "Built-in only; add-ons do not count", "verification_note": "Delivery guarantee in documentation"},
+  {"id": "F-02", "type": "functional", "category": "Core", "text": "Delayed and scheduled jobs", "priority": "should", "gate": false, "verification_note": "Feature documentation"},
+  {"id": "N-01", "type": "non-functional", "category": "Operations", "text": "Metrics and health endpoints for monitoring", "priority": "must", "gate": false, "verification_note": "Documentation or demo"},
+  {"id": "N-02", "type": "non-functional", "category": "Operations", "text": "Web dashboard for inspecting jobs", "priority": "could", "gate": false, "verification_note": "Demo or screenshots"},
+  {"id": "C-01", "type": "non-functional", "category": "Cost", "text": "Predictable pricing at 5 million jobs per month", "priority": "must", "gate": false, "verification_note": "Published pricing"},
+  {"id": "C-02", "type": "non-functional", "category": "Cost", "text": "A usable free tier for development", "priority": "should", "gate": false, "verification_note": "Published pricing"}
+]

@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+
+# scratch space for trying the skills; only its README is tracked
+playground/*
+!playground/README.md

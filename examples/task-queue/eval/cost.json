@@ -1,0 +1,171 @@
+{
+  "currency": "USD",
+  "horizon_months": 36,
+  "assumptions": [
+    {
+      "id": "A-01",
+      "name": "Jobs per month",
+      "value": 5000000,
+      "unit": "jobs/month",
+      "scales": true
+    },
+    {
+      "id": "A-02",
+      "name": "Developers",
+      "value": 4,
+      "unit": "people",
+      "scales": false
+    }
+  ],
+  "scenarios": [
+    {
+      "name": "pilot (100k jobs/month)",
+      "multiplier": 0.02
+    },
+    {
+      "name": "growth (10M jobs/month)",
+      "multiplier": 2
+    }
+  ],
+  "options": {
+    "opt-a": {
+      "components": [
+        {
+          "id": "a-usage",
+          "name": "Job volume",
+          "kind": "tiered",
+          "driver": "A-01",
+          "tiers": [
+            {
+              "up_to": 100000,
+              "unit_price": 0
+            },
+            {
+              "up_to": 1000000,
+              "unit_price": 0.0004
+            },
+            {
+              "up_to": null,
+              "unit_price": 0.0002
+            }
+          ],
+          "evidence_id": "E-004"
+        },
+        {
+          "id": "a-support",
+          "name": "Support plan",
+          "kind": "fixed_monthly",
+          "amount": 100,
+          "evidence_id": "E-004"
+        }
+      ]
+    },
+    "opt-b": {
+      "components": [
+        {
+          "id": "b-hosting",
+          "name": "Hosting (2 nodes)",
+          "kind": "fixed_monthly",
+          "amount": 150,
+          "quantity": 2,
+          "evidence_id": "E-009"
+        },
+        {
+          "id": "b-plugin",
+          "name": "Monitoring plugin",
+          "kind": "fixed_monthly",
+          "amount": 80,
+          "evidence_id": "E-008"
+        },
+        {
+          "id": "b-setup",
+          "name": "Initial setup",
+          "kind": "one_time",
+          "amount": 2000,
+          "evidence_id": "E-009"
+        }
+      ]
+    }
+  },
+  "results": {
+    "currency": "USD",
+    "horizon_months": 36,
+    "options": {
+      "opt-a": {
+        "monthly": 1260.0,
+        "one_time": 0.0,
+        "tco": 45360.0,
+        "incomplete": false,
+        "evidence_gaps": [],
+        "assumed": [],
+        "components": [
+          {
+            "id": "a-usage",
+            "name": "Job volume",
+            "monthly": 1160.0,
+            "one_time": 0.0
+          },
+          {
+            "id": "a-support",
+            "name": "Support plan",
+            "monthly": 100.0,
+            "one_time": 0.0
+          }
+        ],
+        "scenarios": {
+          "pilot (100k jobs/month)": 3600.0,
+          "growth (10M jobs/month)": 81360.0
+        },
+        "index_vs_cheapest": 2.89
+      },
+      "opt-b": {
+        "monthly": 380.0,
+        "one_time": 2000.0,
+        "tco": 15680.0,
+        "incomplete": false,
+        "evidence_gaps": [
+          "b-plugin"
+        ],
+        "assumed": [],
+        "components": [
+          {
+            "id": "b-hosting",
+            "name": "Hosting (2 nodes)",
+            "monthly": 300.0,
+            "one_time": 0.0
+          },
+          {
+            "id": "b-plugin",
+            "name": "Monitoring plugin",
+            "monthly": 80.0,
+            "one_time": 0.0
+          },
+          {
+            "id": "b-setup",
+            "name": "Initial setup",
+            "monthly": 0.0,
+            "one_time": 2000
+          }
+        ],
+        "scenarios": {
+          "pilot (100k jobs/month)": 15680.0,
+          "growth (10M jobs/month)": 15680.0
+        },
+        "index_vs_cheapest": 1.0
+      }
+    },
+    "scenarios": [
+      "pilot (100k jobs/month)",
+      "growth (10M jobs/month)"
+    ],
+    "ranking": [
+      "opt-b",
+      "opt-a"
+    ],
+    "cheapest": "opt-b",
+    "cheapest_by_scenario": {
+      "pilot (100k jobs/month)": "opt-a",
+      "growth (10M jobs/month)": "opt-b"
+    }
+  }
+}
