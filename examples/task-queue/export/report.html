@@ -1,77 +1,138 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Evaluation report: background task queue</title><style>
-:root{--bg:#fff;--fg:#1b2430;--muted:#5d6878;--line:#dde1e7;--rule:#1b2430;--head:#f2f4f7;--accent:#0b6477;--accent-soft:#d6e9ee;--ok:#16703f;--ok-bg:#e0f1e7;--warn:#8a5a00;--warn-bg:#fbefd0;--bad:#a8261b;--bad-bg:#fbe3e0;--serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;--sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+:root{--bg:#fff;--fg:#1a2230;--muted:#5b6576;--line:#e1e4ea;--rule:#1a2230;--head:#f3f5f8;--accent:#0d6a73;--accent-soft:#d5ebed;--ok:#16703f;--ok-bg:#e0f1e7;--warn:#8a5a00;--warn-bg:#fbefd0;--bad:#a8261b;--bad-bg:#fbe3e0;--serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;--sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--side:15.5rem;--gutter:clamp(16px,4vw,48px)}
 @media (prefers-color-scheme:dark){:root{--bg:#12161c;--fg:#e4e8ee;--muted:#98a2b3;--line:#2a313c;--rule:#e4e8ee;--head:#1a2028;--accent:#5fc0d6;--accent-soft:#1d3a44;--ok:#5ccf92;--ok-bg:#16301f;--warn:#e6b84d;--warn-bg:#352a0f;--bad:#ff8a80;--bad-bg:#3a1b19}}
-@media print{:root{--bg:#fff;--fg:#000;--muted:#444;--line:#bbb;--rule:#000;--head:#eee;--accent:#0b4a58;--accent-soft:#cfe3e8}body{max-width:none;padding:0}nav.toc,.filters{display:none}summary{break-after:avoid}details>summary::before{display:none}details.sec{margin-top:1.4rem}table{break-inside:auto}tr{break-inside:avoid}.fill,.reach{animation:none!important}}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--fg);font:15px/1.55 var(--sans);max-width:1120px;margin:0 auto;padding:40px 20px 72px}
+html{scroll-padding-top:16px}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 var(--sans);-webkit-text-size-adjust:100%}
 h1,h2,h3{font-family:var(--serif);font-weight:600;line-height:1.2;letter-spacing:-.01em}
-h1{font-size:2.1rem;margin:0 0 14px;max-width:24ch}
-h2{font-size:1.4rem;margin:3.2rem 0 .7rem;padding-top:.9rem;border-top:2px solid var(--rule);scroll-margin-top:12px}
-h3{font-size:1.1rem;margin:1.6rem 0 .3rem}
-p,li{max-width:74ch}
-.meta{display:flex;flex-wrap:wrap;gap:6px 28px;margin:0 0 18px;color:var(--muted);font-size:.9rem}
-.meta div{display:flex;gap:.5em}.meta dt{font-weight:400}.meta dd{margin:0;color:var(--fg);font-weight:600}
-nav.toc{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;align-items:center;gap:8px 24px;margin:0 0 8px;padding:10px 0;border-block:1px solid var(--line);font-size:.88rem}
-.toc-links{display:flex;flex-wrap:wrap;gap:4px 18px;flex:1}
-nav.toc a{color:var(--muted);text-decoration:none}nav.toc a:hover{color:var(--accent);text-decoration:underline}
-.toc-tools{display:flex;gap:6px;flex:none}
-button,input,select{font:inherit;font-size:.85rem;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:4px 10px}
+p,li{max-width:76ch}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+button,input,select{font:inherit;font-size:.85rem;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:5px 10px}
 button{cursor:pointer}button:hover{border-color:var(--accent);color:var(--accent)}
-a{color:var(--accent)}a:focus-visible,summary:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
-details.sec{border-top:2px solid var(--rule);margin-top:2.2rem}
-details>summary{display:flex;align-items:center;flex-wrap:wrap;gap:4px 12px;cursor:pointer;list-style:none;padding:.85rem 0 .6rem}
-details>summary::-webkit-details-marker{display:none}
-details>summary::before{content:"";flex:none;width:.45em;height:.45em;margin:0 .2em;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:transform .15s ease}
-details[open]>summary::before{transform:rotate(45deg)}
-summary h2,summary h3{margin:0;padding:0;border:0}
-summary:hover h2,summary:hover h3{color:var(--accent)}
-.hint{margin-left:auto;color:var(--muted);font-size:.84rem}
-.sec-body{padding:0 0 .6rem}
-details.sub{border-top:1px solid var(--line)}
-details.sub>summary{padding:.55rem 0}
-details.sub[open]{padding-bottom:.4rem}
-.prose p,.prose li{font-family:var(--serif);font-size:1.02rem;line-height:1.65}
-.prose h3,.prose h4{margin-top:1.2rem}
-.intro{margin-top:1.6rem}.intro p{color:var(--muted);font-size:.95rem}
-.filters{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:4px 0 6px}
-.filters input{flex:1;min-width:12rem;max-width:26rem}
-.verdict{margin:28px 0 8px}
-.verdict .lead{font:600 1.25rem/1.35 var(--serif);margin:0 0 4px;max-width:46ch}
-.verdict .caveat{color:var(--muted);margin:0 0 18px}
-ol.ranking{list-style:none;margin:0;padding:0;display:grid;gap:10px}
-ol.ranking li{display:grid;grid-template-columns:1.6rem minmax(9rem,16rem) 1fr 3.6rem;gap:4px 14px;align-items:center;max-width:none}
+
+/* page frame: a sticky section index beside the report on wide screens */
+.layout{display:grid;grid-template-columns:var(--side) minmax(0,1fr);gap:0 clamp(28px,4vw,56px);max-width:1500px;margin:0 auto;padding:0 var(--gutter)}
+.side{position:sticky;top:0;align-self:start;max-height:100vh;overflow-y:auto;padding:44px 0 24px}
+.side-title{margin:0 0 10px;font-size:.8rem;color:var(--muted)}
+.toc-links{display:flex;flex-direction:column;border-left:1px solid var(--line)}
+.toc-links a{display:block;padding:5px 0 5px 14px;margin-left:-1px;border-left:2px solid transparent;color:var(--muted);text-decoration:none;font-size:.88rem;line-height:1.35}
+.toc-links a:hover{color:var(--fg)}
+.toc-links a[aria-current]{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.toc-tools{display:flex;gap:6px;margin-top:16px}
+main{min-width:0;padding:44px 0 96px}
+
+/* header */
+h1{font-size:clamp(1.6rem,1.2rem + 1.6vw,2.4rem);margin:0 0 14px;max-width:28ch}
+.meta{display:flex;flex-wrap:wrap;gap:6px 28px;margin:0;color:var(--muted);font-size:.88rem}
+.meta div{display:flex;gap:.5em}.meta dd{margin:0;color:var(--fg);font-weight:600}
+
+/* ranking summary: the one graphic the page leads with */
+.verdict{margin:32px 0 0;padding:24px 0 6px;border-top:2px solid var(--rule)}
+.verdict .lead{font:600 1.3rem/1.35 var(--serif);margin:0 0 6px;max-width:52ch}
+.verdict .caveat{color:var(--muted);margin:0 0 20px}
+ol.ranking{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+ol.ranking li{display:grid;grid-template-columns:1.6rem minmax(10rem,19rem) minmax(0,1fr) 3.6rem;gap:4px 14px;align-items:center;max-width:none}
 .pos{font:600 1.1rem var(--serif);color:var(--muted);text-align:right}
-.nm{font-weight:600;overflow-wrap:anywhere}
+.nm{font-weight:600;overflow-wrap:anywhere;line-height:1.3}
 .bar{position:relative;height:18px;background:var(--head);border-radius:2px;overflow:hidden;background-image:linear-gradient(90deg,transparent calc(50% - .5px),var(--line) 50%,transparent calc(50% + .5px))}
 .fill,.reach{position:absolute;top:0;bottom:0;transform-origin:left center;animation:grow .9s cubic-bezier(.2,.7,.2,1) both}
 .fill{left:0;background:var(--accent)}
 .reach{background:repeating-linear-gradient(135deg,var(--accent-soft) 0 4px,transparent 4px 8px);border-right:2px solid var(--accent);animation-delay:.25s}
 @keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-@media (prefers-reduced-motion:reduce){.fill,.reach{animation:none}details>summary::before{transition:none}}
-@media (max-width:640px){nav.toc{position:static;flex-direction:column;align-items:flex-start}.hint{margin-left:1.3em;flex-basis:100%}body{padding:24px 16px 56px}h1{font-size:1.7rem}ol.ranking li{grid-template-columns:1.4rem 1fr 3.4rem}.bar{grid-column:2 / 4;grid-row:2}.flags{grid-column:2 / 4;grid-row:3;margin-top:0}}
 .val{font:600 1.05rem var(--sans);font-variant-numeric:tabular-nums;text-align:right}
 .flags{grid-column:3 / 5;display:flex;flex-wrap:wrap;gap:4px 8px;margin-top:-4px}
 .flag{font-size:.78rem;color:var(--warn);background:var(--warn-bg);padding:0 .55em;border-radius:3px}
-.legend{display:flex;flex-wrap:wrap;gap:4px 20px;margin:14px 0 0;color:var(--muted);font-size:.85rem}
+.legend{display:flex;flex-wrap:wrap;gap:4px 20px;margin:16px 0 0;color:var(--muted);font-size:.84rem}
 .legend i{display:inline-block;width:22px;height:10px;margin-right:6px;vertical-align:-1px}
 .legend .k-fill{background:var(--accent)}.legend .k-reach{background:repeating-linear-gradient(135deg,var(--accent-soft) 0 4px,transparent 4px 8px);border-right:2px solid var(--accent)}
-.table-wrap{overflow-x:auto;margin:10px 0 18px}
-table{border-collapse:collapse;width:100%;font-size:.9rem}
-th,td{padding:7px 12px 7px 0;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
-th{font-size:.8rem;font-weight:600;color:var(--muted);border-bottom:2px solid var(--rule);white-space:nowrap}
-td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;padding-right:14px}
+.intro{margin-top:18px}.intro p{color:var(--muted);font-size:.92rem}
+
+/* collapsible sections */
+details.sec{border-top:1px solid var(--line);scroll-margin-top:12px}
+details.sec:first-of-type{margin-top:28px}
+details>summary{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 14px;cursor:pointer;list-style:none;padding:16px 0 14px}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"";flex:none;align-self:center;width:.5em;height:.5em;margin:0 .15em 0 .1em;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:transform .15s ease}
+details[open]>summary::before{transform:rotate(45deg)}
+summary h2,summary h3{margin:0}
+summary h2{font-size:1.3rem}summary h3{font-size:1.05rem}
+summary:hover h2,summary:hover h3{color:var(--accent)}
+.hint{margin-left:auto;color:var(--muted);font-size:.84rem;text-align:right}
+.sec-body{padding:0 0 28px}
+details.sub{border-top:1px solid var(--line)}
+details.sub>summary{padding:10px 0}
+details.sub[open]{padding-bottom:10px}
+.prose p,.prose li{font-family:var(--serif);font-size:1.03rem;line-height:1.65}
+.prose h3,.prose h4{margin:1.4rem 0 .3rem}
+.sec-body>p,.sec-body>ul{max-width:76ch}
+.sec-body h3{font-size:1.05rem;margin:1.6rem 0 .3rem}
+
+/* tables */
+.table-wrap{overflow-x:auto;margin:10px 0 18px;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{padding:8px 14px 8px 0;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{font-size:.78rem;font-weight:600;color:var(--muted);border-bottom:2px solid var(--rule);line-height:1.3}
+th:last-child,td:last-child{padding-right:0}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}td.num{white-space:nowrap}
 tbody tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:color-mix(in srgb,var(--head) 70%,transparent)}
 code{background:var(--head);padding:1px 5px;border-radius:3px;font-size:.88em}
-.provided,.partial,.vendor-claimed,.not-provided,.unknown{display:inline-block;padding:0 .6em;border-radius:999px;font-size:.78rem;font-weight:600;line-height:1.6;white-space:nowrap}
+.feat td{min-width:12rem}.feat td:first-child{min-width:0;white-space:nowrap;color:var(--muted)}.feat td:nth-child(3){min-width:0}
+.cell .note{display:block;margin-top:3px;color:var(--fg);font-size:.84rem;line-height:1.45}
+.cell .ev{display:block;margin-top:2px}
+#src-table td{font-size:.82rem}#src-table td:nth-child(4){min-width:20rem}
+td a{overflow-wrap:anywhere}
+.provided,.partial,.vendor-claimed,.not-provided,.unknown{display:inline-block;padding:0 .6em;border-radius:999px;font-size:.76rem;font-weight:600;line-height:1.65;white-space:nowrap}
 .provided{color:var(--ok);background:var(--ok-bg)}.partial,.vendor-claimed{color:var(--warn);background:var(--warn-bg)}.not-provided,.unknown{color:var(--bad);background:var(--bad-bg)}
-.tag{font-size:.8rem;color:var(--muted)}.tag.low{color:var(--bad)}.tag.medium{color:var(--warn)}.tag.high{color:var(--ok)}
+.tag{font-size:.78rem;color:var(--muted)}.tag.low{color:var(--bad)}.tag.medium{color:var(--warn)}.tag.high{color:var(--ok)}
 p.tag{margin:6px 0}
 .heat{display:inline-block;min-width:2.1em;padding:1px 8px;border-radius:3px;text-align:center;font-weight:600;background:color-mix(in srgb,var(--accent) calc(var(--p) * 28%),transparent)}
-td a{overflow-wrap:anywhere;font-size:.82rem}
-#src-table td,#src-table th{font-size:.82rem}
-</style></head><body><h1>Background task queue</h1>
+.filters{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:0 0 6px}
+.filters input{flex:1 1 14rem;max-width:26rem}
+.filters select{max-width:100%}
+
+/* medium screens: the index becomes a one-line strip pinned to the top */
+@media (max-width:1080px){
+.layout{display:block}
+.side{z-index:5;max-height:none;overflow:visible;padding:0;margin:0 calc(-1 * var(--gutter));background:var(--bg);border-bottom:1px solid var(--line)}
+nav.toc{display:flex;align-items:center;gap:10px;padding:0 var(--gutter)}
+.side-title{display:none}
+.toc-links{flex:1;flex-direction:row;border:0;overflow-x:auto;scrollbar-width:none;white-space:nowrap;gap:2px}
+.toc-links::-webkit-scrollbar{display:none}
+.toc-links a{padding:12px 8px;margin:0;border-left:0;border-bottom:2px solid transparent}
+.toc-links a[aria-current]{border-bottom-color:var(--accent)}
+.toc-tools{margin:0;flex:none}
+main{padding-top:28px}
+html{scroll-padding-top:56px}details.sec{scroll-margin-top:56px}
+}
+@media (max-width:680px){
+body{font-size:14.5px}
+.toc-tools button{padding:4px 8px;font-size:.78rem}
+ol.ranking li{grid-template-columns:1.4rem minmax(0,1fr) 3.2rem}
+.bar{grid-column:2 / 4;grid-row:2}.flags{grid-column:2 / 4;grid-row:3;margin-top:0}
+.hint{margin-left:1.35em;flex-basis:100%;text-align:left}
+}
+/* tablets and phones: rows become stacked cards labelled by their column */
+@media (max-width:860px){
+.table-wrap{overflow:visible}
+.table-wrap table,.table-wrap tbody,.table-wrap tr,.table-wrap td{display:block;width:100%}
+.table-wrap thead{display:none}
+.table-wrap tr{padding:10px 0;border-bottom:1px solid var(--line)}
+.table-wrap td{display:grid;grid-template-columns:minmax(5.5rem,34%) minmax(0,1fr);gap:10px;border:0;padding:3px 0;min-width:0!important;white-space:normal!important;text-align:left}
+.table-wrap td::before{content:attr(data-label);color:var(--muted);font-size:.76rem;line-height:1.6}
+.table-wrap td:empty{display:none}
+tbody tr:hover td{background:none}
+}
+@media (prefers-reduced-motion:reduce){.fill,.reach{animation:none}details>summary::before{transition:none}}
+@media print{:root{--bg:#fff;--fg:#000;--muted:#444;--line:#bbb;--rule:#000;--head:#eee;--accent:#0b4a58;--accent-soft:#cfe3e8}body{font-size:12px}.layout{display:block;padding:0;max-width:none}.side,.filters{display:none}main{padding:0}details>summary::before{display:none}summary{break-after:avoid}.table-wrap{overflow:visible}table{break-inside:auto}tr{break-inside:avoid}tbody tr:hover td{background:none}.fill,.reach{animation:none!important}}
+</style></head><body><div class="layout">
+<aside class="side"><nav class="toc" aria-label="Report sections"><p class="side-title">In this report</p><div class="toc-links"><a href="#recommendation-and-notes">Recommendation and notes</a><a href="#decision-table">Decision table</a><a href="#criteria-and-weights">Criteria and weights</a><a href="#bias-and-assumption-checks">Bias and assumption checks</a><a href="#weighted-score-matrix">Weighted score matrix</a><a href="#feature-by-feature-comparison">Feature-by-feature comparison</a><a href="#cost-total-cost-of-ownership">Cost: total cost of ownership</a><a href="#sensitivity">Sensitivity</a><a href="#excluded-options">Excluded options</a><a href="#sources">Sources</a></div><div class="toc-tools"><button type="button" data-all="open">Expand all</button><button type="button" data-all="close">Collapse all</button></div></nav></aside>
+<main>
+<header>
+<h1>Background task queue</h1>
 <dl class="meta"><div><dt>Evaluation date</dt><dd>2026-10-01</dd></div><div><dt>Report date</dt><dd>2026-10-02</dd></div><div><dt>Scale</dt><dd>0 to 5</dd></div><div><dt>Cost mode</dt><dd>weighted</dd></div></dl>
-<nav class="toc" aria-label="Report sections"><div class="toc-links"><a href="#recommendation-and-notes">Recommendation and notes</a><a href="#decision-table">Decision table</a><a href="#criteria-and-weights">Criteria and weights</a><a href="#bias-and-assumption-checks">Bias and assumption checks</a><a href="#weighted-score-matrix">Weighted score matrix</a><a href="#feature-by-feature-comparison">Feature-by-feature comparison</a><a href="#cost-total-cost-of-ownership">Cost: total cost of ownership</a><a href="#sensitivity">Sensitivity</a><a href="#excluded-options">Excluded options</a><a href="#sources">Sources</a></div><div class="toc-tools"><button type="button" data-all="open">Expand all</button><button type="button" data-all="close">Collapse all</button></div></nav>
+</header>
 <section class="verdict" aria-label="Ranking summary"><p class="lead">Beta Queue scores 78.0 of 100, 2.0 ahead of Alpha Queue.</p><p class="caveat">The ranking is not settled: the lead is inside the near-tie margin.</p><ol class="ranking"><li><span class="pos">1</span><span class="nm">Beta Queue</span><span class="bar" role="img" aria-label="Beta Queue: 78.0 of 100, up to 84.0 if unknowns are provided"><i class="fill" style="width:78.0%"></i><i class="reach" style="left:78.0%;width:6.0%"></i></span><span class="val">78.0</span><span class="flags"><span class="flag">near-tie</span></span></li><li><span class="pos">2</span><span class="nm">Alpha Queue</span><span class="bar" role="img" aria-label="Alpha Queue: 76.0 of 100"><i class="fill" style="width:76.0%"></i><i class="reach" style="left:76.0%;width:0.0%"></i></span><span class="val">76.0</span><span class="flags"><span class="flag">near-tie</span></span></li></ol><p class="legend"><span><i class="k-fill"></i>Score as researched</span><span><i class="k-reach"></i>Best case if every unknown requirement is provided</span></p></section>
 <details class="sec" id="recommendation-and-notes" open><summary><h2>Recommendation and notes</h2></summary><div class="sec-body"><div class="prose"><p>Recommendation: the choice between Beta Queue and Alpha Queue is not clear-cut (78.0 against 76.0, inside the 3-point tie margin). Beta Queue leads on core capabilities, but its operability claims are unverified, and lowering those low-confidence scores puts Alpha Queue ahead. Verify the metrics support of Beta Queue before committing.</p>
 <p>See <code>scores.json</code> and <code>features.md</code> for the full numbers. Gamma Queue was excluded because it fails the delivery gate (E-010).</p></div></div></details>
@@ -79,25 +140,27 @@ td a{overflow-wrap:anywhere;font-size:.82rem}
 <p class="tag">Near-tie between Beta Queue, Alpha Queue; broken by higher score on highest-weight criterion.</p></div></details>
 <details class="sec" id="criteria-and-weights"><summary><h2>Criteria and weights</h2><span class="hint">3 criteria</span></summary><div class="sec-body"><div class="table-wrap"><table><thead><tr><th>Criterion</th><th class="num">Weight</th><th>Requirements</th></tr></thead><tbody><tr><td>Core capabilities</td><td class="num">50</td><td>F-01, F-02</td></tr><tr><td>Operability</td><td class="num">30</td><td>N-01, N-02</td></tr><tr><td>Cost</td><td class="num">20</td><td>C-01, C-02</td></tr></tbody></table></div></div></details>
 <details class="sec" id="bias-and-assumption-checks"><summary><h2>Bias and assumption checks</h2></summary><div class="sec-body"><ul><li>No requirement is marked as an assumption.</li><li>Findings by source: Alpha Queue: 1 vendor, 4 independent or open source; Beta Queue: 1 vendor, 3 independent or open source.</li><li>Cost compares 2 of 2 options; the others have no published price.</li></ul></div></details>
-<details class="sec" id="weighted-score-matrix"><summary><h2>Weighted score matrix</h2><span class="hint">3 criteria, 2 options</span></summary><div class="sec-body"><div class="table-wrap"><table><thead><tr><th>Criterion</th><th class="num">Weight</th><th class="num">Beta Queue</th><th class="num">Alpha Queue</th></tr></thead><tbody><tr><td>Core capabilities</td><td class="num">50</td><td class="num"><span class="heat" style="--p:1.00">5</span> <span class="tag high">high</span></td><td class="num"><span class="heat" style="--p:0.80">4</span> <span class="tag high">high</span></td></tr><tr><td>Operability</td><td class="num">30</td><td class="num"><span class="heat" style="--p:0.40">2†</span> <span class="tag low">low</span></td><td class="num"><span class="heat" style="--p:0.80">4</span> <span class="tag medium">medium</span></td></tr><tr><td>Cost</td><td class="num">20</td><td class="num"><span class="heat" style="--p:0.80">4</span> <span class="tag medium">medium</span></td><td class="num"><span class="heat" style="--p:0.60">3</span> <span class="tag medium">medium</span></td></tr><tr><td><strong>Weighted total</strong></td><td class="num"><strong>100</strong></td><td class="num"><strong>78.0</strong></td><td class="num"><strong>76.0</strong></td></tr></tbody></table></div>
+<details class="sec" id="weighted-score-matrix"><summary><h2>Weighted score matrix</h2><span class="hint">3 criteria, 2 options</span></summary><div class="sec-body"><div class="table-wrap"><table><thead><tr><th>Criterion</th><th class="num">Weight</th><th class="num"><span title="Beta Queue">Beta Queue</span></th><th class="num"><span title="Alpha Queue">Alpha Queue</span></th></tr></thead><tbody><tr><td>Core capabilities</td><td class="num">50</td><td class="num"><span class="heat" style="--p:1.00">5</span> <span class="tag high">high</span></td><td class="num"><span class="heat" style="--p:0.80">4</span> <span class="tag high">high</span></td></tr><tr><td>Operability</td><td class="num">30</td><td class="num"><span class="heat" style="--p:0.40">2†</span> <span class="tag low">low</span></td><td class="num"><span class="heat" style="--p:0.80">4</span> <span class="tag medium">medium</span></td></tr><tr><td>Cost</td><td class="num">20</td><td class="num"><span class="heat" style="--p:0.80">4</span> <span class="tag medium">medium</span></td><td class="num"><span class="heat" style="--p:0.60">3</span> <span class="tag medium">medium</span></td></tr><tr><td><strong>Weighted total</strong></td><td class="num"><strong>100</strong></td><td class="num"><strong>78.0</strong></td><td class="num"><strong>76.0</strong></td></tr></tbody></table></div>
 <p class="tag">† score capped because the evidence is unverified. Confidence: high = two sources, medium = one, low = none. Independent sources count, and the vendor&rsquo;s official documentation counts once for what a product provides.</p></div></details>
-<details class="sec" id="feature-by-feature-comparison"><summary><h2>Feature-by-feature comparison</h2><span class="hint">6 requirements in 3 groups</span></summary><div class="sec-body"><details class="sub"><summary><h3>Core</h3><span class="hint">provided: Beta Queue 2/2, Alpha Queue 1/2</span></summary><div class="table-wrap"><table><thead><tr><th>ID</th><th>Requirement</th><th>Priority</th><th>Beta Queue</th><th>Alpha Queue</th></tr></thead><tbody><tr><td>F-01</td><td>At-least-once delivery of jobs</td><td>must</td><td><span class="provided">provided</span> <span class="tag">[E-006]</span></td><td><span class="provided">provided</span> <span class="tag">[E-001]</span></td></tr><tr><td>F-02</td><td>Delayed and scheduled jobs</td><td>should</td><td><span class="provided">provided</span> <span class="tag">[E-007]</span></td><td><span class="partial">partial</span> - no recurring schedules <span class="tag">[E-002]</span></td></tr></tbody></table></div></details>
-<details class="sub"><summary><h3>Operations</h3><span class="hint">provided: Beta Queue 1/2, Alpha Queue 1/2</span></summary><div class="table-wrap"><table><thead><tr><th>ID</th><th>Requirement</th><th>Priority</th><th>Beta Queue</th><th>Alpha Queue</th></tr></thead><tbody><tr><td>N-01</td><td>Metrics and health endpoints for monitoring</td><td>must</td><td><span class="partial">partial</span> - via plugin, vendor claim only <span class="tag">[E-008]</span></td><td><span class="provided">provided</span> <span class="tag">[E-003]</span></td></tr><tr><td>N-02</td><td>Web dashboard for inspecting jobs</td><td>could</td><td><span class="provided">provided</span> <span class="tag">[E-008]</span></td><td><span class="not-provided">not provided</span> - no dashboard found</td></tr></tbody></table></div></details>
-<details class="sub"><summary><h3>Cost</h3><span class="hint">provided: Beta Queue 1/2, Alpha Queue 1/2</span></summary><div class="table-wrap"><table><thead><tr><th>ID</th><th>Requirement</th><th>Priority</th><th>Beta Queue</th><th>Alpha Queue</th></tr></thead><tbody><tr><td>C-01</td><td>Predictable pricing at 5 million jobs per month</td><td>must</td><td><span class="provided">provided</span> - self-hosted <span class="tag">[E-009]</span></td><td><span class="partial">partial</span> - tiered, volume discount <span class="tag">[E-004]</span></td></tr><tr><td>C-02</td><td>A usable free tier for development</td><td>should</td><td><span class="partial">partial</span> - no hosted free tier</td><td><span class="provided">provided</span> - 100k jobs free <span class="tag">[E-005]</span></td></tr></tbody></table></div></details></div></details>
+<details class="sec" id="feature-by-feature-comparison"><summary><h2>Feature-by-feature comparison</h2><span class="hint">6 requirements in 3 groups</span></summary><div class="sec-body"><details class="sub"><summary><h3>Core</h3><span class="hint">provided: Beta Queue 2/2, Alpha Queue 1/2</span></summary><div class="table-wrap"><table class="feat"><thead><tr><th>ID</th><th>Requirement</th><th>Priority</th><th><span title="Beta Queue">Beta Queue</span></th><th><span title="Alpha Queue">Alpha Queue</span></th></tr></thead><tbody><tr><td>F-01</td><td>At-least-once delivery of jobs</td><td>must</td><td><div class="cell"><span class="provided">provided</span><span class="ev tag">E-006</span></div></td><td><div class="cell"><span class="provided">provided</span><span class="ev tag">E-001</span></div></td></tr><tr><td>F-02</td><td>Delayed and scheduled jobs</td><td>should</td><td><div class="cell"><span class="provided">provided</span><span class="ev tag">E-007</span></div></td><td><div class="cell"><span class="partial">partial</span><span class="note">no recurring schedules</span><span class="ev tag">E-002</span></div></td></tr></tbody></table></div></details>
+<details class="sub"><summary><h3>Operations</h3><span class="hint">provided: Beta Queue 1/2, Alpha Queue 1/2</span></summary><div class="table-wrap"><table class="feat"><thead><tr><th>ID</th><th>Requirement</th><th>Priority</th><th><span title="Beta Queue">Beta Queue</span></th><th><span title="Alpha Queue">Alpha Queue</span></th></tr></thead><tbody><tr><td>N-01</td><td>Metrics and health endpoints for monitoring</td><td>must</td><td><div class="cell"><span class="partial">partial</span><span class="note">via plugin, vendor claim only</span><span class="ev tag">E-008</span></div></td><td><div class="cell"><span class="provided">provided</span><span class="ev tag">E-003</span></div></td></tr><tr><td>N-02</td><td>Web dashboard for inspecting jobs</td><td>could</td><td><div class="cell"><span class="provided">provided</span><span class="ev tag">E-008</span></div></td><td><div class="cell"><span class="not-provided">not provided</span><span class="note">no dashboard found</span></div></td></tr></tbody></table></div></details>
+<details class="sub"><summary><h3>Cost</h3><span class="hint">provided: Beta Queue 1/2, Alpha Queue 1/2</span></summary><div class="table-wrap"><table class="feat"><thead><tr><th>ID</th><th>Requirement</th><th>Priority</th><th><span title="Beta Queue">Beta Queue</span></th><th><span title="Alpha Queue">Alpha Queue</span></th></tr></thead><tbody><tr><td>C-01</td><td>Predictable pricing at 5 million jobs per month</td><td>must</td><td><div class="cell"><span class="provided">provided</span><span class="note">self-hosted</span><span class="ev tag">E-009</span></div></td><td><div class="cell"><span class="partial">partial</span><span class="note">tiered, volume discount</span><span class="ev tag">E-004</span></div></td></tr><tr><td>C-02</td><td>A usable free tier for development</td><td>should</td><td><div class="cell"><span class="partial">partial</span><span class="note">no hosted free tier</span></div></td><td><div class="cell"><span class="provided">provided</span><span class="note">100k jobs free</span><span class="ev tag">E-005</span></div></td></tr></tbody></table></div></details></div></details>
 <details class="sec" id="cost-total-cost-of-ownership"><summary><h2>Cost: total cost of ownership</h2><span class="hint">USD over 36 months</span></summary><div class="sec-body"><p>Over 36 months, in USD. Prices come from the sources listed below; components marked unverified rest on weak evidence, and components marked assumed are placeholders, not published prices.</p>
 <div class="table-wrap"><table><thead><tr><th>Assumption</th><th class="num">Value</th><th>Unit</th><th>Scales in scenarios</th></tr></thead><tbody><tr><td>Jobs per month</td><td class="num">5,000,000</td><td>jobs/month</td><td>yes</td></tr><tr><td>Developers</td><td class="num">4</td><td>people</td><td>no</td></tr></tbody></table></div>
 <div class="table-wrap"><table><thead><tr><th>Option</th><th class="num">Monthly</th><th class="num">One-time</th><th class="num">Total over horizon</th><th class="num">Vs cheapest</th><th>Notes</th></tr></thead><tbody><tr><td>Beta Queue</td><td class="num">380.00</td><td class="num">2,000.00</td><td class="num">15,680.00</td><td class="num">1.00x</td><td>unverified: b-plugin</td></tr><tr><td>Alpha Queue</td><td class="num">1,260.00</td><td class="num">0.00</td><td class="num">45,360.00</td><td class="num">2.89x</td><td></td></tr></tbody></table></div>
 <h3>Volume scenarios</h3>
-<div class="table-wrap"><table><thead><tr><th>Scenario</th><th class="num">Beta Queue</th><th class="num">Alpha Queue</th><th>Cheapest</th></tr></thead><tbody><tr><td>pilot (100k jobs/month)</td><td class="num">15,680.00</td><td class="num">3,600.00</td><td>Alpha Queue</td></tr><tr><td>growth (10M jobs/month)</td><td class="num">15,680.00</td><td class="num">81,360.00</td><td>Beta Queue</td></tr></tbody></table></div>
+<div class="table-wrap"><table><thead><tr><th>Scenario</th><th class="num"><span title="Beta Queue">Beta Queue</span></th><th class="num"><span title="Alpha Queue">Alpha Queue</span></th><th>Cheapest</th></tr></thead><tbody><tr><td>pilot (100k jobs/month)</td><td class="num">15,680.00</td><td class="num">3,600.00</td><td>Alpha Queue</td></tr><tr><td>growth (10M jobs/month)</td><td class="num">15,680.00</td><td class="num">81,360.00</td><td>Beta Queue</td></tr></tbody></table></div>
 <h3>Components</h3>
 <div class="table-wrap"><table><thead><tr><th>Option</th><th>Component</th><th class="num">Monthly</th><th class="num">One-time</th><th>Evidence</th></tr></thead><tbody><tr><td>Beta Queue</td><td>Hosting (2 nodes)</td><td class="num">300.00</td><td class="num">0.00</td><td></td></tr><tr><td>Beta Queue</td><td>Monitoring plugin</td><td class="num">80.00</td><td class="num">0.00</td><td>unverified</td></tr><tr><td>Beta Queue</td><td>Initial setup</td><td class="num">0.00</td><td class="num">2,000.00</td><td></td></tr><tr><td>Alpha Queue</td><td>Job volume</td><td class="num">1,160.00</td><td class="num">0.00</td><td></td></tr><tr><td>Alpha Queue</td><td>Support plan</td><td class="num">100.00</td><td class="num">0.00</td><td></td></tr></tbody></table></div></div></details>
 <details class="sec" id="sensitivity"><summary><h2>Sensitivity</h2><span class="hint">top option holds in all 6 tests</span></summary><div class="sec-body"><p>Each of the highest-weight criteria moved by 5 points, other weights rescaled.</p>
-<div class="table-wrap"><table><thead><tr><th>Criterion</th><th>Change</th><th>Top option</th><th>Top changed</th><th>Beta Queue</th><th>Alpha Queue</th></tr></thead><tbody><tr><td>Core capabilities</td><td>+5</td><td>Beta Queue</td><td>no</td><td>80.2</td><td>76.4</td></tr><tr><td>Core capabilities</td><td>-5</td><td>Beta Queue</td><td>no</td><td>75.8</td><td>75.6</td></tr><tr><td>Operability</td><td>+5</td><td>Beta Queue</td><td>no</td><td>75.3</td><td>76.3</td></tr><tr><td>Operability</td><td>-5</td><td>Beta Queue</td><td>no</td><td>80.7</td><td>75.7</td></tr><tr><td>Cost</td><td>+5</td><td>Beta Queue</td><td>no</td><td>78.1</td><td>75.0</td></tr><tr><td>Cost</td><td>-5</td><td>Beta Queue</td><td>no</td><td>77.9</td><td>77.0</td></tr></tbody></table></div>
+<div class="table-wrap"><table><thead><tr><th>Criterion</th><th>Change</th><th>Top option</th><th>Top changed</th><th class="num"><span title="Beta Queue">Beta Queue</span></th><th class="num"><span title="Alpha Queue">Alpha Queue</span></th></tr></thead><tbody><tr><td>Core capabilities</td><td>+5</td><td>Beta Queue</td><td>no</td><td class="num">80.2</td><td class="num">76.4</td></tr><tr><td>Core capabilities</td><td>-5</td><td>Beta Queue</td><td>no</td><td class="num">75.8</td><td class="num">75.6</td></tr><tr><td>Operability</td><td>+5</td><td>Beta Queue</td><td>no</td><td class="num">75.3</td><td class="num">76.3</td></tr><tr><td>Operability</td><td>-5</td><td>Beta Queue</td><td>no</td><td class="num">80.7</td><td class="num">75.7</td></tr><tr><td>Cost</td><td>+5</td><td>Beta Queue</td><td>no</td><td class="num">78.1</td><td class="num">75.0</td></tr><tr><td>Cost</td><td>-5</td><td>Beta Queue</td><td>no</td><td class="num">77.9</td><td class="num">77.0</td></tr></tbody></table></div>
 <h3>Confidence tests</h3>
 <div class="table-wrap"><table><thead><tr><th>Test</th><th>Top option</th><th>Top changed</th></tr></thead><tbody><tr><td>all low-confidence scores lowered by one</td><td>Alpha Queue</td><td>yes</td></tr><tr><td>Beta Queue / Operability lowered by one</td><td>Alpha Queue</td><td>yes</td></tr></tbody></table></div></div></details>
 <details class="sec" id="excluded-options"><summary><h2>Excluded options</h2><span class="hint">1 options</span></summary><div class="sec-body"><div class="table-wrap"><table><thead><tr><th>Option</th><th>Reason</th></tr></thead><tbody><tr><td>Gamma Queue</td><td>Fails F-01: no at-least-once delivery (E-010)</td></tr></tbody></table></div></div></details>
 <details class="sec" id="sources"><summary><h2>Sources</h2><span class="hint">10 findings</span></summary><div class="sec-body"><div class="filters"><input id="src-q" type="search" placeholder="Filter findings" aria-label="Filter findings"><select id="src-opt" aria-label="Option"><option value="">All options</option><option value="opt-a">Alpha Queue</option><option value="opt-b">Beta Queue</option><option value="opt-c">Gamma Queue</option></select><span id="src-n" class="tag" aria-live="polite"></span></div>
-<div class="table-wrap"><table id="src-table"><thead><tr><th>ID</th><th>Option</th><th>Requirement</th><th>Finding</th><th>Source</th><th>Source date</th><th>Confidence</th><th>Kind</th></tr></thead><tbody><tr data-opt="opt-a"><td>E-001</td><td>Alpha Queue</td><td>F-01</td><td>Delivers at least once under failure injection</td><td><a href="https://bench.example.org/alpha">https://bench.example.org/alpha</a></td><td>2026-08-01</td><td>CONFIRMED</td><td>independent</td></tr><tr data-opt="opt-a"><td>E-002</td><td>Alpha Queue</td><td>F-02</td><td>Delayed jobs supported, recurring schedules are not</td><td><a href="https://review.example.net/alpha">https://review.example.net/alpha</a></td><td>2026-07-15</td><td>PROBABLE</td><td>independent</td></tr><tr data-opt="opt-a"><td>E-003</td><td>Alpha Queue</td><td>N-01</td><td>Exposes Prometheus metrics and a health endpoint</td><td><a href="https://review.example.net/alpha">https://review.example.net/alpha</a></td><td>2026-07-15</td><td>PROBABLE</td><td>independent</td></tr><tr data-opt="opt-a"><td>E-004</td><td>Alpha Queue</td><td>C-01</td><td>Tiered pricing with a volume discount above 1M jobs</td><td><a href="https://alpha.example.com/pricing">https://alpha.example.com/pricing</a></td><td>2026-09-01</td><td>PRIMARY</td><td>vendor</td></tr><tr data-opt="opt-a"><td>E-005</td><td>Alpha Queue</td><td>C-02</td><td>Free tier of 100k jobs per month</td><td><a href="https://bench.example.org/alpha">https://bench.example.org/alpha</a></td><td>2026-08-01</td><td>PROBABLE</td><td>independent</td></tr><tr data-opt="opt-b"><td>E-006</td><td>Beta Queue</td><td>F-01</td><td>At-least-once delivery confirmed in tests</td><td><a href="https://bench.example.org/beta">https://bench.example.org/beta</a></td><td>2026-08-01</td><td>CONFIRMED</td><td>independent</td></tr><tr data-opt="opt-b"><td>E-007</td><td>Beta Queue</td><td>F-02</td><td>Delayed and recurring jobs supported</td><td><a href="https://docs-mirror.example.net/beta">https://docs-mirror.example.net/beta</a></td><td>2026-06-20</td><td>PROBABLE</td><td>independent</td></tr><tr data-opt="opt-b"><td>E-008</td><td>Beta Queue</td><td>N-01</td><td>Vendor says metrics are available through a plugin</td><td><a href="https://beta.example.com/docs/ops">https://beta.example.com/docs/ops</a></td><td>2026-09-10</td><td>UNVERIFIED</td><td>vendor</td></tr><tr data-opt="opt-b"><td>E-009</td><td>Beta Queue</td><td>C-01</td><td>Open source; hosting cost is predictable</td><td><a href="https://review.example.net/beta">https://review.example.net/beta</a></td><td>2026-07-15</td><td>PROBABLE</td><td>independent</td></tr><tr data-opt="opt-c"><td>E-010</td><td>Gamma Queue</td><td>F-01</td><td>At-most-once delivery only</td><td><a href="https://bench.example.org/gamma">https://bench.example.org/gamma</a></td><td>2026-08-01</td><td>CONFIRMED</td><td>independent</td></tr></tbody></table></div></div></details><script>
+<div class="table-wrap"><table id="src-table"><thead><tr><th>ID</th><th>Option</th><th>Requirement</th><th>Finding</th><th>Source</th><th>Source date</th><th>Confidence</th><th>Kind</th></tr></thead><tbody><tr data-opt="opt-a"><td>E-001</td><td>Alpha Queue</td><td>F-01</td><td>Delivers at least once under failure injection</td><td><a href="https://bench.example.org/alpha" title="https://bench.example.org/alpha">bench.example.org</a></td><td>2026-08-01</td><td>CONFIRMED</td><td>independent</td></tr><tr data-opt="opt-a"><td>E-002</td><td>Alpha Queue</td><td>F-02</td><td>Delayed jobs supported, recurring schedules are not</td><td><a href="https://review.example.net/alpha" title="https://review.example.net/alpha">review.example.net</a></td><td>2026-07-15</td><td>PROBABLE</td><td>independent</td></tr><tr data-opt="opt-a"><td>E-003</td><td>Alpha Queue</td><td>N-01</td><td>Exposes Prometheus metrics and a health endpoint</td><td><a href="https://review.example.net/alpha" title="https://review.example.net/alpha">review.example.net</a></td><td>2026-07-15</td><td>PROBABLE</td><td>independent</td></tr><tr data-opt="opt-a"><td>E-004</td><td>Alpha Queue</td><td>C-01</td><td>Tiered pricing with a volume discount above 1M jobs</td><td><a href="https://alpha.example.com/pricing" title="https://alpha.example.com/pricing">alpha.example.com</a></td><td>2026-09-01</td><td>PRIMARY</td><td>vendor</td></tr><tr data-opt="opt-a"><td>E-005</td><td>Alpha Queue</td><td>C-02</td><td>Free tier of 100k jobs per month</td><td><a href="https://bench.example.org/alpha" title="https://bench.example.org/alpha">bench.example.org</a></td><td>2026-08-01</td><td>PROBABLE</td><td>independent</td></tr><tr data-opt="opt-b"><td>E-006</td><td>Beta Queue</td><td>F-01</td><td>At-least-once delivery confirmed in tests</td><td><a href="https://bench.example.org/beta" title="https://bench.example.org/beta">bench.example.org</a></td><td>2026-08-01</td><td>CONFIRMED</td><td>independent</td></tr><tr data-opt="opt-b"><td>E-007</td><td>Beta Queue</td><td>F-02</td><td>Delayed and recurring jobs supported</td><td><a href="https://docs-mirror.example.net/beta" title="https://docs-mirror.example.net/beta">docs-mirror.example.net</a></td><td>2026-06-20</td><td>PROBABLE</td><td>independent</td></tr><tr data-opt="opt-b"><td>E-008</td><td>Beta Queue</td><td>N-01</td><td>Vendor says metrics are available through a plugin</td><td><a href="https://beta.example.com/docs/ops" title="https://beta.example.com/docs/ops">beta.example.com</a></td><td>2026-09-10</td><td>UNVERIFIED</td><td>vendor</td></tr><tr data-opt="opt-b"><td>E-009</td><td>Beta Queue</td><td>C-01</td><td>Open source; hosting cost is predictable</td><td><a href="https://review.example.net/beta" title="https://review.example.net/beta">review.example.net</a></td><td>2026-07-15</td><td>PROBABLE</td><td>independent</td></tr><tr data-opt="opt-c"><td>E-010</td><td>Gamma Queue</td><td>F-01</td><td>At-most-once delivery only</td><td><a href="https://bench.example.org/gamma" title="https://bench.example.org/gamma">bench.example.org</a></td><td>2026-08-01</td><td>CONFIRMED</td><td>independent</td></tr></tbody></table></div></div></details>
+</main>
+</div><script>
 (function(){
   var all=function(){return document.querySelectorAll('details');};
   function reveal(id){var el=document.getElementById(id);for(var d=el;d;d=d.parentElement){if(d.tagName==='DETAILS')d.open=true;}if(el)el.scrollIntoView();}
@@ -107,5 +170,10 @@ td a{overflow-wrap:anywhere;font-size:.82rem}
   var q=document.getElementById('src-q'),sel=document.getElementById('src-opt'),rows=document.querySelectorAll('#src-table tbody tr'),n=document.getElementById('src-n');
   function filter(){var t=(q.value||'').toLowerCase(),o=sel.value,k=0;rows.forEach(function(r){var show=(!o||r.dataset.opt===o)&&r.textContent.toLowerCase().indexOf(t)>=0;r.hidden=!show;if(show)k++;});n.textContent=k+' of '+rows.length+' shown';}
   if(q){q.addEventListener('input',filter);sel.addEventListener('change',filter);filter();}
+  // label each cell with its column, for the stacked layout on phones
+  document.querySelectorAll('table').forEach(function(t){var hs=[].map.call(t.querySelectorAll('thead th'),function(h){return h.textContent.trim();});t.querySelectorAll('tbody tr').forEach(function(r){[].forEach.call(r.children,function(c,i){if(hs[i])c.setAttribute('data-label',hs[i]);});});});
+  // mark the section in view in the index
+  var links={},strip=document.querySelector('.toc-links');document.querySelectorAll('nav.toc a').forEach(function(a){links[a.hash.slice(1)]=a;});
+  if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(!e.isIntersecting)return;var a=links[e.target.id];if(!a)return;Object.keys(links).forEach(function(k){links[k].removeAttribute('aria-current');});a.setAttribute('aria-current','true');if(strip.scrollWidth>strip.clientWidth)strip.scrollLeft=a.offsetLeft-strip.offsetLeft-24;});},{rootMargin:'-15% 0px -75% 0px'});document.querySelectorAll('details.sec').forEach(function(d){io.observe(d);});}
 })();
 </script></body></html>

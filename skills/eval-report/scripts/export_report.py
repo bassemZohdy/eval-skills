@@ -127,81 +127,138 @@ def md_to_html(md):
 
 
 CSS = """
-:root{--bg:#fff;--fg:#1b2430;--muted:#5d6878;--line:#dde1e7;--rule:#1b2430;--head:#f2f4f7;--accent:#0b6477;--accent-soft:#d6e9ee;--ok:#16703f;--ok-bg:#e0f1e7;--warn:#8a5a00;--warn-bg:#fbefd0;--bad:#a8261b;--bad-bg:#fbe3e0;--serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;--sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+:root{--bg:#fff;--fg:#1a2230;--muted:#5b6576;--line:#e1e4ea;--rule:#1a2230;--head:#f3f5f8;--accent:#0d6a73;--accent-soft:#d5ebed;--ok:#16703f;--ok-bg:#e0f1e7;--warn:#8a5a00;--warn-bg:#fbefd0;--bad:#a8261b;--bad-bg:#fbe3e0;--serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;--sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--side:15.5rem;--gutter:clamp(16px,4vw,48px)}
 @media (prefers-color-scheme:dark){:root{--bg:#12161c;--fg:#e4e8ee;--muted:#98a2b3;--line:#2a313c;--rule:#e4e8ee;--head:#1a2028;--accent:#5fc0d6;--accent-soft:#1d3a44;--ok:#5ccf92;--ok-bg:#16301f;--warn:#e6b84d;--warn-bg:#352a0f;--bad:#ff8a80;--bad-bg:#3a1b19}}
-@media print{:root{--bg:#fff;--fg:#000;--muted:#444;--line:#bbb;--rule:#000;--head:#eee;--accent:#0b4a58;--accent-soft:#cfe3e8}body{max-width:none;padding:0}nav.toc,.filters{display:none}summary{break-after:avoid}details>summary::before{display:none}details.sec{margin-top:1.4rem}table{break-inside:auto}tr{break-inside:avoid}.fill,.reach{animation:none!important}}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--fg);font:15px/1.55 var(--sans);max-width:1120px;margin:0 auto;padding:40px 20px 72px}
+html{scroll-padding-top:16px}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 var(--sans);-webkit-text-size-adjust:100%}
 h1,h2,h3{font-family:var(--serif);font-weight:600;line-height:1.2;letter-spacing:-.01em}
-h1{font-size:2.1rem;margin:0 0 14px;max-width:24ch}
-h2{font-size:1.4rem;margin:3.2rem 0 .7rem;padding-top:.9rem;border-top:2px solid var(--rule);scroll-margin-top:12px}
-h3{font-size:1.1rem;margin:1.6rem 0 .3rem}
-p,li{max-width:74ch}
-.meta{display:flex;flex-wrap:wrap;gap:6px 28px;margin:0 0 18px;color:var(--muted);font-size:.9rem}
-.meta div{display:flex;gap:.5em}.meta dt{font-weight:400}.meta dd{margin:0;color:var(--fg);font-weight:600}
-nav.toc{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;align-items:center;gap:8px 24px;margin:0 0 8px;padding:10px 0;border-block:1px solid var(--line);font-size:.88rem}
-.toc-links{display:flex;flex-wrap:wrap;gap:4px 18px;flex:1}
-nav.toc a{color:var(--muted);text-decoration:none}nav.toc a:hover{color:var(--accent);text-decoration:underline}
-.toc-tools{display:flex;gap:6px;flex:none}
-button,input,select{font:inherit;font-size:.85rem;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:4px 10px}
+p,li{max-width:76ch}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+button,input,select{font:inherit;font-size:.85rem;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:5px 10px}
 button{cursor:pointer}button:hover{border-color:var(--accent);color:var(--accent)}
-a{color:var(--accent)}a:focus-visible,summary:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
-details.sec{border-top:2px solid var(--rule);margin-top:2.2rem}
-details>summary{display:flex;align-items:center;flex-wrap:wrap;gap:4px 12px;cursor:pointer;list-style:none;padding:.85rem 0 .6rem}
-details>summary::-webkit-details-marker{display:none}
-details>summary::before{content:"";flex:none;width:.45em;height:.45em;margin:0 .2em;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:transform .15s ease}
-details[open]>summary::before{transform:rotate(45deg)}
-summary h2,summary h3{margin:0;padding:0;border:0}
-summary:hover h2,summary:hover h3{color:var(--accent)}
-.hint{margin-left:auto;color:var(--muted);font-size:.84rem}
-.sec-body{padding:0 0 .6rem}
-details.sub{border-top:1px solid var(--line)}
-details.sub>summary{padding:.55rem 0}
-details.sub[open]{padding-bottom:.4rem}
-.prose p,.prose li{font-family:var(--serif);font-size:1.02rem;line-height:1.65}
-.prose h3,.prose h4{margin-top:1.2rem}
-.intro{margin-top:1.6rem}.intro p{color:var(--muted);font-size:.95rem}
-.filters{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:4px 0 6px}
-.filters input{flex:1;min-width:12rem;max-width:26rem}
-.verdict{margin:28px 0 8px}
-.verdict .lead{font:600 1.25rem/1.35 var(--serif);margin:0 0 4px;max-width:46ch}
-.verdict .caveat{color:var(--muted);margin:0 0 18px}
-ol.ranking{list-style:none;margin:0;padding:0;display:grid;gap:10px}
-ol.ranking li{display:grid;grid-template-columns:1.6rem minmax(9rem,16rem) 1fr 3.6rem;gap:4px 14px;align-items:center;max-width:none}
+
+/* page frame: a sticky section index beside the report on wide screens */
+.layout{display:grid;grid-template-columns:var(--side) minmax(0,1fr);gap:0 clamp(28px,4vw,56px);max-width:1500px;margin:0 auto;padding:0 var(--gutter)}
+.side{position:sticky;top:0;align-self:start;max-height:100vh;overflow-y:auto;padding:44px 0 24px}
+.side-title{margin:0 0 10px;font-size:.8rem;color:var(--muted)}
+.toc-links{display:flex;flex-direction:column;border-left:1px solid var(--line)}
+.toc-links a{display:block;padding:5px 0 5px 14px;margin-left:-1px;border-left:2px solid transparent;color:var(--muted);text-decoration:none;font-size:.88rem;line-height:1.35}
+.toc-links a:hover{color:var(--fg)}
+.toc-links a[aria-current]{color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.toc-tools{display:flex;gap:6px;margin-top:16px}
+main{min-width:0;padding:44px 0 96px}
+
+/* header */
+h1{font-size:clamp(1.6rem,1.2rem + 1.6vw,2.4rem);margin:0 0 14px;max-width:28ch}
+.meta{display:flex;flex-wrap:wrap;gap:6px 28px;margin:0;color:var(--muted);font-size:.88rem}
+.meta div{display:flex;gap:.5em}.meta dd{margin:0;color:var(--fg);font-weight:600}
+
+/* ranking summary: the one graphic the page leads with */
+.verdict{margin:32px 0 0;padding:24px 0 6px;border-top:2px solid var(--rule)}
+.verdict .lead{font:600 1.3rem/1.35 var(--serif);margin:0 0 6px;max-width:52ch}
+.verdict .caveat{color:var(--muted);margin:0 0 20px}
+ol.ranking{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+ol.ranking li{display:grid;grid-template-columns:1.6rem minmax(10rem,19rem) minmax(0,1fr) 3.6rem;gap:4px 14px;align-items:center;max-width:none}
 .pos{font:600 1.1rem var(--serif);color:var(--muted);text-align:right}
-.nm{font-weight:600;overflow-wrap:anywhere}
+.nm{font-weight:600;overflow-wrap:anywhere;line-height:1.3}
 .bar{position:relative;height:18px;background:var(--head);border-radius:2px;overflow:hidden;background-image:linear-gradient(90deg,transparent calc(50% - .5px),var(--line) 50%,transparent calc(50% + .5px))}
 .fill,.reach{position:absolute;top:0;bottom:0;transform-origin:left center;animation:grow .9s cubic-bezier(.2,.7,.2,1) both}
 .fill{left:0;background:var(--accent)}
 .reach{background:repeating-linear-gradient(135deg,var(--accent-soft) 0 4px,transparent 4px 8px);border-right:2px solid var(--accent);animation-delay:.25s}
 @keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-@media (prefers-reduced-motion:reduce){.fill,.reach{animation:none}details>summary::before{transition:none}}
-@media (max-width:640px){nav.toc{position:static;flex-direction:column;align-items:flex-start}.hint{margin-left:1.3em;flex-basis:100%}body{padding:24px 16px 56px}h1{font-size:1.7rem}ol.ranking li{grid-template-columns:1.4rem 1fr 3.4rem}.bar{grid-column:2 / 4;grid-row:2}.flags{grid-column:2 / 4;grid-row:3;margin-top:0}}
 .val{font:600 1.05rem var(--sans);font-variant-numeric:tabular-nums;text-align:right}
 .flags{grid-column:3 / 5;display:flex;flex-wrap:wrap;gap:4px 8px;margin-top:-4px}
 .flag{font-size:.78rem;color:var(--warn);background:var(--warn-bg);padding:0 .55em;border-radius:3px}
-.legend{display:flex;flex-wrap:wrap;gap:4px 20px;margin:14px 0 0;color:var(--muted);font-size:.85rem}
+.legend{display:flex;flex-wrap:wrap;gap:4px 20px;margin:16px 0 0;color:var(--muted);font-size:.84rem}
 .legend i{display:inline-block;width:22px;height:10px;margin-right:6px;vertical-align:-1px}
 .legend .k-fill{background:var(--accent)}.legend .k-reach{background:repeating-linear-gradient(135deg,var(--accent-soft) 0 4px,transparent 4px 8px);border-right:2px solid var(--accent)}
-.table-wrap{overflow-x:auto;margin:10px 0 18px}
-table{border-collapse:collapse;width:100%;font-size:.9rem}
-th,td{padding:7px 12px 7px 0;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
-th{font-size:.8rem;font-weight:600;color:var(--muted);border-bottom:2px solid var(--rule);white-space:nowrap}
-td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;padding-right:14px}
+.intro{margin-top:18px}.intro p{color:var(--muted);font-size:.92rem}
+
+/* collapsible sections */
+details.sec{border-top:1px solid var(--line);scroll-margin-top:12px}
+details.sec:first-of-type{margin-top:28px}
+details>summary{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 14px;cursor:pointer;list-style:none;padding:16px 0 14px}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"";flex:none;align-self:center;width:.5em;height:.5em;margin:0 .15em 0 .1em;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:transform .15s ease}
+details[open]>summary::before{transform:rotate(45deg)}
+summary h2,summary h3{margin:0}
+summary h2{font-size:1.3rem}summary h3{font-size:1.05rem}
+summary:hover h2,summary:hover h3{color:var(--accent)}
+.hint{margin-left:auto;color:var(--muted);font-size:.84rem;text-align:right}
+.sec-body{padding:0 0 28px}
+details.sub{border-top:1px solid var(--line)}
+details.sub>summary{padding:10px 0}
+details.sub[open]{padding-bottom:10px}
+.prose p,.prose li{font-family:var(--serif);font-size:1.03rem;line-height:1.65}
+.prose h3,.prose h4{margin:1.4rem 0 .3rem}
+.sec-body>p,.sec-body>ul{max-width:76ch}
+.sec-body h3{font-size:1.05rem;margin:1.6rem 0 .3rem}
+
+/* tables */
+.table-wrap{overflow-x:auto;margin:10px 0 18px;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{padding:8px 14px 8px 0;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{font-size:.78rem;font-weight:600;color:var(--muted);border-bottom:2px solid var(--rule);line-height:1.3}
+th:last-child,td:last-child{padding-right:0}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}td.num{white-space:nowrap}
 tbody tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:color-mix(in srgb,var(--head) 70%,transparent)}
 code{background:var(--head);padding:1px 5px;border-radius:3px;font-size:.88em}
-.provided,.partial,.vendor-claimed,.not-provided,.unknown{display:inline-block;padding:0 .6em;border-radius:999px;font-size:.78rem;font-weight:600;line-height:1.6;white-space:nowrap}
+.feat td{min-width:12rem}.feat td:first-child{min-width:0;white-space:nowrap;color:var(--muted)}.feat td:nth-child(3){min-width:0}
+.cell .note{display:block;margin-top:3px;color:var(--fg);font-size:.84rem;line-height:1.45}
+.cell .ev{display:block;margin-top:2px}
+#src-table td{font-size:.82rem}#src-table td:nth-child(4){min-width:20rem}
+td a{overflow-wrap:anywhere}
+.provided,.partial,.vendor-claimed,.not-provided,.unknown{display:inline-block;padding:0 .6em;border-radius:999px;font-size:.76rem;font-weight:600;line-height:1.65;white-space:nowrap}
 .provided{color:var(--ok);background:var(--ok-bg)}.partial,.vendor-claimed{color:var(--warn);background:var(--warn-bg)}.not-provided,.unknown{color:var(--bad);background:var(--bad-bg)}
-.tag{font-size:.8rem;color:var(--muted)}.tag.low{color:var(--bad)}.tag.medium{color:var(--warn)}.tag.high{color:var(--ok)}
+.tag{font-size:.78rem;color:var(--muted)}.tag.low{color:var(--bad)}.tag.medium{color:var(--warn)}.tag.high{color:var(--ok)}
 p.tag{margin:6px 0}
 .heat{display:inline-block;min-width:2.1em;padding:1px 8px;border-radius:3px;text-align:center;font-weight:600;background:color-mix(in srgb,var(--accent) calc(var(--p) * 28%),transparent)}
-td a{overflow-wrap:anywhere;font-size:.82rem}
-#src-table td,#src-table th{font-size:.82rem}
+.filters{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:0 0 6px}
+.filters input{flex:1 1 14rem;max-width:26rem}
+.filters select{max-width:100%}
+
+/* medium screens: the index becomes a one-line strip pinned to the top */
+@media (max-width:1080px){
+.layout{display:block}
+.side{z-index:5;max-height:none;overflow:visible;padding:0;margin:0 calc(-1 * var(--gutter));background:var(--bg);border-bottom:1px solid var(--line)}
+nav.toc{display:flex;align-items:center;gap:10px;padding:0 var(--gutter)}
+.side-title{display:none}
+.toc-links{flex:1;flex-direction:row;border:0;overflow-x:auto;scrollbar-width:none;white-space:nowrap;gap:2px}
+.toc-links::-webkit-scrollbar{display:none}
+.toc-links a{padding:12px 8px;margin:0;border-left:0;border-bottom:2px solid transparent}
+.toc-links a[aria-current]{border-bottom-color:var(--accent)}
+.toc-tools{margin:0;flex:none}
+main{padding-top:28px}
+html{scroll-padding-top:56px}details.sec{scroll-margin-top:56px}
+}
+@media (max-width:680px){
+body{font-size:14.5px}
+.toc-tools button{padding:4px 8px;font-size:.78rem}
+ol.ranking li{grid-template-columns:1.4rem minmax(0,1fr) 3.2rem}
+.bar{grid-column:2 / 4;grid-row:2}.flags{grid-column:2 / 4;grid-row:3;margin-top:0}
+.hint{margin-left:1.35em;flex-basis:100%;text-align:left}
+}
+/* tablets and phones: rows become stacked cards labelled by their column */
+@media (max-width:860px){
+.table-wrap{overflow:visible}
+.table-wrap table,.table-wrap tbody,.table-wrap tr,.table-wrap td{display:block;width:100%}
+.table-wrap thead{display:none}
+.table-wrap tr{padding:10px 0;border-bottom:1px solid var(--line)}
+.table-wrap td{display:grid;grid-template-columns:minmax(5.5rem,34%) minmax(0,1fr);gap:10px;border:0;padding:3px 0;min-width:0!important;white-space:normal!important;text-align:left}
+.table-wrap td::before{content:attr(data-label);color:var(--muted);font-size:.76rem;line-height:1.6}
+.table-wrap td:empty{display:none}
+tbody tr:hover td{background:none}
+}
+@media (prefers-reduced-motion:reduce){.fill,.reach{animation:none}details>summary::before{transition:none}}
+@media print{:root{--bg:#fff;--fg:#000;--muted:#444;--line:#bbb;--rule:#000;--head:#eee;--accent:#0b4a58;--accent-soft:#cfe3e8}body{font-size:12px}.layout{display:block;padding:0;max-width:none}.side,.filters{display:none}main{padding:0}details>summary::before{display:none}summary{break-after:avoid}.table-wrap{overflow:visible}table{break-inside:auto}tr{break-inside:avoid}tbody tr:hover td{background:none}.fill,.reach{animation:none!important}}
 """
 
 
-def _table(head, rows, num_cols=()):
-    h = "".join('<th%s>%s</th>' % (' class="num"' if j in num_cols else "", html.escape(str(c))) for j, c in enumerate(head))
+def _table(head, rows, num_cols=(), cls=""):
+    h = "".join('<th%s>%s</th>' % (' class="num"' if j in num_cols else "", c[0] if isinstance(c, tuple) else html.escape(str(c))) for j, c in enumerate(head))
     body = []
     for r in rows:
         tds = []
@@ -210,7 +267,13 @@ def _table(head, rows, num_cols=()):
             txt = c[0] if raw else html.escape(str(c))
             tds.append('<td%s>%s</td>' % (' class="num"' if j in num_cols else "", txt))
         body.append("<tr>%s</tr>" % "".join(tds))
-    return '<div class="table-wrap"><table><thead><tr>%s</tr></thead><tbody>%s</tbody></table></div>' % (h, "".join(body))
+    return '<div class="table-wrap"><table%s><thead><tr>%s</tr></thead><tbody>%s</tbody></table></div>' % (' class="%s"' % cls if cls else "", h, "".join(body))
+
+
+def _opt_th(D, o):
+    """Column header for an option: the short name, the full name on hover."""
+    full = D.name[o]
+    return ('<span title="%s">%s</span>' % (html.escape(full), html.escape(full.split(" (")[0])),)
 
 
 def _slug(v):
@@ -242,7 +305,7 @@ def _cost_html(D):
     if res["scenarios"]:
         rows = [[sc] + [_money(res["options"][o]["scenarios"][sc]) if not res["options"][o]["incomplete"] else "quote needed" for o in inc]
                 + [D.name[res["cheapest_by_scenario"][sc]] if res["cheapest_by_scenario"][sc] else "n/a (quotes needed)"] for sc in res["scenarios"]]
-        out += ["<h3>Volume scenarios</h3>", _table(["Scenario"] + [D.name[o] for o in inc] + ["Cheapest"], rows, num_cols=tuple(range(1, 1 + len(inc))))]
+        out += ["<h3>Volume scenarios</h3>", _table(["Scenario"] + [_opt_th(D, o) for o in inc] + ["Cheapest"], rows, num_cols=tuple(range(1, 1 + len(inc))))]
     rows = [[D.name[o], c["name"], _money(c["monthly"]), _money(c["one_time"]), "assumed" if c["id"] in res["options"][o].get("assumed", []) else "unverified" if c["id"] in res["options"][o]["evidence_gaps"] else ""]
             for o in inc for c in res["options"][o]["components"]]
     out += ["<h3>Components</h3>", _table(["Option", "Component", "Monthly", "One-time", "Evidence"], rows, num_cols=(2, 3))]
@@ -346,6 +409,11 @@ SCRIPT = """
   var q=document.getElementById('src-q'),sel=document.getElementById('src-opt'),rows=document.querySelectorAll('#src-table tbody tr'),n=document.getElementById('src-n');
   function filter(){var t=(q.value||'').toLowerCase(),o=sel.value,k=0;rows.forEach(function(r){var show=(!o||r.dataset.opt===o)&&r.textContent.toLowerCase().indexOf(t)>=0;r.hidden=!show;if(show)k++;});n.textContent=k+' of '+rows.length+' shown';}
   if(q){q.addEventListener('input',filter);sel.addEventListener('change',filter);filter();}
+  // label each cell with its column, for the stacked layout on phones
+  document.querySelectorAll('table').forEach(function(t){var hs=[].map.call(t.querySelectorAll('thead th'),function(h){return h.textContent.trim();});t.querySelectorAll('tbody tr').forEach(function(r){[].forEach.call(r.children,function(c,i){if(hs[i])c.setAttribute('data-label',hs[i]);});});});
+  // mark the section in view in the index
+  var links={},strip=document.querySelector('.toc-links');document.querySelectorAll('nav.toc a').forEach(function(a){links[a.hash.slice(1)]=a;});
+  if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(!e.isIntersecting)return;var a=links[e.target.id];if(!a)return;Object.keys(links).forEach(function(k){links[k].removeAttribute('aria-current');});a.setAttribute('aria-current','true');if(strip.scrollWidth>strip.clientWidth)strip.scrollLeft=a.offsetLeft-strip.offsetLeft-24;});},{rootMargin:'-15% 0px -75% 0px'});document.querySelectorAll('details.sec').forEach(function(d){io.observe(d);});}
 })();
 """
 
@@ -398,7 +466,7 @@ def build_html(D, expand=False):
         rows.append(row)
     rows.append([("<strong>Weighted total</strong>",), ("<strong>100</strong>",)] + [("<strong>%.1f</strong>" % D.scores["totals"][o],) for o in inc])
     gen["matrix"] = ("Weighted score matrix", "%d criteria, %d options" % (len(D.criteria), len(inc)), [
-        _table(["Criterion", "Weight"] + [D.name[o] for o in inc], rows, num_cols=tuple(range(1, 2 + len(inc)))),
+        _table(["Criterion", "Weight"] + [_opt_th(D, o) for o in inc], rows, num_cols=tuple(range(1, 2 + len(inc)))),
         '<p class="tag">† score capped because the evidence is unverified. Confidence: high = two sources, medium = one, low = none. Independent sources count, and the vendor&rsquo;s official documentation counts once for what a product provides.</p>'])
 
     cats = []
@@ -413,16 +481,16 @@ def build_html(D, expand=False):
             row = [r["id"], r["text"], r["priority"]]
             for o in inc:
                 cell = D.scores["cell_values"][o].get(r["id"], {"value": "unknown"})
-                txt = '<span class="%s">%s</span>' % (_slug(cell["value"]), html.escape(cell["value"]))
+                txt = '<div class="cell"><span class="%s">%s</span>' % (_slug(cell["value"]), html.escape(cell["value"]))
                 if cell.get("note"):
-                    txt += " - " + html.escape(cell["note"])
+                    txt += '<span class="note">%s</span>' % html.escape(cell["note"])
                 if cell.get("evidence_ids"):
-                    txt += ' <span class="tag">[%s]</span>' % html.escape(", ".join(cell["evidence_ids"]))
-                row.append((txt,))
+                    txt += '<span class="ev tag">%s</span>' % html.escape(", ".join(cell["evidence_ids"]))
+                row.append((txt + "</div>",))
             rows.append(row)
         got = ", ".join("%s %d/%d" % (html.escape(D.name[o].split(" (")[0]), sum(1 for r in reqs if D.scores["cell_values"][o].get(r["id"], {}).get("value") == "provided"), len(reqs)) for o in inc)
         feat.append('<details class="sub"%s><summary><h3>%s</h3><span class="hint">provided: %s</span></summary>%s</details>'
-                    % (" open" if expand else "", html.escape(cat), got, _table(["ID", "Requirement", "Priority"] + [D.name[o] for o in inc], rows)))
+                    % (" open" if expand else "", html.escape(cat), got, _table(["ID", "Requirement", "Priority"] + [_opt_th(D, o) for o in inc], rows, cls="feat")))
     gen["features"] = ("Feature-by-feature comparison", "%d requirements in %d groups" % (len(D.reqs), len(cats)), feat)
 
     cost = _cost_html(D)
@@ -431,10 +499,10 @@ def build_html(D, expand=False):
         gen["cost"] = ("Cost: total cost of ownership", "%s over %s months" % (html.escape(res["currency"]), res["horizon_months"]), cost[1:])
 
     sens = D.scores["sensitivity"]
-    rows = [[D.label(x["criterion_id"]), "%+d" % x["delta"], D.name[x["top"]], "yes" if x["changed"] else "no"] + ["%.1f" % x["totals"][o] for o in inc] for x in sens]
+    rows = [[D.label(x["criterion_id"]), "%+d" % x["delta"], D.name[x["top"]].split(" (")[0], "yes" if x["changed"] else "no"] + ["%.1f" % x["totals"][o] for o in inc] for x in sens]
     flips = sum(1 for x in sens if x["changed"])
     part = ["<p>Each of the highest-weight criteria moved by 5 points, other weights rescaled.</p>",
-            _table(["Criterion", "Change", "Top option", "Top changed"] + [D.name[o] for o in inc], rows)]
+            _table(["Criterion", "Change", "Top option", "Top changed"] + [_opt_th(D, o) for o in inc], rows, num_cols=tuple(range(4, 4 + len(inc))))]
     rows = [[D.label(t["test"]), D.name[t["top"]], "yes" if t["changed"] else "no"] for t in D.scores["confidence_tests"]]
     if rows:
         part += ["<h3>Confidence tests</h3>", _table(["Test", "Top option", "Top changed"], rows)]
@@ -448,7 +516,8 @@ def build_html(D, expand=False):
     for e in D.ev:
         url = html.escape(e["source_url"])
         cells = [html.escape(str(c)) for c in (e["evidence_id"], D.name.get(e["option_id"], e["option_id"]), e.get("requirement_id") or e.get("criterion_id") or "", e["finding"])]
-        cells.append('<a href="%s">%s</a>' % (url, url))
+        site = re.sub(r"^https?://(www\.)?", "", e["source_url"]).split("/")[0] or e["source_url"]
+        cells.append('<a href="%s" title="%s">%s</a>' % (url, url, html.escape(site)))
         cells += [html.escape(str(c)) for c in (e["source_date"], e["confidence"], e["source_kind"])]
         body.append('<tr data-opt="%s">%s</tr>' % (html.escape(e["option_id"]), "".join("<td>%s</td>" % c for c in cells)))
     opts = sorted({e["option_id"] for e in D.ev}, key=lambda o: D.name.get(o, o))
@@ -491,9 +560,9 @@ def build_html(D, expand=False):
         nav.append('<a href="#%s">%s</a>' % (sid, html.escape(t)))
         out.append('<details class="sec" id="%s"%s><summary><h2>%s</h2>%s</summary><div class="sec-body">%s</div></details>'
                    % (sid, " open" if is_open else "", html.escape(t), '<span class="hint">%s</span>' % hint if hint else "", "\n".join(part)))
-    toc = ('<nav class="toc" aria-label="Report sections"><div class="toc-links">%s</div><div class="toc-tools">'
-           '<button type="button" data-all="open">Expand all</button><button type="button" data-all="close">Collapse all</button></div></nav>' % "".join(nav))
-    page = head + [toc] + _verdict_html(D) + intro + out
+    toc = ('<aside class="side"><nav class="toc" aria-label="Report sections"><p class="side-title">In this report</p><div class="toc-links">%s</div><div class="toc-tools">'
+           '<button type="button" data-all="open">Expand all</button><button type="button" data-all="close">Collapse all</button></div></nav></aside>' % "".join(nav))
+    page = ['<div class="layout">', toc, "<main>", "<header>"] + head + ["</header>"] + _verdict_html(D) + intro + out + ["</main>", "</div>"]
     return ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
             "<title>%s</title><style>%s</style></head><body>%s<script>%s</script></body></html>\n"
             % (html.escape("Evaluation report: " + D.title), CSS, "\n".join(page), SCRIPT))
