@@ -129,7 +129,7 @@ def md_to_html(md):
 CSS = """
 :root{--bg:#fff;--fg:#1b2430;--muted:#5d6878;--line:#dde1e7;--rule:#1b2430;--head:#f2f4f7;--accent:#0b6477;--accent-soft:#d6e9ee;--ok:#16703f;--ok-bg:#e0f1e7;--warn:#8a5a00;--warn-bg:#fbefd0;--bad:#a8261b;--bad-bg:#fbe3e0;--serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;--sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 @media (prefers-color-scheme:dark){:root{--bg:#12161c;--fg:#e4e8ee;--muted:#98a2b3;--line:#2a313c;--rule:#e4e8ee;--head:#1a2028;--accent:#5fc0d6;--accent-soft:#1d3a44;--ok:#5ccf92;--ok-bg:#16301f;--warn:#e6b84d;--warn-bg:#352a0f;--bad:#ff8a80;--bad-bg:#3a1b19}}
-@media print{:root{--bg:#fff;--fg:#000;--muted:#444;--line:#bbb;--rule:#000;--head:#eee;--accent:#0b4a58;--accent-soft:#cfe3e8}body{max-width:none;padding:0}nav.toc{display:none}h2{break-after:avoid;margin-top:1.6rem}table{break-inside:auto}tr{break-inside:avoid}.fill,.reach{animation:none!important}}
+@media print{:root{--bg:#fff;--fg:#000;--muted:#444;--line:#bbb;--rule:#000;--head:#eee;--accent:#0b4a58;--accent-soft:#cfe3e8}body{max-width:none;padding:0}nav.toc,.filters{display:none}summary{break-after:avoid}details>summary::before{display:none}details.sec{margin-top:1.4rem}table{break-inside:auto}tr{break-inside:avoid}.fill,.reach{animation:none!important}}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--fg);font:15px/1.55 var(--sans);max-width:1120px;margin:0 auto;padding:40px 20px 72px}
 h1,h2,h3{font-family:var(--serif);font-weight:600;line-height:1.2;letter-spacing:-.01em}
@@ -139,9 +139,30 @@ h3{font-size:1.1rem;margin:1.6rem 0 .3rem}
 p,li{max-width:74ch}
 .meta{display:flex;flex-wrap:wrap;gap:6px 28px;margin:0 0 18px;color:var(--muted);font-size:.9rem}
 .meta div{display:flex;gap:.5em}.meta dt{font-weight:400}.meta dd{margin:0;color:var(--fg);font-weight:600}
-nav.toc{display:flex;flex-wrap:wrap;gap:4px 18px;margin:0 0 8px;padding:10px 0;border-block:1px solid var(--line);font-size:.88rem}
+nav.toc{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;align-items:center;gap:8px 24px;margin:0 0 8px;padding:10px 0;border-block:1px solid var(--line);font-size:.88rem}
+.toc-links{display:flex;flex-wrap:wrap;gap:4px 18px;flex:1}
 nav.toc a{color:var(--muted);text-decoration:none}nav.toc a:hover{color:var(--accent);text-decoration:underline}
-a{color:var(--accent)}a:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+.toc-tools{display:flex;gap:6px;flex:none}
+button,input,select{font:inherit;font-size:.85rem;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:4px 10px}
+button{cursor:pointer}button:hover{border-color:var(--accent);color:var(--accent)}
+a{color:var(--accent)}a:focus-visible,summary:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+details.sec{border-top:2px solid var(--rule);margin-top:2.2rem}
+details>summary{display:flex;align-items:center;flex-wrap:wrap;gap:4px 12px;cursor:pointer;list-style:none;padding:.85rem 0 .6rem}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"";flex:none;width:.45em;height:.45em;margin:0 .2em;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:transform .15s ease}
+details[open]>summary::before{transform:rotate(45deg)}
+summary h2,summary h3{margin:0;padding:0;border:0}
+summary:hover h2,summary:hover h3{color:var(--accent)}
+.hint{margin-left:auto;color:var(--muted);font-size:.84rem}
+.sec-body{padding:0 0 .6rem}
+details.sub{border-top:1px solid var(--line)}
+details.sub>summary{padding:.55rem 0}
+details.sub[open]{padding-bottom:.4rem}
+.prose p,.prose li{font-family:var(--serif);font-size:1.02rem;line-height:1.65}
+.prose h3,.prose h4{margin-top:1.2rem}
+.intro{margin-top:1.6rem}.intro p{color:var(--muted);font-size:.95rem}
+.filters{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:4px 0 6px}
+.filters input{flex:1;min-width:12rem;max-width:26rem}
 .verdict{margin:28px 0 8px}
 .verdict .lead{font:600 1.25rem/1.35 var(--serif);margin:0 0 4px;max-width:46ch}
 .verdict .caveat{color:var(--muted);margin:0 0 18px}
@@ -154,8 +175,8 @@ ol.ranking li{display:grid;grid-template-columns:1.6rem minmax(9rem,16rem) 1fr 3
 .fill{left:0;background:var(--accent)}
 .reach{background:repeating-linear-gradient(135deg,var(--accent-soft) 0 4px,transparent 4px 8px);border-right:2px solid var(--accent);animation-delay:.25s}
 @keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-@media (prefers-reduced-motion:reduce){.fill,.reach{animation:none}}
-@media (max-width:640px){body{padding:24px 16px 56px}h1{font-size:1.7rem}ol.ranking li{grid-template-columns:1.4rem 1fr 3.4rem}.bar{grid-column:2 / 4;grid-row:2}.flags{grid-column:2 / 4;grid-row:3;margin-top:0}}
+@media (prefers-reduced-motion:reduce){.fill,.reach{animation:none}details>summary::before{transition:none}}
+@media (max-width:640px){nav.toc{position:static;flex-direction:column;align-items:flex-start}.hint{margin-left:1.3em;flex-basis:100%}body{padding:24px 16px 56px}h1{font-size:1.7rem}ol.ranking li{grid-template-columns:1.4rem 1fr 3.4rem}.bar{grid-column:2 / 4;grid-row:2}.flags{grid-column:2 / 4;grid-row:3;margin-top:0}}
 .val{font:600 1.05rem var(--sans);font-variant-numeric:tabular-nums;text-align:right}
 .flags{grid-column:3 / 5;display:flex;flex-wrap:wrap;gap:4px 8px;margin-top:-4px}
 .flag{font-size:.78rem;color:var(--warn);background:var(--warn-bg);padding:0 .55em;border-radius:3px}
@@ -174,11 +195,8 @@ code{background:var(--head);padding:1px 5px;border-radius:3px;font-size:.88em}
 .tag{font-size:.8rem;color:var(--muted)}.tag.low{color:var(--bad)}.tag.medium{color:var(--warn)}.tag.high{color:var(--ok)}
 p.tag{margin:6px 0}
 .heat{display:inline-block;min-width:2.1em;padding:1px 8px;border-radius:3px;text-align:center;font-weight:600;background:color-mix(in srgb,var(--accent) calc(var(--p) * 28%),transparent)}
-article{border-left:3px solid var(--accent);padding-left:18px;margin:12px 0}
-article p,article li{font-family:var(--serif);font-size:1.02rem;line-height:1.65}
-article h3,article h4{margin-top:1.2rem}
 td a{overflow-wrap:anywhere;font-size:.82rem}
-#sources td,#sources th{font-size:.82rem}
+#src-table td,#src-table th{font-size:.82rem}
 """
 
 
@@ -295,21 +313,56 @@ def _verdict_html(D):
             + '<p class="legend"><span><i class="k-fill"></i>Score as researched</span><span><i class="k-reach"></i>Best case if every unknown requirement is provided</span></p></section>']
 
 
-def build_html(D):
+def _md_sections(md):
+    """Split report.md into (title, markdown) pairs at its level-2 headings."""
+    body = re.sub(r"^#\s+.*\n", "", md.strip() + "\n", count=1)
+    secs, title, buf = [], "Recommendation and notes", []
+    for ln in body.split("\n"):
+        m = re.match(r"##\s+(.+)", ln)
+        if m:
+            if "\n".join(buf).strip():
+                secs.append((title, "\n".join(buf).strip()))
+            title, buf = m.group(1).strip(), []
+        else:
+            buf.append(ln)
+    if "\n".join(buf).strip():
+        secs.append((title, "\n".join(buf).strip()))
+    return secs
+
+
+# report.md headings that cover a computed section, matched on their start
+_ALIAS = [("decision table", "decision"), ("criteria", "criteria"), ("bias", "bias"), ("weighted score", "matrix"), ("feature", "features"),
+          ("cost", "cost"), ("sensitivity", "sensitivity"), ("excluded", "excluded"), ("sources", "sources")]
+# computed tables replace the report's own copies of them; the report's prose is kept
+_COMPUTED_TABLES = {"criteria", "matrix", "features", "cost", "sensitivity", "excluded", "sources"}
+
+SCRIPT = """
+(function(){
+  var all=function(){return document.querySelectorAll('details');};
+  function reveal(id){var el=document.getElementById(id);for(var d=el;d;d=d.parentElement){if(d.tagName==='DETAILS')d.open=true;}if(el)el.scrollIntoView();}
+  document.querySelectorAll('nav.toc a').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();reveal(a.hash.slice(1));history.replaceState(null,'',a.hash);});});
+  document.querySelectorAll('[data-all]').forEach(function(b){b.addEventListener('click',function(){var open=b.dataset.all==='open';all().forEach(function(d){d.open=open;});});});
+  if(location.hash.length>1&&document.getElementById(location.hash.slice(1)))reveal(location.hash.slice(1));
+  var q=document.getElementById('src-q'),sel=document.getElementById('src-opt'),rows=document.querySelectorAll('#src-table tbody tr'),n=document.getElementById('src-n');
+  function filter(){var t=(q.value||'').toLowerCase(),o=sel.value,k=0;rows.forEach(function(r){var show=(!o||r.dataset.opt===o)&&r.textContent.toLowerCase().indexOf(t)>=0;r.hidden=!show;if(show)k++;});n.textContent=k+' of '+rows.length+' shown';}
+  if(q){q.addEventListener('input',filter);sel.addEventListener('change',filter);filter();}
+})();
+"""
+
+
+def build_html(D, expand=False):
     inc = D.ranking
     cs = D.scores["criterion_scores"]
     tie_opts = {o for t in D.scores["ties"] for o in t["options"]}
-    parts = ["<h1>%s</h1>" % html.escape(D.title)]
+    title = D.title[:1].upper() + D.title[1:]
+    head = ["<h1>%s</h1>" % html.escape(title)]
     meta = [("Evaluation date", D.status.get("evaluation_date", "n/a"))]
     if D.status.get("report_date"):
         meta.append(("Report date", D.status["report_date"]))
     meta += [("Scale", "0 to %s" % D.mx), ("Cost mode", D.crit["cost_mode"])]
-    parts.append('<dl class="meta">%s</dl>' % "".join("<div><dt>%s</dt><dd>%s</dd></div>" % (html.escape(str(k)), html.escape(str(v))) for k, v in meta))
-    parts += _verdict_html(D)
-    if D.report.strip():
-        body = re.sub(r"^#\s+.*\n", "", D.report.strip() + "\n", count=1)
-        parts += ["<h2>Recommendation and notes</h2>", "<article>%s</article>" % md_to_html(body)]
+    head.append('<dl class="meta">%s</dl>' % "".join("<div><dt>%s</dt><dd>%s</dd></div>" % (html.escape(str(k)), html.escape(str(v))) for k, v in meta))
 
+    gen = {}  # key -> (title, hint, html parts)
     rows = []
     for i, o in enumerate(inc, 1):
         low = sum(1 for c in D.criteria if c["weight"] > 0 and cs[o][c["id"]]["confidence"] == "low")
@@ -318,19 +371,22 @@ def build_html(D):
         ub = D.scores.get("unknown_bounds", {}).get(o)
         rows.append([i, D.name[o] + (" [%s]" % D.pkg[o] if D.pkg.get(o) else "") + (" (near-tie)" if o in tie_opts else ""), "%.1f" % D.scores["totals"][o], low, gap_n]
                     + (["%d" % ub["unknown_cells"], "%.1f" % ub["if_unknowns_provided"]] if ub else []))
-    head = ["Rank", "Option", "Weighted score (of 100)", "Low-confidence criteria", "Must-have gaps"] + (["Unknown requirements", "Best case if unknowns are provided"] if D.scores.get("unknown_bounds") else [])
-    parts += ["<h2>Decision table</h2>", _table(head, rows, num_cols=tuple(range(0, len(head))) if False else (0, 2, 3, 4, 5, 6))]
+    cols = ["Rank", "Option", "Weighted score (of 100)", "Low-confidence criteria", "Must-have gaps"] + (["Unknown requirements", "Best case if unknowns are provided"] if D.scores.get("unknown_bounds") else [])
+    dec = [_table(cols, rows, num_cols=(0, 2, 3, 4, 5, 6))]
     over = D.scores.get("could_overtake_leader") or []
     if over:
-        parts.append('<p class="tag">The ranking is not decided: %s could overtake %s if the requirements still marked unknown turned out to be provided. Research those first.</p>'
-                     % (html.escape(", ".join(D.name[o] for o in over)), html.escape(D.name[D.ranking[0]])))
+        dec.append('<p class="tag">The ranking is not decided: %s could overtake %s if the requirements still marked unknown turned out to be provided. Research those first.</p>'
+                   % (html.escape(", ".join(D.name[o] for o in over)), html.escape(D.name[D.ranking[0]])))
     for t in D.scores["ties"]:
-        parts.append('<p class="tag">Near-tie between %s; broken by %s.</p>' % (html.escape(", ".join(D.name[o] for o in t["options"])), html.escape(t["tie_break"])))
+        dec.append('<p class="tag">Near-tie between %s; broken by %s.</p>' % (html.escape(", ".join(D.name[o] for o in t["options"])), html.escape(t["tie_break"])))
+    gen["decision"] = ("Decision table", "%d options ranked" % len(inc), dec)
 
-    parts += ["<h2>Criteria and weights</h2>", _table(
-        ["Criterion", "Weight", "Requirements"], [[c["name"], c["weight"], ", ".join(c["requirement_ids"])] for c in D.criteria], num_cols=(1,))]
+    gen["criteria"] = ("Criteria and weights", "%d criteria" % len(D.criteria), [_table(
+        ["Criterion", "Weight", "Requirements"], [[c["name"], c["weight"], ", ".join(c["requirement_ids"])] for c in D.criteria], num_cols=(1,))])
 
-    parts += _bias_html(D)
+    bias = _bias_html(D)
+    if bias:
+        gen["bias"] = ("Bias and assumption checks", "", bias[1:])
 
     rows = []
     for c in D.criteria:
@@ -341,17 +397,19 @@ def build_html(D):
             row.append(('<span class="heat" style="--p:%.2f">%s%s</span> <span class="tag %s">%s</span>' % (d["score"] / max(D.mx, 1), d["score"], mark, d["confidence"], d["confidence"]),))
         rows.append(row)
     rows.append([("<strong>Weighted total</strong>",), ("<strong>100</strong>",)] + [("<strong>%.1f</strong>" % D.scores["totals"][o],) for o in inc])
-    parts += ["<h2>Weighted score matrix</h2>", _table(["Criterion", "Weight"] + [D.name[o] for o in inc], rows, num_cols=tuple(range(1, 2 + len(inc)))),
-              '<p class="tag">† score capped because the evidence is unverified. Confidence: high = two sources, medium = one, low = none. Independent sources count, and the vendor&rsquo;s official documentation counts once for what a product provides.</p>']
+    gen["matrix"] = ("Weighted score matrix", "%d criteria, %d options" % (len(D.criteria), len(inc)), [
+        _table(["Criterion", "Weight"] + [D.name[o] for o in inc], rows, num_cols=tuple(range(1, 2 + len(inc)))),
+        '<p class="tag">† score capped because the evidence is unverified. Confidence: high = two sources, medium = one, low = none. Independent sources count, and the vendor&rsquo;s official documentation counts once for what a product provides.</p>'])
 
     cats = []
     for r in D.reqs:
         if r["category"] not in cats:
             cats.append(r["category"])
-    parts.append("<h2>Feature-by-feature comparison</h2>")
+    feat = []
     for cat in cats:
+        reqs = [x for x in D.reqs if x["category"] == cat]
         rows = []
-        for r in [x for x in D.reqs if x["category"] == cat]:
+        for r in reqs:
             row = [r["id"], r["text"], r["priority"]]
             for o in inc:
                 cell = D.scores["cell_values"][o].get(r["id"], {"value": "unknown"})
@@ -362,43 +420,84 @@ def build_html(D):
                     txt += ' <span class="tag">[%s]</span>' % html.escape(", ".join(cell["evidence_ids"]))
                 row.append((txt,))
             rows.append(row)
-        parts += ["<h3>%s</h3>" % html.escape(cat), _table(["ID", "Requirement", "Priority"] + [D.name[o] for o in inc], rows)]
+        got = ", ".join("%s %d/%d" % (html.escape(D.name[o].split(" (")[0]), sum(1 for r in reqs if D.scores["cell_values"][o].get(r["id"], {}).get("value") == "provided"), len(reqs)) for o in inc)
+        feat.append('<details class="sub"%s><summary><h3>%s</h3><span class="hint">provided: %s</span></summary>%s</details>'
+                    % (" open" if expand else "", html.escape(cat), got, _table(["ID", "Requirement", "Priority"] + [D.name[o] for o in inc], rows)))
+    gen["features"] = ("Feature-by-feature comparison", "%d requirements in %d groups" % (len(D.reqs), len(cats)), feat)
 
-    parts += _cost_html(D)
+    cost = _cost_html(D)
+    if cost:
+        res = D.cost["results"]
+        gen["cost"] = ("Cost: total cost of ownership", "%s over %s months" % (html.escape(res["currency"]), res["horizon_months"]), cost[1:])
 
-    rows = [[D.label(x["criterion_id"]), "%+d" % x["delta"], D.name[x["top"]], "yes" if x["changed"] else "no"] + ["%.1f" % x["totals"][o] for o in inc] for x in D.scores["sensitivity"]]
-    parts += ["<h2>Sensitivity</h2>", "<p>Each of the highest-weight criteria moved by 5 points, other weights rescaled.</p>",
-              _table(["Criterion", "Change", "Top option", "Top changed"] + [D.name[o] for o in inc], rows)]
+    sens = D.scores["sensitivity"]
+    rows = [[D.label(x["criterion_id"]), "%+d" % x["delta"], D.name[x["top"]], "yes" if x["changed"] else "no"] + ["%.1f" % x["totals"][o] for o in inc] for x in sens]
+    flips = sum(1 for x in sens if x["changed"])
+    part = ["<p>Each of the highest-weight criteria moved by 5 points, other weights rescaled.</p>",
+            _table(["Criterion", "Change", "Top option", "Top changed"] + [D.name[o] for o in inc], rows)]
     rows = [[D.label(t["test"]), D.name[t["top"]], "yes" if t["changed"] else "no"] for t in D.scores["confidence_tests"]]
     if rows:
-        parts += ["<h3>Confidence tests</h3>", _table(["Test", "Top option", "Top changed"], rows)]
+        part += ["<h3>Confidence tests</h3>", _table(["Test", "Top option", "Top changed"], rows)]
+    gen["sensitivity"] = ("Sensitivity", "top option changes in %d of %d tests" % (flips, len(sens)) if flips else "top option holds in all %d tests" % len(sens), part)
 
     if D.scores["excluded"]:
-        parts += ["<h2>Excluded options</h2>", _table(["Option", "Reason"], [[D.name[x["option_id"]], x["reason"]] for x in D.scores["excluded"]])]
+        gen["excluded"] = ("Excluded options", "%d options" % len(D.scores["excluded"]),
+                           [_table(["Option", "Reason"], [[D.name[x["option_id"]], x["reason"]] for x in D.scores["excluded"]])])
 
-    rows = []
+    body = []
     for e in D.ev:
         url = html.escape(e["source_url"])
-        rows.append([e["evidence_id"], D.name.get(e["option_id"], e["option_id"]), e.get("requirement_id") or e.get("criterion_id"), e["finding"],
-                     ('<a href="%s">%s</a>' % (url, url),), e["source_date"], e["confidence"], e["source_kind"]])
-    parts += ["<h2>Sources</h2>", _table(["ID", "Option", "Requirement", "Finding", "Source", "Source date", "Confidence", "Kind"], rows)]
+        cells = [html.escape(str(c)) for c in (e["evidence_id"], D.name.get(e["option_id"], e["option_id"]), e.get("requirement_id") or e.get("criterion_id") or "", e["finding"])]
+        cells.append('<a href="%s">%s</a>' % (url, url))
+        cells += [html.escape(str(c)) for c in (e["source_date"], e["confidence"], e["source_kind"])]
+        body.append('<tr data-opt="%s">%s</tr>' % (html.escape(e["option_id"]), "".join("<td>%s</td>" % c for c in cells)))
+    opts = sorted({e["option_id"] for e in D.ev}, key=lambda o: D.name.get(o, o))
+    tools = ('<div class="filters"><input id="src-q" type="search" placeholder="Filter findings" aria-label="Filter findings">'
+             '<select id="src-opt" aria-label="Option"><option value="">All options</option>%s</select><span id="src-n" class="tag" aria-live="polite"></span></div>'
+             % "".join('<option value="%s">%s</option>' % (html.escape(o), html.escape(D.name.get(o, o))) for o in opts))
+    gen["sources"] = ("Sources", "%d findings" % len(D.ev), [tools, '<div class="table-wrap"><table id="src-table"><thead><tr>%s</tr></thead><tbody>%s</tbody></table></div>'
+                                                           % ("".join("<th>%s</th>" % h for h in ("ID", "Option", "Requirement", "Finding", "Source", "Source date", "Confidence", "Kind")), "".join(body))])
 
-    nav, body = [], []
-    for p in parts:
-        m = re.match(r"<h2>(.*)</h2>$", p)
-        if m:
-            sid = re.sub(r"[^a-z0-9]+", "-", re.sub(r"<[^>]+>", "", m.group(1)).lower()).strip("-")
-            nav.append('<a href="#%s">%s</a>' % (sid, m.group(1)))
-            p = '<h2 id="%s">%s</h2>' % (sid, m.group(1))
-        body.append(p)
-    if nav:
-        body.insert(2, '<nav class="toc" aria-label="Report sections">%s</nav>' % "".join(nav))
-    parts = body
+    # merge report.md sections with the computed sections they cover; the report's order wins
+    order = ["decision", "criteria", "bias", "matrix", "features", "cost", "sensitivity", "excluded", "sources"]
+    sections, used, intro = [], set(), []
+    md_secs = _md_sections(D.report) if D.report.strip() else []
+    if len(md_secs) > 1 and md_secs[0][0] == "Recommendation and notes":  # untitled opening text reads as an intro
+        intro = ['<div class="prose intro">%s</div>' % md_to_html(md_secs.pop(0)[1])]
+    for t, md in md_secs:
+        key = next((k for p, k in _ALIAS if t.lower().startswith(p)), None)
+        if key not in gen or key in used:
+            sections.append((t, "", ['<div class="prose">%s</div>' % md_to_html(md)]))
+            continue
+        used.add(key)
+        if key in _COMPUTED_TABLES:
+            md = "\n".join(ln for ln in md.split("\n") if not ln.lstrip().startswith("|"))
+        prose = ['<div class="prose">%s</div>' % md_to_html(md)] if md.strip() else []
+        gt, hint, part = gen[key]
+        if key in ("decision", "bias") and prose:
+            part = ['<details class="sub"%s><summary><h3>%s</h3></summary>%s</details>' % (" open" if expand else "", "Scores, gaps and best case" if key == "decision" else "Computed checks", "".join(part))]
+        sections.append((t, hint, prose + part))
+    for key in order:
+        if key in gen and key not in used:
+            pos = len(sections)
+            if key == "decision":  # right after the recommendation when the report has no decision table
+                pos = min(1, len(sections))
+            sections.insert(pos, gen[key])
+
+    nav, out = [], []
+    for i, (t, hint, part) in enumerate(sections):
+        sid = re.sub(r"[^a-z0-9]+", "-", t.lower()).strip("-") or "section-%d" % i
+        is_open = expand or i == 0 or t.lower().startswith("decision")
+        nav.append('<a href="#%s">%s</a>' % (sid, html.escape(t)))
+        out.append('<details class="sec" id="%s"%s><summary><h2>%s</h2>%s</summary><div class="sec-body">%s</div></details>'
+                   % (sid, " open" if is_open else "", html.escape(t), '<span class="hint">%s</span>' % hint if hint else "", "\n".join(part)))
+    toc = ('<nav class="toc" aria-label="Report sections"><div class="toc-links">%s</div><div class="toc-tools">'
+           '<button type="button" data-all="open">Expand all</button><button type="button" data-all="close">Collapse all</button></div></nav>' % "".join(nav))
+    page = head + [toc] + _verdict_html(D) + intro + out
     return ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
-            "<title>%s</title><style>%s</style></head><body>%s</body></html>\n" % (html.escape("Evaluation report: " + D.title), CSS, "\n".join(parts)))
+            "<title>%s</title><style>%s</style></head><body>%s<script>%s</script></body></html>\n"
+            % (html.escape("Evaluation report: " + D.title), CSS, "\n".join(page), SCRIPT))
 
-
-# ---- XLSX ---------------------------------------------------------------
 
 def _col(n):
     s = ""
@@ -632,7 +731,12 @@ def main(argv=None):
         print("wrote " + os.path.join(out, "report.xlsx"))
     status = 0
     if "pdf" in formats:
-        ok, why = write_pdf(html_path, os.path.join(out, "report.pdf"))
+        # print from a copy with every section expanded
+        fd, print_path = tempfile.mkstemp(suffix=".html", dir=out)
+        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as f:
+            f.write(build_html(D, expand=True))
+        ok, why = write_pdf(print_path, os.path.join(out, "report.pdf"))
+        os.remove(print_path)
         print("wrote " + os.path.join(out, "report.pdf") if ok else "WARNING: PDF skipped: " + why)
         status = 0 if ok else 2
     if "html" not in formats and "pdf" in formats and os.path.exists(html_path):
