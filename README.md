@@ -51,9 +51,12 @@ Each skill bundles `scripts/eval_calc.py` (Python 3, standard library only) for 
 - `matrix FILE.csv` stress-tests an external score table (Criterion and Weight columns plus one numeric column per option): weight sensitivity, equal weights and the smallest lead.
 - `gaps eval [--limit N]` lists, per option, the unknown and unsupported requirements to research first, most important first.
 - `status eval` prints where an evaluation stands and which skill runs next (used by `eval-orchestrator`).
+- `stale-evidence eval [--fast IDS] [--write]` flags evidence older than 3 months (fast-moving options) or 12 months, and with `--write` records it in `status.json`.
 - `score eval` computes criterion scores, the weighted ranking, ties, sensitivity and confidence tests, and writes `eval/features.md`.
 
-`eval-report` also bundles `scripts/export_report.py`, which writes the finished evaluation to `eval/export/` as `report.html`, `report.xlsx` (editable weights and live totals) and `report.pdf` (printed from the HTML by headless Edge or Chrome, skipped if neither is installed). The `examples/task-queue/export/` folder shows the output.
+`eval-report` also bundles `scripts/report_draft.py`: `draft eval --prose FILE` writes the computed sections of `eval/report.md` from the evaluation files plus the judgment text in a JSON file, and `check eval` verifies the finished report against `scores.json` (leader, scores, confidence wording, excluded options).
+
+`eval-report` also bundles `scripts/export_report.py`, which writes the finished evaluation to `eval/export/` as `report.html`, `report.xlsx` (editable weights and live totals) and `report.pdf` (printed from a fully expanded copy of the HTML by headless Edge or Chrome, skipped if neither is installed). The HTML has a section index, collapsible sections, a source filter, and adapts to phone, tablet and desktop widths. The `examples/task-queue/export/` folder shows the output.
 
 ## Try it
 
