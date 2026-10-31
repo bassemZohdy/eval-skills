@@ -1,0 +1,12 @@
+{
+  "cost_mode": "weighted",
+  "scale": {"min": 0, "max": 5},
+  "criteria": [
+    {"id": "crit-core", "name": "Core capabilities", "category": "Core", "weight": 50, "requirement_ids": ["F-01", "F-02"],
+     "anchors": {"0": "No delivery guarantee and no scheduling", "3": "Delivery guarantee met, scheduling partial", "5": "Delivery guarantee and scheduling fully met"}},
+    {"id": "crit-ops", "name": "Operability", "category": "Operations", "weight": 30, "requirement_ids": ["N-01", "N-02"],
+     "anchors": {"0": "No monitoring support", "3": "Monitoring endpoints met, no dashboard", "5": "Monitoring and dashboard both met"}},
+    {"id": "crit-cost", "name": "Cost", "category": "Cost", "weight": 20, "requirement_ids": ["C-01", "C-02"],
+     "anchors": {"0": "Pricing unpredictable and no free tier", "3": "Predictable pricing or a free tier", "5": "Predictable pricing and a usable free tier"}}
+  ]
+}

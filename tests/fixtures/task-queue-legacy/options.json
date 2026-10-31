@@ -1,0 +1,5 @@
+[
+  {"option_id": "opt-a", "name": "Alpha Queue", "source_links": ["https://alpha.example.com"], "excluded": false, "exclusion_reason": "", "not_profiled": false, "gate_status": {"F-01": "pass"}},
+  {"option_id": "opt-b", "name": "Beta Queue", "source_links": ["https://beta.example.com"], "excluded": false, "exclusion_reason": "", "not_profiled": false, "gate_status": {"F-01": "pass"}},
+  {"option_id": "opt-c", "name": "Gamma Queue", "source_links": ["https://gamma.example.com"], "excluded": true, "exclusion_reason": "Fails F-01: no at-least-once delivery (E-010)", "not_profiled": false, "gate_status": {"F-01": "fail"}}
+]

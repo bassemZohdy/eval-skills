@@ -9,7 +9,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "shared"))
 import eval_calc  # noqa: E402
 
-SAMPLE = os.path.join(ROOT, "examples", "task-queue", "eval")
+SAMPLE = os.path.join(ROOT, "tests", "fixtures", "task-queue-legacy")
 
 
 def read(d, name):
@@ -655,7 +655,7 @@ class PackageTest(Sandbox):
         self.assertEqual(eval_calc.validate(self.d).errors, [])
         o[0]["package"] = ""
         write(self.d, "options.json", o)
-        self.assertTrue(any("package must be a non-empty string" in e for e in eval_calc.validate(self.d).errors))
+        self.assertTrue(any("package must name the editions and versions" in e for e in eval_calc.validate(self.d).errors))
 
 
 class MatrixTest(unittest.TestCase):
@@ -857,7 +857,7 @@ class StatusCommandsTest(Sandbox):
         self.assertEqual((st["report_date"], st["stale_steps"]), ("2027-02-03", ["compare"]))
 
     def test_changed_marks_only_completed_dependents_in_order(self):
-        rep, stale = eval_calc.mark_changed(self.d, "weights")
+        rep, stale = eval_calc.mark_changed(self.d, "weights", "test reason")
         self.assertEqual(stale, ["compare", "report"])
         s = read(self.d, "status.json")
         s["completed_steps"], s["stale_steps"] = ["define", "analyze", "discover"], []
@@ -886,7 +886,7 @@ class StatusCommandsTest(Sandbox):
     def test_cli_commands(self):
         import subprocess
         script = os.path.join(ROOT, "shared", "eval_calc.py")
-        r = subprocess.run([sys.executable, "-I", script, "changed", self.d, "weights"], capture_output=True, text=True)
+        r = subprocess.run([sys.executable, "-I", script, "changed", self.d, "weights", "--reason", "test"], capture_output=True, text=True)
         self.assertEqual(r.returncode, 0, r.stderr)
         self.assertEqual(json.loads(r.stdout), ["compare", "report"])
         r = subprocess.run([sys.executable, "-I", script, "complete", self.d, "compare"], capture_output=True, text=True)
