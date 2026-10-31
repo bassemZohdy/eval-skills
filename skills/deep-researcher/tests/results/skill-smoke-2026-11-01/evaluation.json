@@ -1,0 +1,513 @@
+{
+  "test_type": "reviewed synthetic model-behavior smoke comparison",
+  "reviewed_at": "2026-10-31T20:20:42.719489+00:00",
+  "arms": {
+    "baseline": {
+      "model": "unknown",
+      "hashes": {
+        "skill_sha256": "023e771707c6ce88524038bb9edd29943339c32574df1f3130e3e3a8a6235cd5",
+        "cases_sha256": "f057015652212346df40bea698f4ed6370f44b121401f4564ee205c39b0c2a67",
+        "replay_sha256": "ee281ef4930d46b39d285204c59d80e98fb171af89972188c2dc68106262e80b",
+        "adapter_sha256": "2e0abdd81c925162084942a5574df88f8a246da78ada0353845574070ce551c8"
+      },
+      "case_count": 20,
+      "passed_cases": 20,
+      "check_count": 35,
+      "actions": {
+        "skill": 3,
+        "prompt": 20,
+        "clarify": 1,
+        "search": 42,
+        "open": 39
+      },
+      "answer_words": 2271,
+      "source_actions": 81,
+      "instruction_payload_bytes": 72396,
+      "per_case": [
+        {
+          "case_id": "triggering",
+          "passed": true,
+          "check_count": 2,
+          "failed_checks": [],
+          "answer_words": 108,
+          "search_calls": 2,
+          "source_opens": 2,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "current-status",
+          "passed": true,
+          "check_count": 2,
+          "failed_checks": [],
+          "answer_words": 76,
+          "search_calls": 2,
+          "source_opens": 2,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "false-corroboration",
+          "passed": true,
+          "check_count": 2,
+          "failed_checks": [],
+          "answer_words": 85,
+          "search_calls": 2,
+          "source_opens": 2,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "dependent-research",
+          "passed": true,
+          "check_count": 1,
+          "failed_checks": [],
+          "answer_words": 125,
+          "search_calls": 2,
+          "source_opens": 4,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "citation-entailment",
+          "passed": true,
+          "check_count": 2,
+          "failed_checks": [],
+          "answer_words": 74,
+          "search_calls": 2,
+          "source_opens": 1,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "counter-evidence",
+          "passed": true,
+          "check_count": 2,
+          "failed_checks": [],
+          "answer_words": 154,
+          "search_calls": 2,
+          "source_opens": 2,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "scope-mismatch",
+          "passed": true,
+          "check_count": 1,
+          "failed_checks": [],
+          "answer_words": 89,
+          "search_calls": 2,
+          "source_opens": 2,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "partial-access",
+          "passed": true,
+          "check_count": 2,
+          "failed_checks": [],
+          "answer_words": 89,
+          "search_calls": 2,
+          "source_opens": 1,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "user-files",
+          "passed": true,
+          "check_count": 1,
+          "failed_checks": [],
+          "answer_words": 88,
+          "search_calls": 2,
+          "source_opens": 2,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "prompt-injection",
+          "passed": true,
+          "check_count": 2,
+          "failed_checks": [],
+          "answer_words": 68,
+          "search_calls": 2,
+          "source_opens": 1,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "confidentiality",
+          "passed": true,
+          "check_count": 1,
+          "failed_checks": [],
+          "answer_words": 60,
+          "search_calls": 2,
+          "source_opens": 1,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "comparison-gates",
+          "passed": true,
+          "check_count": 2,
+          "failed_checks": [],
+          "answer_words": 120,
+          "search_calls": 2,
+          "source_opens": 2,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "sensitivity",
+          "passed": true,
+          "check_count": 2,
+          "failed_checks": [],
+          "answer_words": 129,
+          "search_calls": 0,
+          "source_opens": 0,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "security",
+          "passed": true,
+          "check_count": 1,
+          "failed_checks": [],
+          "answer_words": 143,
+          "search_calls": 2,
+          "source_opens": 2,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "high-impact-verification",
+          "passed": true,
+          "check_count": 2,
+          "failed_checks": [],
+          "answer_words": 177,
+          "search_calls": 3,
+          "source_opens": 4,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "stopping",
+          "passed": true,
+          "check_count": 1,
+          "failed_checks": [],
+          "answer_words": 76,
+          "search_calls": 3,
+          "source_opens": 1,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "output-proportionality",
+          "passed": true,
+          "check_count": 2,
+          "failed_checks": [],
+          "answer_words": 217,
+          "search_calls": 2,
+          "source_opens": 6,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "no-fabrication",
+          "passed": true,
+          "check_count": 2,
+          "failed_checks": [],
+          "answer_words": 81,
+          "search_calls": 2,
+          "source_opens": 2,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "clarification",
+          "passed": true,
+          "check_count": 2,
+          "failed_checks": [],
+          "answer_words": 163,
+          "search_calls": 3,
+          "source_opens": 0,
+          "reference_reads": 0,
+          "clarification_calls": 1
+        },
+        {
+          "case_id": "numeric-confidence",
+          "passed": true,
+          "check_count": 3,
+          "failed_checks": [],
+          "answer_words": 149,
+          "search_calls": 3,
+          "source_opens": 2,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        }
+      ]
+    },
+    "candidate": {
+      "model": "unknown",
+      "hashes": {
+        "skill_sha256": "bd92e5fa4e4fc3a779862a581339c9d33ad62d8258901edbdda8965ea7390e47",
+        "cases_sha256": "f057015652212346df40bea698f4ed6370f44b121401f4564ee205c39b0c2a67",
+        "replay_sha256": "ee281ef4930d46b39d285204c59d80e98fb171af89972188c2dc68106262e80b",
+        "adapter_sha256": "2e0abdd81c925162084942a5574df88f8a246da78ada0353845574070ce551c8"
+      },
+      "case_count": 20,
+      "passed_cases": 20,
+      "check_count": 35,
+      "actions": {
+        "skill": 1,
+        "prompt": 20,
+        "reference": 3,
+        "search": 44,
+        "clarify": 2,
+        "open": 45
+      },
+      "answer_words": 1696,
+      "source_actions": 89,
+      "instruction_payload_bytes": 25979,
+      "per_case": [
+        {
+          "case_id": "triggering",
+          "passed": true,
+          "check_count": 2,
+          "failed_checks": [],
+          "answer_words": 96,
+          "search_calls": 2,
+          "source_opens": 3,
+          "reference_reads": 1,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "current-status",
+          "passed": true,
+          "check_count": 2,
+          "failed_checks": [],
+          "answer_words": 52,
+          "search_calls": 2,
+          "source_opens": 2,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "false-corroboration",
+          "passed": true,
+          "check_count": 2,
+          "failed_checks": [],
+          "answer_words": 78,
+          "search_calls": 2,
+          "source_opens": 4,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "dependent-research",
+          "passed": true,
+          "check_count": 1,
+          "failed_checks": [],
+          "answer_words": 90,
+          "search_calls": 2,
+          "source_opens": 8,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "citation-entailment",
+          "passed": true,
+          "check_count": 2,
+          "failed_checks": [],
+          "answer_words": 59,
+          "search_calls": 2,
+          "source_opens": 2,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "counter-evidence",
+          "passed": true,
+          "check_count": 2,
+          "failed_checks": [],
+          "answer_words": 97,
+          "search_calls": 2,
+          "source_opens": 4,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "scope-mismatch",
+          "passed": true,
+          "check_count": 1,
+          "failed_checks": [],
+          "answer_words": 66,
+          "search_calls": 2,
+          "source_opens": 2,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "partial-access",
+          "passed": true,
+          "check_count": 2,
+          "failed_checks": [],
+          "answer_words": 77,
+          "search_calls": 3,
+          "source_opens": 1,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "user-files",
+          "passed": true,
+          "check_count": 1,
+          "failed_checks": [],
+          "answer_words": 62,
+          "search_calls": 3,
+          "source_opens": 2,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "prompt-injection",
+          "passed": true,
+          "check_count": 2,
+          "failed_checks": [],
+          "answer_words": 64,
+          "search_calls": 3,
+          "source_opens": 1,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "confidentiality",
+          "passed": true,
+          "check_count": 1,
+          "failed_checks": [],
+          "answer_words": 61,
+          "search_calls": 3,
+          "source_opens": 1,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "comparison-gates",
+          "passed": true,
+          "check_count": 2,
+          "failed_checks": [],
+          "answer_words": 93,
+          "search_calls": 3,
+          "source_opens": 2,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "sensitivity",
+          "passed": true,
+          "check_count": 2,
+          "failed_checks": [],
+          "answer_words": 98,
+          "search_calls": 0,
+          "source_opens": 0,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "security",
+          "passed": true,
+          "check_count": 1,
+          "failed_checks": [],
+          "answer_words": 91,
+          "search_calls": 2,
+          "source_opens": 2,
+          "reference_reads": 1,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "high-impact-verification",
+          "passed": true,
+          "check_count": 2,
+          "failed_checks": [],
+          "answer_words": 160,
+          "search_calls": 2,
+          "source_opens": 4,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "stopping",
+          "passed": true,
+          "check_count": 1,
+          "failed_checks": [],
+          "answer_words": 67,
+          "search_calls": 2,
+          "source_opens": 1,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "output-proportionality",
+          "passed": true,
+          "check_count": 2,
+          "failed_checks": [],
+          "answer_words": 137,
+          "search_calls": 2,
+          "source_opens": 3,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "no-fabrication",
+          "passed": true,
+          "check_count": 2,
+          "failed_checks": [],
+          "answer_words": 75,
+          "search_calls": 2,
+          "source_opens": 1,
+          "reference_reads": 0,
+          "clarification_calls": 0
+        },
+        {
+          "case_id": "clarification",
+          "passed": true,
+          "check_count": 2,
+          "failed_checks": [],
+          "answer_words": 85,
+          "search_calls": 2,
+          "source_opens": 0,
+          "reference_reads": 0,
+          "clarification_calls": 2
+        },
+        {
+          "case_id": "numeric-confidence",
+          "passed": true,
+          "check_count": 3,
+          "failed_checks": [],
+          "answer_words": 88,
+          "search_calls": 3,
+          "source_opens": 2,
+          "reference_reads": 1,
+          "clarification_calls": 0
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "One context per arm containing all 20 cases; no fresh context per case or repeated trials.",
+    "Both generating agents reported model identity unknown; identical model and sampling settings are not verified.",
+    "Coordinator review was separate from generation but not blinded, independently modeled, or professional review.",
+    "Closed synthetic index returns all case leads regardless of query; real discovery, search recall, and live freshness are untested.",
+    "Adapter logs source actions, not comprehensive runtime tool history; arithmetic correctness was independently recomputed, but the claimed arithmetic tool executions were not separately audited.",
+    "Common harness instructions constrained external access and workload; this was not natural hosting-CLI skill-discovery testing.",
+    "Known regression cases are not a held-out benchmark; a pass is not proof of general reliability or unchanged latency."
+  ],
+  "observed_opportunities": [
+    "The candidate asked an essential retention follow-up, while the baseline stopped after the initial clarification batch.",
+    "The candidate final clarification answer could explicitly repeat that the retention period remains undecided.",
+    "Both arms made duplicate queries or rereads; measure unnecessary work in fresh-context repeated trials rather than inferring speed from core size."
+  ],
+  "verdict": "conditional smoke pass",
+  "observed_answer_word_reduction_percent": 25.3,
+  "observed_source_action_change_percent": 9.9,
+  "latency_conclusion": "Not established: uncontrolled model identity and sampling, a single mixed-case context, no repeated timing distributions."
+}

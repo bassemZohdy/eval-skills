@@ -1,0 +1,135 @@
+{
+  "format": "agent-skill-package/1",
+  "name": "deep-researcher",
+  "entrypoint": "SKILL.md",
+  "python_minimum": "3.9",
+  "license": "UNSPECIFIED",
+  "evidence_status": "conditional-smoke-pass",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 6234,
+      "sha256": "1c1a7b7a907e508fb9c0dbc19ea309764840642a5199cb147c330b12669dc783"
+    },
+    {
+      "path": "SKILL.md",
+      "bytes": 18181,
+      "sha256": "08bc2249f0925ac2fb04bf417d1b70c8d4d27c5b39151c108e1ab653df034b53"
+    },
+    {
+      "path": "references/claim-specific-checks.md",
+      "bytes": 2086,
+      "sha256": "32345bb3c6fd0dfabc1847a443ee660b8fc9f7d72b2f3e5d757f904393df2ea0"
+    },
+    {
+      "path": "references/delegation.md",
+      "bytes": 1611,
+      "sha256": "3cf1fad275734cf76ed4e0b2dda0f93dbd6de2d2016d3306d386e06f8fdb0182"
+    },
+    {
+      "path": "references/quantified-confidence.md",
+      "bytes": 3137,
+      "sha256": "f039e56c29a5200e273f6aca6ab2479a4fcdef059f88cd561527b9019afb0824"
+    },
+    {
+      "path": "scripts/package_skill.py",
+      "bytes": 5934,
+      "sha256": "1086885c1c986d159b8e4623345652bf09e5854634da0a742fadf4297b2506ba"
+    },
+    {
+      "path": "tests/TESTING.md",
+      "bytes": 5519,
+      "sha256": "237c19bb4a15dd73a08d61faeee6c02f35a7ffa8edf2f41529e214c62d78997b"
+    },
+    {
+      "path": "tests/check_skill.py",
+      "bytes": 11096,
+      "sha256": "1d06936f47144ca931a8edcb0c53a91bdd163cfd7e9ad17a672879c6bc228e76"
+    },
+    {
+      "path": "tests/record_observations.py",
+      "bytes": 4779,
+      "sha256": "0e11b00a8e5344cd3be5fd6f641591c2a92682e2f269ef900367a9c1e57df789"
+    },
+    {
+      "path": "tests/replay-sources.json",
+      "bytes": 13141,
+      "sha256": "ee281ef4930d46b39d285204c59d80e98fb171af89972188c2dc68106262e80b"
+    },
+    {
+      "path": "tests/replay_sources.py",
+      "bytes": 5136,
+      "sha256": "2e0abdd81c925162084942a5574df88f8a246da78ada0353845574070ce551c8"
+    },
+    {
+      "path": "tests/research-cases.json",
+      "bytes": 10385,
+      "sha256": "f057015652212346df40bea698f4ed6370f44b121401f4564ee205c39b0c2a67"
+    },
+    {
+      "path": "tests/results/skill-smoke-2026-11-01/baseline-answers.json",
+      "bytes": 18071,
+      "sha256": "015c0cdda6b5c5e8d492696311922abdfd31f735f61538956cf220d5488d0b95"
+    },
+    {
+      "path": "tests/results/skill-smoke-2026-11-01/baseline-observations.json",
+      "bytes": 52094,
+      "sha256": "9e4edd8ed252ac33d1cb2377c2f3334e14bd8ac356636b924a2004178aad532a"
+    },
+    {
+      "path": "tests/results/skill-smoke-2026-11-01/baseline-reviews.json",
+      "bytes": 6552,
+      "sha256": "e03fd217a325a5b1f87dbe1418d44de9063d5fb47924fb2f2067f975b213ec37"
+    },
+    {
+      "path": "tests/results/skill-smoke-2026-11-01/baseline-source.md",
+      "bytes": 23593,
+      "sha256": "023e771707c6ce88524038bb9edd29943339c32574df1f3130e3e3a8a6235cd5"
+    },
+    {
+      "path": "tests/results/skill-smoke-2026-11-01/baseline-trace.jsonl",
+      "bytes": 21183,
+      "sha256": "b758ea48babe7d7bfd6c47bef9ff2d66d1f7e28f51a6563272d96ea32f2e29d4"
+    },
+    {
+      "path": "tests/results/skill-smoke-2026-11-01/candidate-answers.json",
+      "bytes": 14099,
+      "sha256": "2e36cc45270992dae7b5760bf71812e7db06cbeb4a378bec6f530a68fecb5c6b"
+    },
+    {
+      "path": "tests/results/skill-smoke-2026-11-01/candidate-observations.json",
+      "bytes": 50393,
+      "sha256": "aa6fa629c1f3cc407853e7383855c4d7f86a7bf0cdd2b5192de39696a7c1a894"
+    },
+    {
+      "path": "tests/results/skill-smoke-2026-11-01/candidate-reviews.json",
+      "bytes": 6514,
+      "sha256": "ea65cfbc41f7f20680e4b90a985b9b23519615046289a9212cb6c7766a9ecfc9"
+    },
+    {
+      "path": "tests/results/skill-smoke-2026-11-01/candidate-trace.jsonl",
+      "bytes": 23074,
+      "sha256": "71fa48da5113c6ba5ad1955ec235c8395f764e6b4eff1bfcb6f8c999497a3e40"
+    },
+    {
+      "path": "tests/results/skill-smoke-2026-11-01/evaluation.json",
+      "bytes": 15454,
+      "sha256": "bce08550464475aa67c580a4ffcd1c25f7ced237b57f6ad17665bde22e18a97f"
+    },
+    {
+      "path": "tests/test_package_skill.py",
+      "bytes": 2488,
+      "sha256": "9a6d1e5d5f973929ad358148614ed73542401ec89e93209fb242b007383040eb"
+    },
+    {
+      "path": "tests/test_record_observations.py",
+      "bytes": 2174,
+      "sha256": "b82f45b9b9581cd21862669eaadf9c629d5178f17dd71fdcee1f53cfeff2798d"
+    },
+    {
+      "path": "tests/test_replay_sources.py",
+      "bytes": 2776,
+      "sha256": "b3e92a9505c54aaf4c1ba9f1cd7a4a0726feb69c994b31e629cf545bfdf1cb53"
+    }
+  ]
+}
