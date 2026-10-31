@@ -23,6 +23,9 @@ import time
 import zipfile
 from xml.sax.saxutils import escape as xesc
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import eval_calc  # noqa: E402
+
 
 def _load(d, name, required=True):
     path = os.path.join(d, name)
@@ -36,19 +39,21 @@ def _load(d, name, required=True):
 
 class Data:
     def __init__(self, d):
+        self.dir = d
         self.reqs = _load(d, "requirements.json")
         self.crit = _load(d, "criteria.json")
         self.opts = _load(d, "options.json")
         self.ev = _load(d, "evidence.json")
         self.scores = _load(d, "scores.json")
         self.cost = _load(d, "cost.json", required=False)
+        self.features = _load(d, "features.json", required=False)
         if "totals" not in self.scores:
             raise SystemExit("ERROR: scores.json has no computed results; run `eval_calc.py score` first")
         self.report = _load(d, "report.md", required=False) or ""
         self.solution = _load(d, "solution.md", required=False) or ""
         self.status = _load(d, "status.json", required=False) or {}
         self.name = {o["option_id"]: o["name"] for o in self.opts}
-        self.pkg = {o["option_id"]: o.get("package") for o in self.opts}
+        self.pkg = {o["option_id"]: eval_calc.package_text(o.get("package")) for o in self.opts}
         self.ranking = self.scores["ranking"]
         self.criteria = self.crit["criteria"]
         self.mx = self.crit["scale"]["max"]
@@ -208,8 +213,8 @@ tbody tr:hover td{background:color-mix(in srgb,var(--head) 70%,transparent)}
 code{background:var(--head);padding:1px 5px;border-radius:3px;font-size:.88em}
 .feat td{min-width:12rem}.feat td:first-child{min-width:0;white-space:nowrap;color:var(--muted)}.feat td:nth-child(3){min-width:0}
 .pkg{display:block;margin-top:2px;color:var(--muted);font-size:.8rem;line-height:1.4;font-weight:400}.cell .note{display:block;margin-top:3px;color:var(--fg);font-size:.84rem;line-height:1.45}
-.cell .ev{display:block;margin-top:2px}
-#src-table td{font-size:.82rem}#src-table td:nth-child(1),#src-table td:nth-child(5),#src-table td:nth-child(6){white-space:nowrap}#src-table td:nth-child(5) a{overflow-wrap:normal}#src-table td:nth-child(4){min-width:20rem}
+.cell .ev{display:block;margin-top:2px}.cell .tags{display:block;font-size:.76rem;color:var(--warn)}.cell.dim{opacity:.35}
+#src-table td{font-size:.82rem}#src-table td:nth-child(1),#src-table td:nth-child(2),#src-table td:nth-child(6),#src-table td:nth-child(7){white-space:nowrap}#src-table td:nth-child(6) a{overflow-wrap:normal}#src-table td:nth-child(5){min-width:20rem}
 td a{overflow-wrap:anywhere}
 .provided,.partial,.vendor-claimed,.not-provided,.unknown{display:inline-block;padding:0 .6em;border-radius:999px;font-size:.76rem;font-weight:600;line-height:1.65;white-space:nowrap}
 .provided{color:var(--ok);background:var(--ok-bg)}.partial,.vendor-claimed{color:var(--warn);background:var(--warn-bg)}.not-provided,.unknown{color:var(--bad);background:var(--bad-bg)}
@@ -275,6 +280,63 @@ def _opt_th(D, o):
     """Column header for an option: the short name, the full name on hover."""
     full = D.name[o]
     return ('<span title="%s">%s</span>' % (html.escape(full), html.escape(full.split(" (")[0])),)
+
+
+def _num(v):
+    """A score for display: up to two decimals, no trailing zeros."""
+    return ("%.2f" % v).rstrip("0").rstrip(".") if isinstance(v, float) else str(v)
+
+
+def _feature_groups(D, inc):
+    """The feature table as (category, [(id, text, priority, {option: (status, note, evidence ids)})]).
+    It comes from features.json; evaluations on the older model fall back to their cell values."""
+    out = []
+    if D.features:
+        for f in D.features:
+            if f["category"] not in [c for c, _ in out]:
+                out.append((f["category"], []))
+            dict(out)[f["category"]].append((f["id"], f["name"], "", {o: ((f["cells"].get(o) or {}).get("status", "missing"), (f["cells"].get(o) or {}).get("note", ""),
+                                                                      (f["cells"].get(o) or {}).get("evidence_ids", []), (f["cells"].get(o) or {}).get("scope_tags", [])) for o in inc}))
+    elif "cell_values" in D.scores:
+        for r in D.reqs:
+            if r["category"] not in [c for c, _ in out]:
+                out.append((r["category"], []))
+            cells = {o: (lambda c: (c["value"], c.get("note", ""), c.get("evidence_ids", []), []))(D.scores["cell_values"][o].get(r["id"], {"value": "unknown"})) for o in inc}
+            dict(out)[r["category"]].append((r["id"], r["text"], r["priority"], cells))
+    return out
+
+
+def _whatif_data(D, inc):
+    """What the page needs to recompute the totals: the requirement scores, their categories and priorities, and the defaults."""
+    rs = D.scores.get("requirement_scores")
+    if not rs:
+        return None
+    prio = {r["id"]: r["priority"] for r in D.reqs}
+    return {"mx": D.mx, "gap": D.scores.get("meaningful_gap", 5), "options": [{"id": o, "name": D.name[o].split(" (")[0]} for o in inc],
+            "points": D.scores.get("priority_points") or {"must": 5, "should": 3, "could": 1},
+            "criteria": [{"id": c["id"], "name": c["name"], "weight": c["weight"], "reqs": [[r, prio[r]] for r in c["requirement_ids"]]} for c in D.criteria if c["weight"] > 0],
+            "scores": {o: {r: v["score"] for r, v in rs[o].items()} for o in inc}}
+
+
+def _whatif_html(D, inc):
+    data = _whatif_data(D, inc)
+    if not data:
+        return []
+    blob = json.dumps(data).replace("</", "<\\/")
+    return ['<details class="sub"><summary><h3>What if the weights were different?</h3><span class="hint">edit category weights and priority points</span></summary>'
+            '<p class="tag">Try your own weights. They are rebalanced to 100. Gates and the feature table are not affected, and nothing is saved.</p>'
+            '<div id="whatif"></div><script type="application/json" id="whatif-data">%s</script></details>' % blob]
+
+
+def source_numbers(D):
+    """Number each document 1..N in order of first citation (gates, requirement scores, features); uncited ones follow. One number per document."""
+    by_id = {e["evidence_id"]: e for e in D.ev}
+    order = [i for i in eval_calc.cited_evidence(D.scores, D.crit, D.features) if i in by_id] + [e["evidence_id"] for e in D.ev]
+    num = {}
+    for i in order:
+        key = eval_calc._doc_key(by_id[i]["source_url"])
+        num.setdefault(key, len(num) + 1)
+    return {e["evidence_id"]: num[eval_calc._doc_key(e["source_url"])] for e in D.ev}
 
 
 def _slug(v):
@@ -397,6 +459,27 @@ def _md_sections(md):
 # report.md headings that cover a computed section, matched on their start
 _ALIAS = [("decision table", "decision"), ("criteria", "criteria"), ("bias", "bias"), ("weighted score", "matrix"), ("feature", "features"),
           ("cost", "cost"), ("sensitivity", "sensitivity"), ("excluded", "excluded"), ("sources", "sources")]
+# The report reads in decision order: what is decided and what blocks it, then the evidence behind it, then the reference material.
+SECTION_ORDER = ["eligibility", "decision recommendation", "decision table", "context", "packages scored", "recommended next steps", "gates", "excluded options",
+                 "criteria and weights", "weighted score matrix", "sensitivity", "bias and assumptions", "cost", "option profiles", "poc tests",
+                 "open verification items", "verify before deciding", "comparison with an earlier assessment", "feature", "candidate requirements", "risks and open questions", "caveats", "sources"]
+
+
+def section_rank(title):
+    t = title.lower()
+    return next((i for i, p in enumerate(SECTION_ORDER) if t.startswith(p)), None)
+
+
+def order_sections(items, title=lambda x: x):
+    """Stable sort into SECTION_ORDER; a section the order does not know stays after the section before it."""
+    keyed, last = [], 0
+    for i, it in enumerate(items):
+        r = section_rank(title(it))
+        last = r if r is not None else last
+        keyed.append((last, 0 if r is not None else 1, i, it))
+    return [k[3] for k in sorted(keyed, key=lambda k: k[:3])]
+
+
 # computed tables replace the report's own copies of them; the report's prose is kept
 _COMPUTED_TABLES = {"criteria", "matrix", "features", "cost", "sensitivity", "excluded", "sources"}
 
@@ -407,6 +490,27 @@ SCRIPT = """
   document.querySelectorAll('nav.toc a').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();reveal(a.hash.slice(1));history.replaceState(null,'',a.hash);});});
   document.querySelectorAll('[data-all]').forEach(function(b){b.addEventListener('click',function(){var open=b.dataset.all==='open';all().forEach(function(d){d.open=open;});});});
   if(location.hash.length>1&&document.getElementById(location.hash.slice(1)))reveal(location.hash.slice(1));
+  function totals(d,w,p){var tw=0;d.criteria.forEach(function(c){tw+=w[c.id];});var out={};
+    d.options.forEach(function(o){var t=0;d.criteria.forEach(function(c){var num=0,den=0;c.reqs.forEach(function(r){num+=p[r[1]]*d.scores[o.id][r[0]];den+=p[r[1]];});t+=(tw?w[c.id]/tw*100:0)*num/den/5;});out[o.id]=Math.round((t+1e-9)*10)/10;});return out;}
+  window.__recompute=totals;
+  var box=document.getElementById('whatif'),src=document.getElementById('whatif-data');
+  if(box&&src){var d=JSON.parse(src.textContent),W={},P={};
+    function reset(){d.criteria.forEach(function(c){W[c.id]=c.weight;});P={must:d.points.must,should:d.points.should,could:d.points.could};}
+    function draw(){var t=totals(d,W,P),tw=0;d.criteria.forEach(function(c){tw+=W[c.id];});
+      var h='<div class="table-wrap"><table><thead><tr><th>Category</th><th class="num">Weight</th><th class="num">Share of 100</th></tr></thead><tbody>';
+      d.criteria.forEach(function(c){h+='<tr><td>'+c.name+'</td><td class="num"><input type="number" min="0" step="1" value="'+W[c.id]+'" data-w="'+c.id+'" aria-label="Weight of '+c.name+'" style="width:5em"></td><td class="num">'+(tw?(W[c.id]/tw*100).toFixed(1):'0.0')+'</td></tr>';});
+      h+='</tbody></table></div><p>Priority points: ';['must','should','could'].forEach(function(k){h+=k+' <input type="number" min="1" step="1" value="'+P[k]+'" data-p="'+k+'" aria-label="Points for '+k+'" style="width:4em"> ';});
+      h+='<button type="button" id="whatif-reset">Reset</button></p><div class="table-wrap"><table><thead><tr><th>Option</th><th class="num">Total</th></tr></thead><tbody>';
+      var ids=d.options.map(function(o){return o.id;}).sort(function(a,b){return t[b]-t[a];});
+      ids.forEach(function(i){h+='<tr><td>'+d.options.filter(function(o){return o.id===i;})[0].name+'</td><td class="num" data-total="'+i+'">'+t[i].toFixed(1)+'</td></tr>';});
+      var lead=ids.length>1?Math.round((t[ids[0]]-t[ids[1]])*10)/10:null;
+      h+='</tbody></table></div>'+(lead===null?'':'<p class="tag" id="whatif-gap">Lead: '+lead.toFixed(1)+' points. '+(lead<d.gap?'Under the meaningful gap of '+d.gap+': treat it as a near-tie.':'At or above the meaningful gap of '+d.gap+'.')+'</p>');
+      box.innerHTML=h;
+      box.querySelectorAll('input').forEach(function(el){el.addEventListener('change',function(){var v=Math.max(0,parseFloat(el.value)||0);if(el.dataset.w)W[el.dataset.w]=v;else P[el.dataset.p]=Math.max(1,v);draw();});});
+      document.getElementById('whatif-reset').addEventListener('click',function(){reset();draw();});}
+    reset();draw();}
+  var st=document.getElementById('strict');
+  if(st){st.addEventListener('click',function(){var on=st.getAttribute('aria-pressed')!=='true';st.setAttribute('aria-pressed',on);document.querySelectorAll('.cell[data-tags]').forEach(function(c){c.classList.toggle('dim',on);});});}
   var q=document.getElementById('src-q'),sel=document.getElementById('src-opt'),rows=document.querySelectorAll('#src-table tbody tr'),n=document.getElementById('src-n');
   function filter(){var t=(q.value||'').toLowerCase(),o=sel.value,k=0;rows.forEach(function(r){var show=(!o||r.dataset.opt===o)&&r.textContent.toLowerCase().indexOf(t)>=0;r.hidden=!show;if(show)k++;});n.textContent=k+' of '+rows.length+' shown';}
   if(q){q.addEventListener('input',filter);sel.addEventListener('change',filter);filter();}
@@ -436,7 +540,7 @@ def build_html(D, expand=False):
     for i, o in enumerate(inc, 1):
         low = sum(1 for c in D.criteria if c["weight"] > 0 and cs[o][c["id"]]["confidence"] == "low")
         gaps = D.scores["must_summary"][o]
-        gap_n = sum(v for k, v in gaps.items() if k != "provided")
+        gap_n = D.scores["must_gaps"][o] if "must_gaps" in D.scores else sum(v for k, v in gaps.items() if k != "provided")
         ub = D.scores.get("unknown_bounds", {}).get(o)
         rows.append([i, ('<strong>%s</strong>%s%s' % (html.escape(D.name[o]), " (near-tie)" if o in tie_opts else "", '<span class="note pkg">%s</span>' % html.escape(D.pkg[o]) if D.pkg.get(o) else ""),), "%.1f" % D.scores["totals"][o], low, gap_n]
                     + (["%d" % ub["unknown_cells"], "%.1f" % ub["if_unknowns_provided"]] if ub else []))
@@ -463,36 +567,54 @@ def build_html(D, expand=False):
         for o in inc:
             d = cs[o][c["id"]]
             mark = "†" if d["capped"] else ""
-            row.append(('<span class="heat" style="--p:%.2f">%s%s</span> <span class="tag %s">%s</span>' % (d["score"] / max(D.mx, 1), d["score"], mark, d["confidence"], d["confidence"]),))
+            row.append(('<span class="heat" style="--p:%.2f">%s%s</span> <span class="tag %s">%s</span>' % (d["score"] / max(D.mx, 1), _num(d["score"]), mark, d["confidence"], d["confidence"]),))
         rows.append(row)
     rows.append([("<strong>Weighted total</strong>",), ("<strong>100</strong>",)] + [("<strong>%.1f</strong>" % D.scores["totals"][o],) for o in inc])
     gen["matrix"] = ("Weighted score matrix", "%d criteria, %d options" % (len(D.criteria), len(inc)), [
         _table(["Criterion", "Weight"] + [_opt_th(D, o) for o in inc], rows, num_cols=tuple(range(1, 2 + len(inc)))),
         '<p class="tag">† score capped because the evidence is unverified. Confidence: high = two sources, medium = one, low = none. Independent sources count, and the vendor&rsquo;s official documentation counts once for what a product provides.</p>'])
 
-    cats = []
-    for r in D.reqs:
-        if r["category"] not in cats:
-            cats.append(r["category"])
+    groups = _feature_groups(D, inc)
     feat = []
-    for cat in cats:
-        reqs = [x for x in D.reqs if x["category"] == cat]
+    for cat, items in groups:
         rows = []
-        for r in reqs:
-            row = [r["id"], r["text"], r["priority"]]
+        for fid, text, prio, cells in items:
+            row = [fid, text] + ([prio] if prio else [])
             for o in inc:
-                cell = D.scores["cell_values"][o].get(r["id"], {"value": "unknown"})
-                txt = '<div class="cell"><span class="%s">%s</span>' % (_slug(cell["value"]), html.escape(cell["value"]))
-                if cell.get("note"):
-                    txt += '<span class="note">%s</span>' % html.escape(cell["note"])
-                if cell.get("evidence_ids"):
-                    txt += '<span class="ev tag">%s</span>' % html.escape(", ".join(cell["evidence_ids"]))
+                st, note, ids, tags = cells[o]
+                txt = '<div class="cell"%s><span class="%s">%s</span>' % (' data-tags="%s"' % " ".join(tags) if tags else "", _slug(st), html.escape(st))
+                if tags:
+                    txt += '<span class="tags">%s</span>' % html.escape(", ".join(t.replace("_", " ") for t in tags))
+                if note:
+                    txt += '<span class="note">%s</span>' % html.escape(note)
+                if ids:
+                    txt += '<span class="ev tag">%s</span>' % html.escape(", ".join(ids))
                 row.append((txt + "</div>",))
             rows.append(row)
-        got = ", ".join("%s %d/%d" % (html.escape(D.name[o].split(" (")[0]), sum(1 for r in reqs if D.scores["cell_values"][o].get(r["id"], {}).get("value") == "provided"), len(reqs)) for o in inc)
-        feat.append('<details class="sub"%s><summary><h3>%s</h3><span class="hint">provided: %s</span></summary>%s</details>'
-                    % (" open" if expand else "", html.escape(cat), got, _table(["ID", "Requirement", "Priority"] + [_opt_th(D, o) for o in inc], rows, cls="feat")))
-    gen["features"] = ("Feature-by-feature comparison", "%d requirements in %d groups" % (len(D.reqs), len(cats)), feat)
+        got = ", ".join("%s %d/%d" % (html.escape(D.name[o].split(" (")[0]), sum(1 for it in items if it[3][o][0] in ("provided", "included")), len(items)) for o in inc)
+        head = ["ID", "Feature" if D.features else "Requirement"] + ([] if D.features else ["Priority"])
+        feat.append('<details class="sub"%s><summary><h3>%s</h3><span class="hint">included: %s</span></summary>%s</details>'
+                    % (" open" if expand else "", html.escape(cat), got, _table(head + [_opt_th(D, o) for o in inc], rows, cls="feat")))
+    whatif = _whatif_html(D, inc)
+    if whatif:
+        gen["matrix"][2].extend(whatif)
+    alone = []
+    if D.features:
+        for cat, items in groups:
+            for fid, text, prio, cells in items:
+                inc_only = [o for o in inc if cells[o][0] == "included" and not cells[o][3]]
+                others = [o for o in inc if not inc_only or o != inc_only[0]]
+                clean = all(not cells[o][1] for o in others)  # a note on the other side is a finding (negative evidence), not a plain gap
+                if len(inc_only) == 1 and clean and all(cells[o][0] != "included" for o in others):
+                    alone.append("<li><strong>%s</strong>: only %s</li>" % (html.escape(text), html.escape(D.name[inc_only[0]].split(" (")[0])))
+    if alone:
+        feat.insert(0, '<details class="sub"%s><summary><h3>Stands alone</h3><span class="hint">features only one option has</span></summary><ul>%s</ul>'
+                    '<p class="tag">Rows with negative evidence and tagged rows are left out.</p></details>' % (" open" if expand else "", "".join(alone)))
+    if D.features and any(c[3] for _, items in groups for it in items for c in it[3].values()):
+        feat.insert(0, '<div class="filters"><button type="button" id="strict" aria-pressed="false">Strict scope: grey out tagged cells</button>'
+                    '<span class="tag">Affects this table only; scores are unchanged.</span></div>')
+    gen["features"] = ("Feature comparison", "%d features in %d groups" % (sum(len(i) for _, i in groups), len(groups)), 
+                       ['<p class="tag">What each option offers. This table describes the options; it does not feed the scores.</p>'] + feat if D.features else feat)
 
     cost = _cost_html(D)
     if cost:
@@ -514,19 +636,20 @@ def build_html(D, expand=False):
                            [_table(["Option", "Reason"], [[D.name[x["option_id"]], x["reason"]] for x in D.scores["excluded"]])])
 
     body = []
-    for e in D.ev:
+    srcn = source_numbers(D)
+    for e in sorted(D.ev, key=lambda e: (srcn[e["evidence_id"]], e["evidence_id"])):
         url = html.escape(e["source_url"])
-        cells = [html.escape(str(c)) for c in (e["evidence_id"], D.name.get(e["option_id"], e["option_id"]), e.get("requirement_id") or e.get("criterion_id") or "", e["finding"])]
+        cells = [html.escape(str(c)) for c in (srcn[e["evidence_id"]], e["evidence_id"], D.name.get(e["option_id"], e["option_id"]), e.get("requirement_id") or e.get("criterion_id") or "", e["finding"])]
         site = re.sub(r"^https?://(www\.)?", "", e["source_url"]).split("/")[0] or e["source_url"]
         cells.append('<a href="%s" title="%s">%s</a>' % (url, url, html.escape(site)))
-        cells += [html.escape(str(c)) for c in (e["source_date"], e["confidence"], e["source_kind"])]
+        cells += [html.escape(str(c)) for c in (e["source_date"], e["confidence"], e["source_kind"] + (" (from source code)" if e["source_kind"] == "source_code" else ""))]
         body.append('<tr data-opt="%s">%s</tr>' % (html.escape(e["option_id"]), "".join("<td>%s</td>" % c for c in cells)))
     opts = sorted({e["option_id"] for e in D.ev}, key=lambda o: D.name.get(o, o))
     tools = ('<div class="filters"><input id="src-q" type="search" placeholder="Filter findings" aria-label="Filter findings">'
              '<select id="src-opt" aria-label="Option"><option value="">All options</option>%s</select><span id="src-n" class="tag" aria-live="polite"></span></div>'
              % "".join('<option value="%s">%s</option>' % (html.escape(o), html.escape(D.name.get(o, o))) for o in opts))
     gen["sources"] = ("Sources", "%d findings" % len(D.ev), [tools, '<div class="table-wrap"><table id="src-table"><thead><tr>%s</tr></thead><tbody>%s</tbody></table></div>'
-                                                           % ("".join("<th>%s</th>" % h for h in ("ID", "Option", "Requirement", "Finding", "Source", "Source date", "Confidence", "Kind")), "".join(body))])
+                                                           % ("".join("<th>%s</th>" % h for h in ("No.", "ID", "Option", "Requirement", "Finding", "Source", "Source date", "Confidence", "Kind")), "".join(body))])
 
     # merge report.md sections with the computed sections they cover; the report's order wins
     order = ["decision", "criteria", "bias", "matrix", "features", "cost", "sensitivity", "excluded", "sources"]
@@ -554,6 +677,7 @@ def build_html(D, expand=False):
                 pos = min(1, len(sections))
             sections.insert(pos, gen[key])
 
+    sections = order_sections(sections, lambda x: x[0])
     nav, out = [], []
     for i, (t, hint, part) in enumerate(sections):
         sid = re.sub(r"[^a-z0-9]+", "-", t.lower()).strip("-") or "section-%d" % i
@@ -646,7 +770,7 @@ def build_sheets(D):
     rrow = [[C(h, H) for h in ("Rank (live)", "Option", "Weighted score", "Low-confidence criteria", "Must-have gaps") + (("Unknown requirements", "Best case if unknowns are provided") if ubs else ())]]
     for i, o in enumerate(inc):
         low = sum(1 for c in D.criteria if c["weight"] > 0 and cs[o][c["id"]]["confidence"] == "low")
-        gap = sum(v for kk, v in D.scores["must_summary"][o].items() if kk != "provided")
+        gap = D.scores["must_gaps"][o] if "must_gaps" in D.scores else sum(v for kk, v in D.scores["must_summary"][o].items() if kk != "provided")
         rrow.append([C(i + 1, 0, "RANK(C%d,$C$2:$C$%d)" % (i + 2, n + 1)), C(D.name[o], WRAP),
                      C(D.scores["totals"][o], NUM, "Scores!%s%d" % (_col(3 + i), tot_row)), C(low), C(gap)]
                     + ([C(ubs[o]["unknown_cells"]), C(ubs[o]["if_unknowns_provided"], NUM)] if ubs else []))
@@ -658,14 +782,14 @@ def build_sheets(D):
     ranking = (rrow, [14, 28, 18, 24, 18, 22, 28])
 
     # Features sheet
-    frow = [[C(h, H) for h in ["ID", "Category", "Requirement", "Priority"] + [D.name[o] for o in inc]]]
-    for r in D.reqs:
-        row = [C(r["id"]), C(r["category"], WRAP), C(r["text"], WRAP), C(r["priority"])]
-        for o in inc:
-            cell = D.scores["cell_values"][o].get(r["id"], {"value": "unknown"})
-            txt = cell["value"] + (" - " + cell["note"] if cell.get("note") else "") + (" [" + ", ".join(cell["evidence_ids"]) + "]" if cell.get("evidence_ids") else "")
-            row.append(C(txt, WRAP))
-        frow.append(row)
+    frow = [[C(h, H) for h in ["ID", "Category", "Feature or requirement", "Priority"] + [D.name[o] for o in inc]]]
+    for cat, items in _feature_groups(D, inc):
+        for fid, text, prio, cells in items:
+            row = [C(fid), C(cat, WRAP), C(text, WRAP), C(prio)]
+            for o in inc:
+                st, note, ids, tags = cells[o]
+                row.append(C(st + (" {" + ", ".join(tags) + "}" if tags else "") + (" - " + note if note else "") + (" [" + ", ".join(ids) + "]" if ids else ""), WRAP))
+            frow.append(row)
     features = (frow, [8, 16, 44, 10] + [34] * len(inc))
 
     # Cost sheet: horizon is editable, totals are live
@@ -779,12 +903,84 @@ def write_pdf(html_path, pdf_path):
     return False, "browser did not produce a PDF; open report.html and print it to PDF"
 
 
+_PROBE_HEAD = "<script>window.__errs=[];window.onerror=function(m){window.__errs.push(String(m));};</script>"
+_PROBE_TAIL = """<script>window.addEventListener('load',function(){var n=document.querySelector('.side'),r=document.createElement('pre');r.id='__result';
+r.textContent=JSON.stringify({errors:window.__errs,scrollW:document.documentElement.scrollWidth,innerW:window.innerWidth,innerH:window.innerHeight,navH:n?Math.round(n.getBoundingClientRect().height):0,navSticky:n?getComputedStyle(n).position:''});
+document.body.appendChild(r);});</script>"""
+
+
+def static_problems(D, page):
+    """Checks that need no browser: the totals in the page are the scorer's, and no total from an earlier run is still shown."""
+    text = re.sub(r"<[^>]+>", " ", page)
+    out = []
+    for o, t in D.scores["totals"].items():
+        if "%.1f" % t not in text:
+            out.append("the page does not show the total %.1f of %s" % (t, D.name.get(o, o)))
+    now = {"%.1f" % t for t in D.scores["totals"].values()}
+    for t in D.status.get("earlier_totals", []):
+        s = "%.1f" % t
+        if s not in now and re.search(r"(?<![\d.])%s(?![\d])" % re.escape(s), text):
+            out.append("the page still shows %s, a total from an earlier run" % s)
+    return out
+
+
+def browser_problems(page):
+    """Open the page headless at desktop and phone width: no script errors, no sideways scroll, and a navigation strip no taller than 10% of the screen."""
+    browser = find_browser()
+    if not browser:
+        return None
+    probe = page.replace("<head>", "<head>" + _PROBE_HEAD, 1).replace("</body>", _PROBE_TAIL + "</body>", 1)
+    out = []
+    tmp = tempfile.mkdtemp()
+    try:
+        path = os.path.join(tmp, "probe.html")
+        with open(path, "w", encoding="utf-8", newline="\n") as f:
+            f.write(probe)
+        for width, height in ((1400, 900), (390, 844)):
+            profile = tempfile.mkdtemp(dir=tmp)
+            cmd = [browser, "--headless", "--disable-gpu", "--user-data-dir=" + profile, "--window-size=%d,%d" % (width, height), "--virtual-time-budget=4000",
+                   "--dump-dom", pathlib.Path(path).resolve().as_uri()]
+            try:
+                dom = subprocess.run(cmd, capture_output=True, timeout=120).stdout.decode("utf-8", "replace")
+            except (OSError, subprocess.TimeoutExpired) as e:
+                return ["browser failed: %s" % e]
+            m = re.search(r'<pre id="__result">(.*?)</pre>', dom, re.S)
+            if not m:
+                out.append("%d px: the page did not finish loading" % width)
+                continue
+            r = json.loads(html.unescape(m.group(1)))
+            if r["errors"]:
+                out.append("%d px: script errors: %s" % (width, "; ".join(r["errors"])))
+            if width < 700:
+                if r["scrollW"] > r["innerW"] + 1:
+                    out.append("%d px: the page scrolls sideways (%d wide in %d)" % (width, r["scrollW"], r["innerW"]))
+                if r["navH"] > 0.1 * r["innerH"]:
+                    out.append("%d px: the navigation takes %d px of %d" % (width, r["navH"], r["innerH"]))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+    return out
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="export_report.py", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("dir")
     ap.add_argument("--out")
     ap.add_argument("--formats", default="html,xlsx,pdf")
+    ap.add_argument("--check", action="store_true", help="check the page instead of exporting: totals match scores.json, no stale totals, and (with Edge or Chrome) no script errors or sideways scroll at 1400 and 390 px")
     a = ap.parse_args(argv)
+    if a.check:
+        D = Data(a.dir)
+        page = build_html(D)
+        problems = static_problems(D, page)
+        b = browser_problems(page)
+        if b is None:
+            print("NOTE: no Edge or Chrome found; the browser checks were skipped")
+        else:
+            problems += b
+        for p in problems:
+            print("PROBLEM: " + p, file=sys.stderr)
+        print("ok" if not problems else "%d problem(s)" % len(problems))
+        return 1 if problems else 0
     formats = [f.strip() for f in a.formats.split(",") if f.strip()]
     bad = [f for f in formats if f not in ("html", "xlsx", "pdf")]
     if bad:
