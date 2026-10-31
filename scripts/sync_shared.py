@@ -26,6 +26,8 @@ def expected():
         yield os.path.join(ROOT, "skills", s, "references", "workspace-contract.md"), HEADER.encode() + contract
         yield os.path.join(ROOT, "skills", s, "scripts", "eval_calc.py"), script
     yield os.path.join(ROOT, "skills", "eval-report", "scripts", "export_report.py"), export
+    with open(os.path.join(ROOT, "shared", "report_draft.py"), "rb") as f:
+        yield os.path.join(ROOT, "skills", "eval-report", "scripts", "report_draft.py"), f.read()
 
 
 def main():

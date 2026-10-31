@@ -911,5 +911,27 @@ class RankTest(unittest.TestCase):
         self.assertEqual((ranking, ties), (["x", "y"], []))
 
 
+class StaleEvidenceTest(Sandbox):
+    def test_old_evidence_is_flagged_and_dates_are_respected(self):
+        import datetime
+        rep, none = eval_calc.find_stale_evidence(self.d, datetime.date(2026, 10, 31))
+        self.assertEqual(none, [])
+        rep, old = eval_calc.find_stale_evidence(self.d, datetime.date(2028, 1, 1))
+        self.assertTrue(old and all(x["age_months"] > 12 for x in old))
+
+    def test_fast_moving_options_use_the_short_limit(self):
+        import datetime
+        rep, slow = eval_calc.find_stale_evidence(self.d, datetime.date(2027, 1, 20))
+        rep, fast = eval_calc.find_stale_evidence(self.d, datetime.date(2027, 1, 20), fast=["opt-a", "opt-b"])
+        self.assertLess(len(slow), len(fast))
+
+    def test_write_records_ids_and_marks_steps_stale(self):
+        import datetime
+        rep, old = eval_calc.find_stale_evidence(self.d, datetime.date(2028, 1, 1), write=True)
+        status = json.load(open(os.path.join(self.d, "status.json"), encoding="utf-8"))
+        self.assertEqual(status["stale_evidence"], [x["evidence_id"] for x in old])
+        self.assertIn("compare", status["stale_steps"])
+
+
 if __name__ == "__main__":
     unittest.main()

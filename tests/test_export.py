@@ -29,7 +29,7 @@ class ExportTest(unittest.TestCase):
     def test_html_contents(self):
         with open(os.path.join(self.out, "report.html"), encoding="utf-8") as f:
             h = f.read()
-        for needle in ("Beta Queue", "Alpha Queue", "78.0", "76.0", "Gamma Queue", "E-008", "near-tie", "<!doctype html>", "prefers-color-scheme", "Cost: total cost of ownership", "45,360.00", "pilot (100k jobs/month)", "unverified", "Best case if unknowns are provided"):
+        for needle in ("Beta Queue", "Alpha Queue", "78.0", "76.0", "Gamma Queue", "E-008", "near-tie", "<!doctype html>", "prefers-color-scheme", "<h2>Cost</h2>", "45,360.00", "pilot (100k jobs/month)", "unverified", "Best case if unknowns are provided"):
             self.assertIn(needle, h)
 
     def test_html_escapes_content(self):
@@ -82,7 +82,7 @@ class ExportTest(unittest.TestCase):
     def test_bias_section_is_in_the_html(self):
         with open(os.path.join(self.out, "report.html"), encoding="utf-8") as f:
             h = f.read()
-        self.assertIn("Bias and assumption checks", h)
+        self.assertIn("<h2>Bias and assumptions</h2>", h)
         self.assertIn("No requirement is marked as an assumption.", h)
         self.assertIn("Findings by source:", h)
 

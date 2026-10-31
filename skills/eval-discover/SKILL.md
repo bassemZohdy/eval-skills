@@ -21,7 +21,7 @@ Third step of the eval chain: define, analyze, discover, compare, report. Reads 
 
 ## Staleness
 
-On reopening an archived or older evaluation, flag evidence whose `gathered_on` date is older than 3 months for fast-moving products and 12 months otherwise, and write the flag into `eval/status.json` so eval-report can show it. On any run, also flag a fact whose `source_date` is older than those limits. Refresh only when the user asks. Never change old evidence silently.
+On reopening an archived or older evaluation, flag evidence whose `gathered_on` date is older than 3 months for fast-moving products and 12 months otherwise, and run `python scripts/eval_calc.py stale-evidence eval --fast <option ids of fast-moving products>`, which lists them; add `--write` to record them in `eval/status.json` (and mark compare and report stale) so eval-report can show them. On any run, also flag a fact whose `source_date` is older than those limits. Refresh only when the user asks. Never change old evidence silently.
 
 ## Quality rules
 

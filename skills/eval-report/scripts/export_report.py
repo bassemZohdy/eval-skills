@@ -207,9 +207,9 @@ tbody tr:last-child td{border-bottom:0}
 tbody tr:hover td{background:color-mix(in srgb,var(--head) 70%,transparent)}
 code{background:var(--head);padding:1px 5px;border-radius:3px;font-size:.88em}
 .feat td{min-width:12rem}.feat td:first-child{min-width:0;white-space:nowrap;color:var(--muted)}.feat td:nth-child(3){min-width:0}
-.cell .note{display:block;margin-top:3px;color:var(--fg);font-size:.84rem;line-height:1.45}
+.pkg{display:block;margin-top:2px;color:var(--muted);font-size:.8rem;line-height:1.4;font-weight:400}.cell .note{display:block;margin-top:3px;color:var(--fg);font-size:.84rem;line-height:1.45}
 .cell .ev{display:block;margin-top:2px}
-#src-table td{font-size:.82rem}#src-table td:nth-child(4){min-width:20rem}
+#src-table td{font-size:.82rem}#src-table td:nth-child(1),#src-table td:nth-child(5),#src-table td:nth-child(6){white-space:nowrap}#src-table td:nth-child(5) a{overflow-wrap:normal}#src-table td:nth-child(4){min-width:20rem}
 td a{overflow-wrap:anywhere}
 .provided,.partial,.vendor-claimed,.not-provided,.unknown{display:inline-block;padding:0 .6em;border-radius:999px;font-size:.76rem;font-weight:600;line-height:1.65;white-space:nowrap}
 .provided{color:var(--ok);background:var(--ok-bg)}.partial,.vendor-claimed{color:var(--warn);background:var(--warn-bg)}.not-provided,.unknown{color:var(--bad);background:var(--bad-bg)}
@@ -221,7 +221,7 @@ p.tag{margin:6px 0}
 .filters select{max-width:100%}
 
 /* medium screens: the index becomes a one-line strip pinned to the top */
-@media (max-width:1080px){
+@media screen and (max-width:1080px){
 .layout{display:block}
 .side{z-index:5;max-height:none;overflow:visible;padding:0;margin:0 calc(-1 * var(--gutter));background:var(--bg);border-bottom:1px solid var(--line)}
 nav.toc{display:flex;align-items:center;gap:10px;padding:0 var(--gutter)}
@@ -234,7 +234,7 @@ nav.toc{display:flex;align-items:center;gap:10px;padding:0 var(--gutter)}
 main{padding-top:28px}
 html{scroll-padding-top:56px}details.sec{scroll-margin-top:56px}
 }
-@media (max-width:680px){
+@media screen and (max-width:680px){
 body{font-size:14.5px}
 .toc-tools button{padding:4px 8px;font-size:.78rem}
 ol.ranking li{grid-template-columns:1.4rem minmax(0,1fr) 3.2rem}
@@ -242,7 +242,7 @@ ol.ranking li{grid-template-columns:1.4rem minmax(0,1fr) 3.2rem}
 .hint{margin-left:1.35em;flex-basis:100%;text-align:left}
 }
 /* tablets and phones: rows become stacked cards labelled by their column */
-@media (max-width:860px){
+@media screen and (max-width:860px){
 .table-wrap{overflow:visible}
 .table-wrap table,.table-wrap tbody,.table-wrap tr,.table-wrap td{display:block;width:100%}
 .table-wrap thead{display:none}
@@ -253,6 +253,7 @@ ol.ranking li{grid-template-columns:1.4rem minmax(0,1fr) 3.2rem}
 tbody tr:hover td{background:none}
 }
 @media (prefers-reduced-motion:reduce){.fill,.reach{animation:none}details>summary::before{transition:none}}
+@page{size:A4 landscape;margin:12mm}
 @media print{:root{--bg:#fff;--fg:#000;--muted:#444;--line:#bbb;--rule:#000;--head:#eee;--accent:#0b4a58;--accent-soft:#cfe3e8}body{font-size:12px}.layout{display:block;padding:0;max-width:none}.side,.filters{display:none}main{padding:0}details>summary::before{display:none}summary{break-after:avoid}.table-wrap{overflow:visible}table{break-inside:auto}tr{break-inside:avoid}tbody tr:hover td{background:none}.fill,.reach{animation:none!important}}
 """
 
@@ -437,7 +438,7 @@ def build_html(D, expand=False):
         gaps = D.scores["must_summary"][o]
         gap_n = sum(v for k, v in gaps.items() if k != "provided")
         ub = D.scores.get("unknown_bounds", {}).get(o)
-        rows.append([i, D.name[o] + (" [%s]" % D.pkg[o] if D.pkg.get(o) else "") + (" (near-tie)" if o in tie_opts else ""), "%.1f" % D.scores["totals"][o], low, gap_n]
+        rows.append([i, ('<strong>%s</strong>%s%s' % (html.escape(D.name[o]), " (near-tie)" if o in tie_opts else "", '<span class="note pkg">%s</span>' % html.escape(D.pkg[o]) if D.pkg.get(o) else ""),), "%.1f" % D.scores["totals"][o], low, gap_n]
                     + (["%d" % ub["unknown_cells"], "%.1f" % ub["if_unknowns_provided"]] if ub else []))
     cols = ["Rank", "Option", "Weighted score (of 100)", "Low-confidence criteria", "Must-have gaps"] + (["Unknown requirements", "Best case if unknowns are provided"] if D.scores.get("unknown_bounds") else [])
     dec = [_table(cols, rows, num_cols=(0, 2, 3, 4, 5, 6))]

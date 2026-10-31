@@ -642,6 +642,46 @@ def mark_changed(d, what):
     return rep, status["stale_steps"]
 
 
+def _age_months(date_text, today):
+    """Whole months between an ISO date and today, or None when the date is missing or unknown."""
+    import datetime
+    try:
+        y, m, dd = (int(x) for x in str(date_text)[:10].split("-"))
+        d0 = datetime.date(y, m, dd)
+    except (ValueError, TypeError):
+        return None
+    return (today.year - d0.year) * 12 + today.month - d0.month - (1 if today.day < d0.day else 0)
+
+
+def find_stale_evidence(d, today=None, fast=(), write=False):
+    """Evidence whose gathered_on or source_date is older than 3 months (options in `fast`) or 12 months.
+
+    With write=True the ids go into status.json as stale_evidence and compare and report
+    are marked stale when there are any. Unknown source dates are never counted.
+    """
+    import datetime
+    rep = Report()
+    today = today or datetime.date.today()
+    ev = _read_json(d, "evidence.json", rep, True)
+    status = _read_json(d, "status.json", rep, True) if write else None
+    if rep.errors:
+        return rep, None
+    stale = []
+    for e in ev:
+        limit = 3 if e.get("option_id") in set(fast) else 12
+        ages = [a for a in (_age_months(e.get("gathered_on"), today), _age_months(e.get("source_date"), today)) if a is not None]
+        if ages and max(ages) > limit:
+            stale.append({"evidence_id": e["evidence_id"], "option_id": e.get("option_id"), "age_months": max(ages), "limit_months": limit})
+    if write:
+        status["stale_evidence"] = [x["evidence_id"] for x in stale]
+        if stale:
+            done = set(status.get("completed_steps", []))
+            marked = set(status.get("stale_steps", [])) | {x for x in STALE_MAP["evidence"] if x in done}
+            status["stale_steps"] = [x for x in STEPS if x in marked]
+        _write_status(d, status)
+    return rep, stale
+
+
 # ---- status --------------------------------------------------------------
 
 def status_report(d):
@@ -1088,6 +1128,11 @@ def main(argv=None):
     e.add_argument("--kind", required=True)
     e.add_argument("--source-date", default="unknown")
     e.add_argument("--scope", choices=["in_scope", "out_of_scope"], help="out_of_scope marks evidence about a component the gate excludes")
+    sv = sub.add_parser("stale-evidence")
+    sv.add_argument("dir")
+    sv.add_argument("--fast", default="", help="comma-separated option ids of fast-moving products (3 month limit instead of 12)")
+    sv.add_argument("--today", help="YYYY-MM-DD, default today")
+    sv.add_argument("--write", action="store_true", help="record the ids in status.json and mark compare and report stale")
     mx = sub.add_parser("matrix")
     mx.add_argument("path")
     mx.add_argument("--scale-max", type=float, default=5.0)
@@ -1102,6 +1147,16 @@ def main(argv=None):
             print(json.dumps(wts, indent=2))
             return 0
         print(json.dumps(rank_sum_weights(a.ids), indent=2))
+        return 0
+    if a.cmd == "stale-evidence":
+        import datetime
+        today = datetime.date.fromisoformat(a.today) if a.today else None
+        rep, stale = find_stale_evidence(a.dir, today, [x for x in a.fast.split(",") if x], a.write)
+        for m in rep.errors:
+            print("ERROR: " + m, file=sys.stderr)
+        if stale is None:
+            return 1
+        print(json.dumps({"stale": stale, "count": len(stale)}, indent=2))
         return 0
     if a.cmd in ("complete", "changed"):
         rep, res = complete_step(a.dir, a.step, a.slug) if a.cmd == "complete" else mark_changed(a.dir, a.what)

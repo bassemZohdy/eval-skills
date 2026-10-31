@@ -11,7 +11,7 @@ Final step of the eval chain: define, analyze, discover, compare, report. Reads 
 
 1. **Check status.** Read `eval/status.json`. Run `python scripts/eval_calc.py validate eval --before report` and, if it reports a problem, stop and follow its message. If compare is not complete or any step is stale, stop and say which skill to rerun.
 2. **Read everything.** Solution, requirements, criteria, options, evidence, scores, features, and the staleness flags in `eval/status.json`.
-3. **Write the report** to `eval/report.md` in this order:
+3. **Write the report** to `eval/report.md`. Write the judgment text into a JSON file outside `eval/` (the keys are listed in `python scripts/report_draft.py --help`: recommendation, confidence, confidence_why, options, bias, cost, sensitivity, next_steps, risks, excluded), then run `python scripts/report_draft.py draft eval --prose <that file>`. It writes every computed section (tables, scores, costs, sources) from the evaluation files, so no number is typed by hand. The sections, in order, and what each holds:
    - **Decision recommendation:** the recommended option, in one or two sentences, with the confidence level, stated as high, medium, or low and never as a percentage, and the main condition under which the recommendation would change. High means a clear margin that holds under every sensitivity test and the key scores rest on independent evidence, medium means the margin holds but some key scores are low-confidence, and low means a near-tie, a flip under sensitivity, more than half of the total weight resting on low-confidence scores, or unknown requirements that could let another option overtake the leader (`could_overtake_leader` in `eval/scores.json`).
    - **Decision table:** options ranked by weighted score, with gate status, low-confidence flags, and one line on each option's main strength and main gap.
    - **Context:** the solution, who it is for, and the date of the evaluation.
@@ -25,6 +25,7 @@ Final step of the eval chain: define, analyze, discover, compare, report. Reads 
    - **Risks and open questions:** unverified claims that touch the recommendation, gaps, assumptions, and any evidence flagged stale, with its gathered date.
    - **Excluded options:** each with the gate it failed and the evidence.
    - **Sources:** every source used, with date and confidence label, and the date evidence was gathered.
+3b. **Check the report.** Run `python scripts/report_draft.py check eval` and fix every problem it lists (unfinished prose, a missing section, a leader or score that disagrees with `eval/scores.json`, a confidence given as a percentage, an excluded option left out). If Python is unavailable, write the report by hand in the same order.
 4. **Be honest about the recommendation.** If the top two options are within the tie margin, or the result flips under sensitivity, say the choice is not clear-cut and name what would settle it. Never present a narrow win as decisive.
 5. **Review with the user.** Present the recommendation and the decision table. Apply requested edits to wording; changes to scores or weights go back through eval-analyze or eval-compare.
 6. **Save the record.** Run `python scripts/eval_calc.py complete eval report`, which records the report date in `eval/status.json`. The evaluation stays active in `eval/` until a new evaluation starts, at which point it is archived to `eval-archive/<solution-slug>-<YYYY-MM-DD>/`.
@@ -35,6 +36,7 @@ Final step of the eval chain: define, analyze, discover, compare, report. Reads 
 - The report adds no facts that are not in the evidence file, apart from context the user supplied in the solution file.
 - Keep the recommendation and the evidence consistent. Anything marked UNVERIFIED that the recommendation depends on appears under risks.
 - Quote sources briefly. Do not reproduce long passages.
+- `report_draft.py` keeps the report consistent with the computed files; `check` is the gate before review.
 - The exporter rebuilds the decision table, matrices, cost, sensitivity, excluded and sources sections from the computed files and drops the Markdown tables under those headings, so write the prose (recommendation, context, next steps, risks) and never fix a number in the report by hand: change the evaluation files and rerun the step.
 - Open the report's first line with `Evaluation date <date>. Scale 0 to <n>. Cost mode: <mode>.` followed by the reruns and how the evidence was gathered; the HTML shows that line as its opening note.
 
