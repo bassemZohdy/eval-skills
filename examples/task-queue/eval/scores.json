@@ -1,90 +1,153 @@
 {
-  "cell_values": {
+  "scoring_model": "anchored",
+  "priority_points": {
+    "must": 5,
+    "should": 3,
+    "could": 1
+  },
+  "requirement_scores": {
     "opt-a": {
       "F-01": {
-        "value": "provided",
-        "note": "",
+        "score": 4,
+        "confidence": "medium",
+        "rationale": "Fully meets: At-least-once delivery of jobs.",
         "evidence_ids": [
           "E-001"
-        ]
+        ],
+        "capped": false,
+        "overridden": false
       },
       "F-02": {
-        "value": "partial",
-        "note": "no recurring schedules",
+        "score": 3,
+        "confidence": "medium",
+        "rationale": "no recurring schedules",
         "evidence_ids": [
           "E-002"
-        ]
+        ],
+        "capped": false,
+        "overridden": false
       },
       "N-01": {
-        "value": "provided",
-        "note": "",
+        "score": 4,
+        "confidence": "medium",
+        "rationale": "Fully meets: Metrics and health endpoints for monitoring.",
         "evidence_ids": [
           "E-003"
-        ]
+        ],
+        "capped": false,
+        "overridden": false
       },
       "N-02": {
-        "value": "not provided",
-        "note": "no dashboard found",
-        "evidence_ids": []
+        "score": 0,
+        "confidence": "low",
+        "rationale": "no dashboard found",
+        "evidence_ids": [],
+        "capped": false,
+        "overridden": false
       },
       "C-01": {
-        "value": "partial",
-        "note": "tiered, volume discount",
+        "score": 3,
+        "confidence": "medium",
+        "rationale": "tiered, volume discount",
         "evidence_ids": [
           "E-004"
-        ]
+        ],
+        "capped": false,
+        "overridden": false
       },
       "C-02": {
-        "value": "provided",
-        "note": "100k jobs free",
+        "score": 4,
+        "confidence": "medium",
+        "rationale": "100k jobs free",
         "evidence_ids": [
           "E-005"
-        ]
+        ],
+        "capped": false,
+        "overridden": false
+      },
+      "N-03": {
+        "score": 4,
+        "confidence": "medium",
+        "rationale": "Offline install, upgrade and licence are documented; not yet tested.",
+        "evidence_ids": [
+          "E-011"
+        ],
+        "capped": false,
+        "overridden": false
       }
     },
     "opt-b": {
       "F-01": {
-        "value": "provided",
-        "note": "",
+        "score": 4,
+        "confidence": "medium",
+        "rationale": "Fully meets: At-least-once delivery of jobs.",
         "evidence_ids": [
           "E-006"
-        ]
+        ],
+        "capped": false,
+        "overridden": false
       },
       "F-02": {
-        "value": "provided",
-        "note": "",
+        "score": 4,
+        "confidence": "medium",
+        "rationale": "Fully meets: Delayed and scheduled jobs.",
         "evidence_ids": [
           "E-007"
-        ]
+        ],
+        "capped": false,
+        "overridden": false
       },
       "N-01": {
-        "value": "partial",
-        "note": "via plugin, vendor claim only",
+        "score": 2,
+        "confidence": "low",
+        "rationale": "via plugin, vendor claim only",
         "evidence_ids": [
           "E-008"
-        ]
+        ],
+        "capped": false,
+        "overridden": false
       },
       "N-02": {
-        "value": "provided",
-        "note": "",
+        "score": 2,
+        "confidence": "low",
+        "rationale": "Vendor claim only, not confirmed: Web dashboard for inspecting jobs.",
         "evidence_ids": [
           "E-008"
-        ]
+        ],
+        "capped": false,
+        "overridden": false
       },
       "C-01": {
-        "value": "provided",
-        "note": "self-hosted",
+        "score": 4,
+        "confidence": "medium",
+        "rationale": "self-hosted",
         "evidence_ids": [
           "E-009"
-        ]
+        ],
+        "capped": false,
+        "overridden": false
       },
       "C-02": {
-        "value": "partial",
-        "note": "no hosted free tier",
-        "evidence_ids": []
+        "score": 2,
+        "confidence": "low",
+        "rationale": "no hosted free tier",
+        "evidence_ids": [],
+        "capped": false,
+        "overridden": false
+      },
+      "N-03": {
+        "score": 4,
+        "confidence": "medium",
+        "rationale": "Vendor confirmed offline install and upgrade in writing.",
+        "evidence_ids": [
+          "E-012"
+        ],
+        "capped": false,
+        "overridden": false
       }
     }
   },
+  "overrides": [],
   "rationales": {
     "opt-a": {
       "crit-core": "Delivery met, recurring schedules missing.",
@@ -97,276 +160,50 @@
       "crit-cost": "Predictable self-hosted cost, no hosted free tier."
     }
   },
-  "overrides": [],
+  "bias_checks": {
+    "oss_base": {
+      "with_base": [
+        "opt-b"
+      ],
+      "unchecked": []
+    },
+    "assumed_requirements": [],
+    "source_mix": {
+      "opt-a": {
+        "vendor": 2,
+        "independent_or_open_source": 4
+      },
+      "opt-b": {
+        "vendor": 2,
+        "independent_or_open_source": 3
+      }
+    },
+    "cost_comparable": {
+      "complete": 2,
+      "total": 2
+    }
+  },
   "mapping": {
-    "ranges": {
-      "not provided": [
-        0,
-        1
-      ],
-      "vendor-claimed": [
-        2,
-        2
-      ],
-      "partial": [
-        2,
-        3
-      ],
-      "provided": [
-        4,
-        5
-      ],
-      "unknown": [
-        1,
-        1
-      ]
+    "scoring_model": "anchored",
+    "anchors": {
+      "5": "exceeds the requirement",
+      "4": "fully meets it, generally available",
+      "3": "core is met, with limits",
+      "2": "partial, preview or beta",
+      "1": "only via a custom build, a third-party add-on or a component outside the package",
+      "0": "not met"
     },
-    "midpoints": {
-      "not provided": 0.5,
-      "vendor-claimed": 2,
-      "partial": 2.5,
-      "provided": 4.5,
-      "unknown": 1
-    },
-    "priority_weights": {
-      "must": 3,
-      "should": 2,
+    "priority_points": {
+      "must": 5,
+      "should": 3,
       "could": 1
     },
     "cap_unverified": 2,
-    "tie_margin": 3.0,
-    "rounding": "half_up",
+    "tie_margin": 5,
+    "meaningful_gap": 5,
+    "rounding": "none (one decimal on totals)",
     "scale_factor": 1.0
   },
-  "criterion_scores": {
-    "opt-a": {
-      "crit-core": {
-        "score": 4,
-        "confidence": "high",
-        "capped": false,
-        "overridden": false,
-        "evidence_ids": [
-          "E-001",
-          "E-002"
-        ],
-        "rationale": "Delivery met, recurring schedules missing."
-      },
-      "crit-ops": {
-        "score": 4,
-        "confidence": "medium",
-        "capped": false,
-        "overridden": false,
-        "evidence_ids": [
-          "E-003"
-        ],
-        "rationale": "Metrics present, no dashboard."
-      },
-      "crit-cost": {
-        "score": 3,
-        "confidence": "medium",
-        "capped": false,
-        "overridden": false,
-        "evidence_ids": [
-          "E-004",
-          "E-005"
-        ],
-        "rationale": "Free tier but tiered pricing."
-      }
-    },
-    "opt-b": {
-      "crit-core": {
-        "score": 5,
-        "confidence": "high",
-        "capped": false,
-        "overridden": false,
-        "evidence_ids": [
-          "E-006",
-          "E-007"
-        ],
-        "rationale": "Both core requirements met."
-      },
-      "crit-ops": {
-        "score": 2,
-        "confidence": "low",
-        "capped": true,
-        "overridden": false,
-        "evidence_ids": [
-          "E-008"
-        ],
-        "rationale": "Ops claims rest on the vendor only."
-      },
-      "crit-cost": {
-        "score": 4,
-        "confidence": "medium",
-        "capped": false,
-        "overridden": false,
-        "evidence_ids": [
-          "E-009"
-        ],
-        "rationale": "Predictable self-hosted cost, no hosted free tier."
-      }
-    }
-  },
-  "totals": {
-    "opt-a": 76.0,
-    "opt-b": 78.0
-  },
-  "ranking": [
-    "opt-b",
-    "opt-a"
-  ],
-  "ties": [
-    {
-      "options": [
-        "opt-b",
-        "opt-a"
-      ],
-      "tie_break": "higher score on highest-weight criterion"
-    }
-  ],
-  "excluded": [
-    {
-      "option_id": "opt-c",
-      "reason": "Fails F-01: no at-least-once delivery (E-010)"
-    }
-  ],
-  "must_summary": {
-    "opt-a": {
-      "provided": 2,
-      "vendor-claimed": 0,
-      "partial": 1,
-      "not provided": 0,
-      "unknown": 0
-    },
-    "opt-b": {
-      "provided": 2,
-      "vendor-claimed": 0,
-      "partial": 1,
-      "not provided": 0,
-      "unknown": 0
-    }
-  },
-  "sensitivity": [
-    {
-      "criterion_id": "crit-core",
-      "delta": 5,
-      "weights": {
-        "crit-core": 55,
-        "crit-ops": 27.0,
-        "crit-cost": 18.0
-      },
-      "totals": {
-        "opt-a": 76.4,
-        "opt-b": 80.2
-      },
-      "top": "opt-b",
-      "changed": false,
-      "tie": false
-    },
-    {
-      "criterion_id": "crit-core",
-      "delta": -5,
-      "weights": {
-        "crit-core": 45,
-        "crit-ops": 33.0,
-        "crit-cost": 22.0
-      },
-      "totals": {
-        "opt-a": 75.6,
-        "opt-b": 75.8
-      },
-      "top": "opt-b",
-      "changed": false,
-      "tie": true
-    },
-    {
-      "criterion_id": "crit-ops",
-      "delta": 5,
-      "weights": {
-        "crit-core": 46.43,
-        "crit-ops": 35,
-        "crit-cost": 18.57
-      },
-      "totals": {
-        "opt-a": 76.3,
-        "opt-b": 75.3
-      },
-      "top": "opt-b",
-      "changed": false,
-      "tie": true
-    },
-    {
-      "criterion_id": "crit-ops",
-      "delta": -5,
-      "weights": {
-        "crit-core": 53.57,
-        "crit-ops": 25,
-        "crit-cost": 21.43
-      },
-      "totals": {
-        "opt-a": 75.7,
-        "opt-b": 80.7
-      },
-      "top": "opt-b",
-      "changed": false,
-      "tie": false
-    },
-    {
-      "criterion_id": "crit-cost",
-      "delta": 5,
-      "weights": {
-        "crit-core": 46.88,
-        "crit-ops": 28.12,
-        "crit-cost": 25
-      },
-      "totals": {
-        "opt-a": 75.0,
-        "opt-b": 78.1
-      },
-      "top": "opt-b",
-      "changed": false,
-      "tie": false
-    },
-    {
-      "criterion_id": "crit-cost",
-      "delta": -5,
-      "weights": {
-        "crit-core": 53.12,
-        "crit-ops": 31.88,
-        "crit-cost": 15
-      },
-      "totals": {
-        "opt-a": 77.0,
-        "opt-b": 77.9
-      },
-      "top": "opt-b",
-      "changed": false,
-      "tie": true
-    }
-  ],
-  "confidence_tests": [
-    {
-      "test": "all low-confidence scores lowered by one",
-      "totals": {
-        "opt-a": 76.0,
-        "opt-b": 72.0
-      },
-      "top": "opt-a",
-      "changed": true
-    },
-    {
-      "test": "opt-b / crit-ops lowered by one",
-      "totals": {
-        "opt-a": 76.0,
-        "opt-b": 72.0
-      },
-      "top": "opt-a",
-      "changed": true
-    }
-  ],
-  "warnings": [
-    "Beta Queue has evidence-backed values for 3 of 6 requirements against 5 for the best-covered option; its scores may reflect how little was researched, not its capability. Give every option the same depth of research before ranking"
-  ],
   "cost_summary": {
     "currency": "USD",
     "horizon_months": 36,
@@ -392,38 +229,384 @@
       }
     }
   },
+  "requirement_shares": {
+    "crit-core": {
+      "F-01": 31,
+      "F-02": 19
+    },
+    "crit-ops": {
+      "N-01": 14,
+      "N-02": 3,
+      "N-03": 13
+    },
+    "crit-cost": {
+      "C-01": 13,
+      "C-02": 7
+    }
+  },
+  "must_gaps": {
+    "opt-a": 0,
+    "opt-b": 1
+  },
+  "criterion_scores": {
+    "opt-a": {
+      "crit-core": {
+        "score": 3.625,
+        "confidence": "medium",
+        "capped": false,
+        "overridden": false,
+        "evidence_ids": [
+          "E-001",
+          "E-002"
+        ],
+        "rationale": "",
+        "attainment": 0.725,
+        "contribution": 36.25
+      },
+      "crit-ops": {
+        "score": 3.636,
+        "confidence": "medium",
+        "capped": false,
+        "overridden": false,
+        "evidence_ids": [
+          "E-003",
+          "E-011"
+        ],
+        "rationale": "",
+        "attainment": 0.7273,
+        "contribution": 21.82
+      },
+      "crit-cost": {
+        "score": 3.375,
+        "confidence": "medium",
+        "capped": false,
+        "overridden": false,
+        "evidence_ids": [
+          "E-004",
+          "E-005"
+        ],
+        "rationale": "",
+        "attainment": 0.675,
+        "contribution": 13.5
+      }
+    },
+    "opt-b": {
+      "crit-core": {
+        "score": 4.0,
+        "confidence": "medium",
+        "capped": false,
+        "overridden": false,
+        "evidence_ids": [
+          "E-006",
+          "E-007"
+        ],
+        "rationale": "",
+        "attainment": 0.8,
+        "contribution": 40.0
+      },
+      "crit-ops": {
+        "score": 2.909,
+        "confidence": "low",
+        "capped": false,
+        "overridden": false,
+        "evidence_ids": [
+          "E-008",
+          "E-012"
+        ],
+        "rationale": "",
+        "attainment": 0.5818,
+        "contribution": 17.45
+      },
+      "crit-cost": {
+        "score": 3.25,
+        "confidence": "medium",
+        "capped": false,
+        "overridden": false,
+        "evidence_ids": [
+          "E-009"
+        ],
+        "rationale": "",
+        "attainment": 0.65,
+        "contribution": 13.0
+      }
+    }
+  },
+  "totals": {
+    "opt-a": 71.6,
+    "opt-b": 70.5
+  },
+  "ranking": [
+    "opt-a",
+    "opt-b"
+  ],
+  "ties": [
+    {
+      "options": [
+        "opt-a",
+        "opt-b"
+      ],
+      "tie_break": "fewer must-have gaps"
+    }
+  ],
+  "excluded": [
+    {
+      "option_id": "opt-c",
+      "reason": "Fails F-01: no at-least-once delivery (E-010)"
+    }
+  ],
+  "must_summary": {
+    "opt-a": {
+      "meets (4-5)": 3,
+      "limits (3)": 1,
+      "partial (2)": 0,
+      "workaround (1)": 0,
+      "not met (0)": 0
+    },
+    "opt-b": {
+      "meets (4-5)": 3,
+      "limits (3)": 0,
+      "partial (2)": 1,
+      "workaround (1)": 0,
+      "not met (0)": 0
+    }
+  },
   "evidence_coverage": {
-    "opt-a": 5,
-    "opt-b": 3
+    "opt-a": 6,
+    "opt-b": 4
   },
   "unknown_bounds": {
     "opt-a": {
-      "as_scored": 76.0,
-      "if_unknowns_provided": 76.0,
+      "as_scored": 71.6,
+      "if_unknowns_provided": 71.6,
       "unknown_cells": 0
     },
     "opt-b": {
-      "as_scored": 78.0,
-      "if_unknowns_provided": 84.0,
+      "as_scored": 70.5,
+      "if_unknowns_provided": 70.5,
       "unknown_cells": 0
     }
   },
   "could_overtake_leader": [],
-  "bias_checks": {
-    "assumed_requirements": [],
-    "source_mix": {
-      "opt-a": {
-        "vendor": 1,
-        "independent_or_open_source": 4
+  "sensitivity": [
+    {
+      "criterion_id": "crit-core",
+      "delta": 5,
+      "weights": {
+        "crit-core": 55,
+        "crit-ops": 27.0,
+        "crit-cost": 18.0
       },
-      "opt-b": {
-        "vendor": 1,
-        "independent_or_open_source": 3
-      }
+      "totals": {
+        "opt-a": 71.7,
+        "opt-b": 71.4
+      },
+      "top": "opt-a",
+      "changed": false,
+      "tie": true
     },
-    "cost_comparable": {
-      "complete": 2,
-      "total": 2
+    {
+      "criterion_id": "crit-core",
+      "delta": -5,
+      "weights": {
+        "crit-core": 45,
+        "crit-ops": 33.0,
+        "crit-cost": 22.0
+      },
+      "totals": {
+        "opt-a": 71.5,
+        "opt-b": 69.5
+      },
+      "top": "opt-a",
+      "changed": false,
+      "tie": true
+    },
+    {
+      "criterion_id": "crit-ops",
+      "delta": 5,
+      "weights": {
+        "crit-core": 46.43,
+        "crit-ops": 35,
+        "crit-cost": 18.57
+      },
+      "totals": {
+        "opt-a": 71.7,
+        "opt-b": 69.6
+      },
+      "top": "opt-a",
+      "changed": false,
+      "tie": true
+    },
+    {
+      "criterion_id": "crit-ops",
+      "delta": -5,
+      "weights": {
+        "crit-core": 53.57,
+        "crit-ops": 25,
+        "crit-cost": 21.43
+      },
+      "totals": {
+        "opt-a": 71.5,
+        "opt-b": 71.3
+      },
+      "top": "opt-a",
+      "changed": false,
+      "tie": true
+    },
+    {
+      "criterion_id": "crit-cost",
+      "delta": 5,
+      "weights": {
+        "crit-core": 46.88,
+        "crit-ops": 28.12,
+        "crit-cost": 25
+      },
+      "totals": {
+        "opt-a": 71.3,
+        "opt-b": 70.1
+      },
+      "top": "opt-a",
+      "changed": false,
+      "tie": true
+    },
+    {
+      "criterion_id": "crit-cost",
+      "delta": -5,
+      "weights": {
+        "crit-core": 53.12,
+        "crit-ops": 31.88,
+        "crit-cost": 15
+      },
+      "totals": {
+        "opt-a": 71.8,
+        "opt-b": 70.8
+      },
+      "top": "opt-a",
+      "changed": false,
+      "tie": true
     }
+  ],
+  "confidence_tests": [
+    {
+      "test": "all low-confidence scores lowered by one",
+      "totals": {
+        "opt-a": 71.6,
+        "opt-b": 64.5
+      },
+      "top": "opt-a",
+      "changed": false
+    },
+    {
+      "test": "opt-b / crit-ops lowered by one",
+      "totals": {
+        "opt-a": 71.6,
+        "opt-b": 64.5
+      },
+      "top": "opt-a",
+      "changed": false
+    }
+  ],
+  "warnings": [],
+  "scenarios": [
+    {
+      "name": "base weights",
+      "totals": {
+        "opt-a": 71.6,
+        "opt-b": 70.5
+      },
+      "leader": "opt-a",
+      "changed": false
+    },
+    {
+      "name": "equal category weights",
+      "totals": {
+        "opt-a": 70.9,
+        "opt-b": 67.7
+      },
+      "leader": "opt-a",
+      "changed": false
+    },
+    {
+      "name": "must-have requirements only",
+      "totals": {
+        "opt-a": 76.0,
+        "opt-b": 74.0
+      },
+      "leader": "opt-a",
+      "changed": false
+    },
+    {
+      "name": "5 points moved from crit-ops to crit-core",
+      "totals": {
+        "opt-a": 71.6,
+        "opt-b": 71.5
+      },
+      "leader": "opt-a",
+      "changed": false
+    },
+    {
+      "name": "5 points moved from crit-core to crit-ops",
+      "totals": {
+        "opt-a": 71.6,
+        "opt-b": 69.4
+      },
+      "leader": "opt-a",
+      "changed": false
+    },
+    {
+      "name": "all low-confidence scores lowered by one",
+      "totals": {
+        "opt-a": 71.6,
+        "opt-b": 64.5
+      },
+      "leader": "opt-a",
+      "changed": false
+    }
+  ],
+  "order_changes": "0 of 6 scenarios",
+  "lead": 1.1,
+  "meaningful_gap": 5,
+  "deciding_cells": {
+    "gates": [
+      {
+        "gate": "G-1",
+        "option_id": "opt-a",
+        "verdict": "PASS",
+        "basis": "tested"
+      },
+      {
+        "gate": "G-1",
+        "option_id": "opt-b",
+        "verdict": "PASS",
+        "basis": "documented"
+      },
+      {
+        "gate": "G-1",
+        "option_id": "opt-c",
+        "verdict": "NOT MET",
+        "basis": ""
+      },
+      {
+        "gate": "G-2",
+        "option_id": "opt-a",
+        "verdict": "PASS",
+        "basis": "documented"
+      },
+      {
+        "gate": "G-2",
+        "option_id": "opt-b",
+        "verdict": "PASS",
+        "basis": "vendor_confirmed"
+      }
+    ],
+    "requirements": [
+      {
+        "requirement_id": "N-01",
+        "leader": "opt-a",
+        "runner_up": "opt-b",
+        "leader_score": 4,
+        "runner_up_score": 2,
+        "points": 5.45
+      }
+    ]
   }
 }

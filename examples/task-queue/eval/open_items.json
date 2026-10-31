@@ -1,0 +1,31 @@
+[
+  {
+    "id": "OI-1",
+    "option": "opt-b",
+    "linked": "G-1",
+    "question": "Does Beta redeliver a job when a worker is killed mid-job?",
+    "owner_type": "poc_test",
+    "test_id": "P1",
+    "owner": "platform team",
+    "status": "open"
+  },
+  {
+    "id": "OI-2",
+    "option": "opt-a",
+    "linked": "G-2",
+    "question": "Do install, upgrade and licence start work in an isolated network?",
+    "owner_type": "poc_test",
+    "test_id": "P2",
+    "owner": "platform team",
+    "status": "open"
+  },
+  {
+    "id": "OI-3",
+    "option": "opt-b",
+    "linked": "N-01",
+    "question": "Which metrics does the plugin export, and is it supported by the vendor?",
+    "owner_type": "vendor_question",
+    "owner": "procurement",
+    "status": "open"
+  }
+]

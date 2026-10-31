@@ -1,0 +1,98 @@
+[
+  {
+    "id": "F-01",
+    "type": "functional",
+    "category": "Core",
+    "text": "The agent protocol is generally available in a vendor-supported release",
+    "priority": "must",
+    "gate": true,
+    "verification_note": "Documentation, vendor confirmation or a POC test",
+    "gate_scope": "Built-in only"
+  },
+  {
+    "id": "F-02",
+    "type": "functional",
+    "category": "Core",
+    "text": "Model routing with fallback between providers",
+    "priority": "must",
+    "gate": false,
+    "verification_note": "Documentation, vendor confirmation or a POC test"
+  },
+  {
+    "id": "F-03",
+    "type": "functional",
+    "category": "Core",
+    "text": "Prompt and skills management",
+    "priority": "should",
+    "gate": false,
+    "verification_note": "Documentation, vendor confirmation or a POC test"
+  },
+  {
+    "id": "P-01",
+    "type": "non-functional",
+    "category": "Platform",
+    "text": "Every package component is supported on the target Kubernetes platform",
+    "priority": "must",
+    "gate": true,
+    "verification_note": "Documentation, vendor confirmation or a POC test",
+    "gate_scope": "All components of the package"
+  },
+  {
+    "id": "P-02",
+    "type": "non-functional",
+    "category": "Platform",
+    "text": "Install, upgrade and licence validation work offline",
+    "priority": "must",
+    "gate": true,
+    "verification_note": "Documentation, vendor confirmation or a POC test",
+    "gate_scope": "No vendor-hosted service"
+  },
+  {
+    "id": "P-03",
+    "type": "non-functional",
+    "category": "Platform",
+    "text": "Each site keeps working when the control plane is lost",
+    "priority": "must",
+    "gate": true,
+    "verification_note": "Documentation, vendor confirmation or a POC test",
+    "gate_scope": "Cold start included"
+  },
+  {
+    "id": "S-01",
+    "type": "non-functional",
+    "category": "Support",
+    "text": "Vendor support is available in the customer's country",
+    "priority": "must",
+    "gate": true,
+    "verification_note": "Documentation, vendor confirmation or a POC test",
+    "gate_scope": "Local or regional presence"
+  },
+  {
+    "id": "S-02",
+    "type": "non-functional",
+    "category": "Support",
+    "text": "Licensing and entitlement are clear (which SKU covers what)",
+    "priority": "must",
+    "gate": true,
+    "verification_note": "Documentation, vendor confirmation or a POC test",
+    "gate_scope": "Written entitlement map"
+  },
+  {
+    "id": "C-01",
+    "type": "non-functional",
+    "category": "Cost",
+    "text": "Predictable pricing at 20 million requests per month",
+    "priority": "must",
+    "gate": false,
+    "verification_note": "Documentation, vendor confirmation or a POC test"
+  },
+  {
+    "id": "C-02",
+    "type": "non-functional",
+    "category": "Cost",
+    "text": "A usable free or development tier",
+    "priority": "should",
+    "gate": false,
+    "verification_note": "Documentation, vendor confirmation or a POC test"
+  }
+]

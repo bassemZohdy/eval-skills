@@ -8,7 +8,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "shared"))
 import report_draft  # noqa: E402
 
-SAMPLE = os.path.join(ROOT, "examples", "task-queue", "eval")
+SAMPLE = os.path.join(ROOT, "tests", "fixtures", "task-queue-legacy")
+EXAMPLE = os.path.join(ROOT, "examples", "task-queue", "eval")
 PROSE = {
     "recommendation": "The choice between Beta Queue and Alpha Queue is not clear-cut: Beta Queue leads by 2.0 points, inside the tie margin.",
     "confidence": "low", "confidence_why": "Near-tie that flips when low-confidence scores drop.",

@@ -1,12 +1,201 @@
 {
   "cost_mode": "weighted",
-  "scale": {"min": 0, "max": 5},
+  "scale": {
+    "min": 0,
+    "max": 5
+  },
   "criteria": [
-    {"id": "crit-core", "name": "Core capabilities", "category": "Core", "weight": 50, "requirement_ids": ["F-01", "F-02"],
-     "anchors": {"0": "No delivery guarantee and no scheduling", "3": "Delivery guarantee met, scheduling partial", "5": "Delivery guarantee and scheduling fully met"}},
-    {"id": "crit-ops", "name": "Operability", "category": "Operations", "weight": 30, "requirement_ids": ["N-01", "N-02"],
-     "anchors": {"0": "No monitoring support", "3": "Monitoring endpoints met, no dashboard", "5": "Monitoring and dashboard both met"}},
-    {"id": "crit-cost", "name": "Cost", "category": "Cost", "weight": 20, "requirement_ids": ["C-01", "C-02"],
-     "anchors": {"0": "Pricing unpredictable and no free tier", "3": "Predictable pricing or a free tier", "5": "Predictable pricing and a usable free tier"}}
+    {
+      "id": "crit-core",
+      "name": "Core capabilities",
+      "category": "Core",
+      "weight": 50,
+      "requirement_ids": [
+        "F-01",
+        "F-02"
+      ],
+      "anchors": {
+        "0": "No delivery guarantee and no scheduling",
+        "3": "Delivery guarantee met, scheduling partial",
+        "5": "Delivery guarantee and scheduling fully met"
+      }
+    },
+    {
+      "id": "crit-ops",
+      "name": "Operability",
+      "category": "Operations",
+      "weight": 30,
+      "requirement_ids": [
+        "N-01",
+        "N-02",
+        "N-03"
+      ],
+      "anchors": {
+        "0": "No monitoring support",
+        "3": "Monitoring endpoints met, no dashboard",
+        "5": "Monitoring and dashboard both met"
+      }
+    },
+    {
+      "id": "crit-cost",
+      "name": "Cost",
+      "category": "Cost",
+      "weight": 20,
+      "requirement_ids": [
+        "C-01",
+        "C-02"
+      ],
+      "anchors": {
+        "0": "Pricing unpredictable and no free tier",
+        "3": "Predictable pricing or a free tier",
+        "5": "Predictable pricing and a usable free tier"
+      }
+    }
+  ],
+  "gates": [
+    {
+      "id": "G-1",
+      "requirement_id": "F-01",
+      "pass_clauses": [
+        "Delivery is at least once when a worker crashes mid-job",
+        "The behaviour is shown in a test or in the official documentation"
+      ],
+      "evidence_needed": "A failure-injection test result or the vendor's delivery guarantee",
+      "package_rule": "Every component of the package must keep the guarantee",
+      "verdicts": {
+        "opt-a": {
+          "verdict": "PASS",
+          "basis": "tested",
+          "clauses": [
+            {
+              "met": true,
+              "note": "Independent benchmark kills workers; no job lost",
+              "evidence_ids": [
+                "E-001"
+              ]
+            },
+            {
+              "met": true,
+              "note": "Benchmark publishes the result",
+              "evidence_ids": [
+                "E-001"
+              ]
+            }
+          ]
+        },
+        "opt-b": {
+          "verdict": "PASS",
+          "basis": "documented",
+          "confirm_by": "POC test P1: kill a worker mid-job and count delivered jobs",
+          "clauses": [
+            {
+              "met": true,
+              "note": "Confirmed in tests by a third party",
+              "evidence_ids": [
+                "E-006"
+              ]
+            },
+            {
+              "met": true,
+              "note": "Documented guarantee",
+              "evidence_ids": [
+                "E-006"
+              ]
+            }
+          ]
+        },
+        "opt-c": {
+          "verdict": "NOT MET",
+          "clauses": [
+            {
+              "met": false,
+              "note": "At-most-once delivery only",
+              "evidence_ids": [
+                "E-010"
+              ]
+            },
+            {
+              "met": false,
+              "note": "Documentation states the weaker guarantee",
+              "evidence_ids": [
+                "E-010"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "G-2",
+      "requirement_id": "N-03",
+      "pass_clauses": [
+        "Installation works without internet access",
+        "Upgrades work without internet access",
+        "Licence validation works without a vendor service"
+      ],
+      "evidence_needed": "Offline installation guide, or a POC test in an isolated network",
+      "package_rule": "Every component of the package must satisfy every clause",
+      "verdicts": {
+        "opt-a": {
+          "verdict": "PASS",
+          "basis": "documented",
+          "confirm_by": "POC test P2: install, upgrade and start in an isolated network",
+          "clauses": [
+            {
+              "met": true,
+              "note": "Offline installer documented",
+              "evidence_ids": [
+                "E-011"
+              ]
+            },
+            {
+              "met": true,
+              "note": "Offline upgrade bundle documented",
+              "evidence_ids": [
+                "E-011"
+              ]
+            },
+            {
+              "met": true,
+              "note": "Licence is a signed file checked locally",
+              "evidence_ids": [
+                "E-011"
+              ]
+            }
+          ]
+        },
+        "opt-b": {
+          "verdict": "PASS",
+          "basis": "vendor_confirmed",
+          "clauses": [
+            {
+              "met": true,
+              "note": "Open source; installs from a local mirror",
+              "evidence_ids": [
+                "E-012"
+              ]
+            },
+            {
+              "met": true,
+              "note": "Upgrades from a local mirror",
+              "evidence_ids": [
+                "E-012"
+              ]
+            },
+            {
+              "met": true,
+              "note": "No licence needed",
+              "evidence_ids": [
+                "E-012"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "not_assessed": [
+    "Operating effort and team skills",
+    "Lock-in and exit cost"
   ]
 }

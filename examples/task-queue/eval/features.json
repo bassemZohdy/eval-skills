@@ -1,0 +1,136 @@
+[
+  {
+    "id": "FT-01-F",
+    "category": "Core",
+    "name": "At-least-once delivery of jobs",
+    "description": "",
+    "cells": {
+      "opt-a": {
+        "status": "included",
+        "note": "",
+        "evidence_ids": [
+          "E-001"
+        ]
+      },
+      "opt-b": {
+        "status": "included",
+        "note": "",
+        "evidence_ids": [
+          "E-006"
+        ]
+      }
+    }
+  },
+  {
+    "id": "FT-02-F",
+    "category": "Core",
+    "name": "Delayed and scheduled jobs",
+    "description": "",
+    "cells": {
+      "opt-a": {
+        "status": "partial",
+        "note": "no recurring schedules",
+        "evidence_ids": [
+          "E-002"
+        ],
+        "scope_tags": [
+          "saas"
+        ]
+      },
+      "opt-b": {
+        "status": "included",
+        "note": "",
+        "evidence_ids": [
+          "E-007"
+        ]
+      }
+    }
+  },
+  {
+    "id": "FT-01-N",
+    "category": "Operations",
+    "name": "Metrics and health endpoints for monitoring",
+    "description": "",
+    "cells": {
+      "opt-a": {
+        "status": "included",
+        "note": "",
+        "evidence_ids": [
+          "E-003"
+        ]
+      },
+      "opt-b": {
+        "status": "partial",
+        "note": "via plugin, vendor claim only",
+        "evidence_ids": [
+          "E-008"
+        ]
+      }
+    }
+  },
+  {
+    "id": "FT-02-N",
+    "category": "Operations",
+    "name": "Web dashboard for inspecting jobs",
+    "description": "",
+    "cells": {
+      "opt-a": {
+        "status": "missing",
+        "note": "no dashboard found",
+        "evidence_ids": []
+      },
+      "opt-b": {
+        "status": "included",
+        "note": "",
+        "evidence_ids": [
+          "E-008"
+        ],
+        "scope_tags": [
+          "third_party"
+        ]
+      }
+    }
+  },
+  {
+    "id": "FT-01-C",
+    "category": "Cost",
+    "name": "Predictable pricing at 5 million jobs per month",
+    "description": "",
+    "cells": {
+      "opt-a": {
+        "status": "partial",
+        "note": "tiered, volume discount",
+        "evidence_ids": [
+          "E-004"
+        ]
+      },
+      "opt-b": {
+        "status": "included",
+        "note": "self-hosted",
+        "evidence_ids": [
+          "E-009"
+        ]
+      }
+    }
+  },
+  {
+    "id": "FT-02-C",
+    "category": "Cost",
+    "name": "A usable free tier for development",
+    "description": "",
+    "cells": {
+      "opt-a": {
+        "status": "included",
+        "note": "100k jobs free",
+        "evidence_ids": [
+          "E-005"
+        ]
+      },
+      "opt-b": {
+        "status": "partial",
+        "note": "no hosted free tier",
+        "evidence_ids": []
+      }
+    }
+  }
+]

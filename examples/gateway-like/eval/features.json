@@ -1,0 +1,118 @@
+[
+  {
+    "id": "FT-1",
+    "category": "Core",
+    "name": "Agent registry",
+    "description": "A registry of agents with versions",
+    "cells": {
+      "opt-1": {
+        "status": "included",
+        "note": "",
+        "evidence_ids": [
+          "E-1-F-03"
+        ]
+      },
+      "opt-2": {
+        "status": "included",
+        "note": "Through a third-party add-on",
+        "evidence_ids": [
+          "E-2-F-03"
+        ],
+        "scope_tags": [
+          "third_party"
+        ]
+      },
+      "opt-3": {
+        "status": "missing",
+        "note": "",
+        "evidence_ids": []
+      }
+    }
+  },
+  {
+    "id": "FT-2",
+    "category": "Core",
+    "name": "Semantic cache",
+    "description": "Caches model answers by meaning",
+    "cells": {
+      "opt-1": {
+        "status": "included",
+        "note": "",
+        "evidence_ids": [
+          "E-1-F-02"
+        ],
+        "scope_tags": [
+          "latest_only"
+        ]
+      },
+      "opt-2": {
+        "status": "missing",
+        "note": "",
+        "evidence_ids": []
+      },
+      "opt-3": {
+        "status": "missing",
+        "note": "",
+        "evidence_ids": []
+      }
+    }
+  },
+  {
+    "id": "FT-3",
+    "category": "Platform",
+    "name": "Sidecar-free mode",
+    "description": "Runs without sidecars",
+    "cells": {
+      "opt-1": {
+        "status": "missing",
+        "note": "",
+        "evidence_ids": []
+      },
+      "opt-2": {
+        "status": "included",
+        "note": "",
+        "evidence_ids": [
+          "E-2-P-03"
+        ]
+      },
+      "opt-3": {
+        "status": "missing",
+        "note": "",
+        "evidence_ids": []
+      }
+    }
+  },
+  {
+    "id": "FT-4",
+    "category": "Platform",
+    "name": "Hosted dashboard",
+    "description": "A vendor-hosted usage dashboard",
+    "cells": {
+      "opt-1": {
+        "status": "included",
+        "note": "Vendor SaaS only",
+        "evidence_ids": [
+          "E-1-S-02"
+        ],
+        "scope_tags": [
+          "saas"
+        ]
+      },
+      "opt-2": {
+        "status": "partial",
+        "note": "Preview",
+        "evidence_ids": [
+          "E-2-S-02"
+        ],
+        "scope_tags": [
+          "preview"
+        ]
+      },
+      "opt-3": {
+        "status": "missing",
+        "note": "",
+        "evidence_ids": []
+      }
+    }
+  }
+]

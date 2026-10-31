@@ -1,0 +1,10 @@
+[
+  {
+    "id": "CR-1",
+    "text": "Jobs can be replayed from a dead-letter queue by operators",
+    "suggested_priority": "should",
+    "suggested_category": "Operations",
+    "why": "Found while profiling Alpha: failed jobs are kept only for seven days",
+    "source": "E-002"
+  }
+]

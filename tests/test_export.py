@@ -11,7 +11,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "shared"))
 import export_report  # noqa: E402
 
-SAMPLE = os.path.join(ROOT, "examples", "task-queue", "eval")
+SAMPLE = os.path.join(ROOT, "tests", "fixtures", "task-queue-legacy")
+EXAMPLE = os.path.join(ROOT, "examples", "task-queue", "eval")
 NS = {"m": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
 
 

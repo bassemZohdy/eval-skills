@@ -1,5 +1,82 @@
 [
-  {"option_id": "opt-a", "name": "Alpha Queue", "source_links": ["https://alpha.example.com"], "excluded": false, "exclusion_reason": "", "not_profiled": false, "gate_status": {"F-01": "pass"}},
-  {"option_id": "opt-b", "name": "Beta Queue", "source_links": ["https://beta.example.com"], "excluded": false, "exclusion_reason": "", "not_profiled": false, "gate_status": {"F-01": "pass"}},
-  {"option_id": "opt-c", "name": "Gamma Queue", "source_links": ["https://gamma.example.com"], "excluded": true, "exclusion_reason": "Fails F-01: no at-least-once delivery (E-010)", "not_profiled": false, "gate_status": {"F-01": "fail"}}
+  {
+    "option_id": "opt-a",
+    "name": "Alpha Queue",
+    "source_links": [
+      "https://alpha.example.com"
+    ],
+    "excluded": false,
+    "exclusion_reason": "",
+    "not_profiled": false,
+    "gate_status": {
+      "F-01": "pass",
+      "N-03": "pass"
+    },
+    "oss_base": null,
+    "package": {
+      "components": [
+        {
+          "name": "Alpha Queue server",
+          "version": "4.2.1",
+          "release_date": "2026-06-10",
+          "lifecycle": "supported",
+          "newest_release": "4.2.1",
+          "compatibility": ""
+        },
+        {
+          "name": "Alpha Queue worker SDK",
+          "version": "4.2.0",
+          "release_date": "2026-05-02",
+          "lifecycle": "supported",
+          "newest_release": "4.2.0",
+          "compatibility": "Works with server 4.x"
+        }
+      ]
+    }
+  },
+  {
+    "option_id": "opt-b",
+    "name": "Beta Queue",
+    "source_links": [
+      "https://beta.example.com"
+    ],
+    "excluded": false,
+    "exclusion_reason": "",
+    "not_profiled": false,
+    "gate_status": {
+      "F-01": "pass",
+      "N-03": "pass"
+    },
+    "oss_base": {
+      "project": "beta-queue",
+      "ref": "v2.4.0",
+      "source": "https://github.com/example/beta-queue"
+    },
+    "package": {
+      "components": [
+        {
+          "name": "Beta Queue",
+          "version": "2.4.0",
+          "release_date": "2026-04-15",
+          "lifecycle": "lts",
+          "newest_release": "2.5.0",
+          "compatibility": "Metrics plugin 1.3 tested with 2.4"
+        }
+      ]
+    }
+  },
+  {
+    "option_id": "opt-c",
+    "name": "Gamma Queue",
+    "source_links": [
+      "https://gamma.example.com"
+    ],
+    "excluded": true,
+    "exclusion_reason": "Fails F-01: no at-least-once delivery (E-010)",
+    "not_profiled": false,
+    "gate_status": {
+      "F-01": "fail"
+    },
+    "oss_base": null
+  }
 ]

@@ -1,0 +1,511 @@
+{
+  "cost_mode": "weighted",
+  "scale": {
+    "min": 0,
+    "max": 5
+  },
+  "meaningful_gap": 5,
+  "not_assessed": [
+    "Operating effort and team skills",
+    "Roadmap commitments"
+  ],
+  "criteria": [
+    {
+      "id": "crit-core",
+      "name": "Core capabilities",
+      "category": "Core",
+      "weight": 35,
+      "requirement_ids": [
+        "F-01",
+        "F-02",
+        "F-03"
+      ],
+      "anchors": {
+        "5": "exceeds the requirement",
+        "3": "core is met, with limits",
+        "0": "not met"
+      }
+    },
+    {
+      "id": "crit-plat",
+      "name": "Platform fit",
+      "category": "Platform",
+      "weight": 30,
+      "requirement_ids": [
+        "P-01",
+        "P-02",
+        "P-03"
+      ],
+      "anchors": {
+        "5": "exceeds the requirement",
+        "3": "core is met, with limits",
+        "0": "not met"
+      }
+    },
+    {
+      "id": "crit-sup",
+      "name": "Support and licensing",
+      "category": "Support",
+      "weight": 20,
+      "requirement_ids": [
+        "S-01",
+        "S-02"
+      ],
+      "anchors": {
+        "5": "exceeds the requirement",
+        "3": "core is met, with limits",
+        "0": "not met"
+      }
+    },
+    {
+      "id": "crit-cost",
+      "name": "Cost",
+      "category": "Cost",
+      "weight": 15,
+      "requirement_ids": [
+        "C-01",
+        "C-02"
+      ],
+      "anchors": {
+        "5": "exceeds the requirement",
+        "3": "core is met, with limits",
+        "0": "not met"
+      }
+    }
+  ],
+  "gates": [
+    {
+      "id": "G-1",
+      "requirement_id": "F-01",
+      "pass_clauses": [
+        "The capability exists in the evaluated release",
+        "It works for every component of the package"
+      ],
+      "evidence_needed": "Official documentation, a vendor statement or a test",
+      "package_rule": "Every component of the package must satisfy both clauses",
+      "verdicts": {
+        "opt-1": {
+          "verdict": "PASS",
+          "clauses": [
+            {
+              "met": true,
+              "note": "The capability exists in the evaluated release of Gateway One",
+              "evidence_ids": [
+                "E-1-F-01"
+              ]
+            },
+            {
+              "met": true,
+              "note": "It works for every component of the package",
+              "evidence_ids": [
+                "E-1-F-01"
+              ]
+            }
+          ],
+          "basis": "vendor_confirmed"
+        },
+        "opt-2": {
+          "verdict": "PASS",
+          "clauses": [
+            {
+              "met": true,
+              "note": "The capability exists in the evaluated release of Gateway Two",
+              "evidence_ids": [
+                "E-2-F-01"
+              ]
+            },
+            {
+              "met": true,
+              "note": "It works for every component of the package",
+              "evidence_ids": [
+                "E-2-F-01"
+              ]
+            }
+          ],
+          "basis": "documented",
+          "confirm_by": "POC test P1: run the protocol conformance suite against the supported release"
+        },
+        "opt-3": {
+          "verdict": "PASS",
+          "clauses": [
+            {
+              "met": true,
+              "note": "The capability exists in the evaluated release of Gateway Three",
+              "evidence_ids": [
+                "E-3-F-01"
+              ]
+            },
+            {
+              "met": true,
+              "note": "It works for every component of the package",
+              "evidence_ids": [
+                "E-3-F-01"
+              ]
+            }
+          ],
+          "basis": "vendor_confirmed"
+        }
+      }
+    },
+    {
+      "id": "G-2",
+      "requirement_id": "P-01",
+      "pass_clauses": [
+        "The capability exists in the evaluated release",
+        "It works for every component of the package"
+      ],
+      "evidence_needed": "Official documentation, a vendor statement or a test",
+      "package_rule": "Every component of the package must satisfy both clauses",
+      "verdicts": {
+        "opt-1": {
+          "verdict": "PASS",
+          "clauses": [
+            {
+              "met": true,
+              "note": "The capability exists in the evaluated release of Gateway One",
+              "evidence_ids": [
+                "E-1-P-01"
+              ]
+            },
+            {
+              "met": true,
+              "note": "It works for every component of the package",
+              "evidence_ids": [
+                "E-1-P-01"
+              ]
+            }
+          ],
+          "basis": "documented",
+          "confirm_by": "Vendor question Q1: is the second component supported on OpenShift 4.16?"
+        },
+        "opt-2": {
+          "verdict": "PASS",
+          "clauses": [
+            {
+              "met": true,
+              "note": "The capability exists in the evaluated release of Gateway Two",
+              "evidence_ids": [
+                "E-2-P-01"
+              ]
+            },
+            {
+              "met": true,
+              "note": "It works for every component of the package",
+              "evidence_ids": [
+                "E-2-P-01"
+              ]
+            }
+          ],
+          "basis": "vendor_confirmed"
+        },
+        "opt-3": {
+          "verdict": "PASS",
+          "clauses": [
+            {
+              "met": true,
+              "note": "The capability exists in the evaluated release of Gateway Three",
+              "evidence_ids": [
+                "E-3-P-01"
+              ]
+            },
+            {
+              "met": true,
+              "note": "It works for every component of the package",
+              "evidence_ids": [
+                "E-3-P-01"
+              ]
+            }
+          ],
+          "basis": "vendor_confirmed"
+        }
+      }
+    },
+    {
+      "id": "G-3",
+      "requirement_id": "P-02",
+      "pass_clauses": [
+        "The capability exists in the evaluated release",
+        "It works for every component of the package"
+      ],
+      "evidence_needed": "Official documentation, a vendor statement or a test",
+      "package_rule": "Every component of the package must satisfy both clauses",
+      "verdicts": {
+        "opt-1": {
+          "verdict": "PASS",
+          "clauses": [
+            {
+              "met": true,
+              "note": "The capability exists in the evaluated release of Gateway One",
+              "evidence_ids": [
+                "E-1-P-02"
+              ]
+            },
+            {
+              "met": true,
+              "note": "It works for every component of the package",
+              "evidence_ids": [
+                "E-1-P-02"
+              ]
+            }
+          ],
+          "basis": "vendor_confirmed"
+        },
+        "opt-2": {
+          "verdict": "PASS",
+          "clauses": [
+            {
+              "met": true,
+              "note": "The capability exists in the evaluated release of Gateway Two",
+              "evidence_ids": [
+                "E-2-P-02"
+              ]
+            },
+            {
+              "met": true,
+              "note": "It works for every component of the package",
+              "evidence_ids": [
+                "E-2-P-02"
+              ]
+            }
+          ],
+          "basis": "vendor_confirmed"
+        },
+        "opt-3": {
+          "verdict": "NOT MET",
+          "clauses": [
+            {
+              "met": false,
+              "note": "The installer needs the vendor's hosted licence service",
+              "evidence_ids": [
+                "E-3-P-02"
+              ]
+            },
+            {
+              "met": true,
+              "note": "Upgrades work from a mirror",
+              "evidence_ids": [
+                "E-3-P-02"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "G-4",
+      "requirement_id": "P-03",
+      "pass_clauses": [
+        "The capability exists in the evaluated release",
+        "It works for every component of the package"
+      ],
+      "evidence_needed": "Official documentation, a vendor statement or a test",
+      "package_rule": "Every component of the package must satisfy both clauses",
+      "verdicts": {
+        "opt-1": {
+          "verdict": "PASS",
+          "clauses": [
+            {
+              "met": true,
+              "note": "The capability exists in the evaluated release of Gateway One",
+              "evidence_ids": [
+                "E-1-P-03"
+              ]
+            },
+            {
+              "met": true,
+              "note": "It works for every component of the package",
+              "evidence_ids": [
+                "E-1-P-03"
+              ]
+            }
+          ],
+          "basis": "vendor_confirmed"
+        },
+        "opt-2": {
+          "verdict": "PASS",
+          "clauses": [
+            {
+              "met": true,
+              "note": "The capability exists in the evaluated release of Gateway Two",
+              "evidence_ids": [
+                "E-2-P-03"
+              ]
+            },
+            {
+              "met": true,
+              "note": "It works for every component of the package",
+              "evidence_ids": [
+                "E-2-P-03"
+              ]
+            }
+          ],
+          "basis": "vendor_confirmed"
+        },
+        "opt-3": {
+          "verdict": "PASS",
+          "clauses": [
+            {
+              "met": true,
+              "note": "The capability exists in the evaluated release of Gateway Three",
+              "evidence_ids": [
+                "E-3-P-03"
+              ]
+            },
+            {
+              "met": true,
+              "note": "It works for every component of the package",
+              "evidence_ids": [
+                "E-3-P-03"
+              ]
+            }
+          ],
+          "basis": "vendor_confirmed"
+        }
+      }
+    },
+    {
+      "id": "G-5",
+      "requirement_id": "S-01",
+      "pass_clauses": [
+        "The capability exists in the evaluated release",
+        "It works for every component of the package"
+      ],
+      "evidence_needed": "Official documentation, a vendor statement or a test",
+      "package_rule": "Every component of the package must satisfy both clauses",
+      "verdicts": {
+        "opt-1": {
+          "verdict": "PASS",
+          "clauses": [
+            {
+              "met": true,
+              "note": "The capability exists in the evaluated release of Gateway One",
+              "evidence_ids": [
+                "E-1-S-01"
+              ]
+            },
+            {
+              "met": true,
+              "note": "It works for every component of the package",
+              "evidence_ids": [
+                "E-1-S-01"
+              ]
+            }
+          ],
+          "basis": "vendor_confirmed"
+        },
+        "opt-2": {
+          "verdict": "PASS",
+          "clauses": [
+            {
+              "met": true,
+              "note": "The capability exists in the evaluated release of Gateway Two",
+              "evidence_ids": [
+                "E-2-S-01"
+              ]
+            },
+            {
+              "met": true,
+              "note": "It works for every component of the package",
+              "evidence_ids": [
+                "E-2-S-01"
+              ]
+            }
+          ],
+          "basis": "tested"
+        },
+        "opt-3": {
+          "verdict": "PASS",
+          "clauses": [
+            {
+              "met": true,
+              "note": "The capability exists in the evaluated release of Gateway Three",
+              "evidence_ids": [
+                "E-3-S-01"
+              ]
+            },
+            {
+              "met": true,
+              "note": "It works for every component of the package",
+              "evidence_ids": [
+                "E-3-S-01"
+              ]
+            }
+          ],
+          "basis": "vendor_confirmed"
+        }
+      }
+    },
+    {
+      "id": "G-6",
+      "requirement_id": "S-02",
+      "pass_clauses": [
+        "The capability exists in the evaluated release",
+        "It works for every component of the package"
+      ],
+      "evidence_needed": "Official documentation, a vendor statement or a test",
+      "package_rule": "Every component of the package must satisfy both clauses",
+      "verdicts": {
+        "opt-1": {
+          "verdict": "PASS",
+          "clauses": [
+            {
+              "met": true,
+              "note": "The capability exists in the evaluated release of Gateway One",
+              "evidence_ids": [
+                "E-1-S-02"
+              ]
+            },
+            {
+              "met": true,
+              "note": "It works for every component of the package",
+              "evidence_ids": [
+                "E-1-S-02"
+              ]
+            }
+          ],
+          "basis": "vendor_confirmed"
+        },
+        "opt-2": {
+          "verdict": "PASS",
+          "clauses": [
+            {
+              "met": true,
+              "note": "The capability exists in the evaluated release of Gateway Two",
+              "evidence_ids": [
+                "E-2-S-02"
+              ]
+            },
+            {
+              "met": true,
+              "note": "It works for every component of the package",
+              "evidence_ids": [
+                "E-2-S-02"
+              ]
+            }
+          ],
+          "basis": "vendor_confirmed"
+        },
+        "opt-3": {
+          "verdict": "PASS",
+          "clauses": [
+            {
+              "met": true,
+              "note": "The capability exists in the evaluated release of Gateway Three",
+              "evidence_ids": [
+                "E-3-S-02"
+              ]
+            },
+            {
+              "met": true,
+              "note": "It works for every component of the package",
+              "evidence_ids": [
+                "E-3-S-02"
+              ]
+            }
+          ],
+          "basis": "vendor_confirmed"
+        }
+      }
+    }
+  ]
+}

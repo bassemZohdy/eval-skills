@@ -1,0 +1,163 @@
+{
+  "total": 16,
+  "queue": [
+    {
+      "kind": "gate",
+      "id": "G-1",
+      "option_id": "opt-b",
+      "reasons": [
+        "documented only"
+      ],
+      "priority": 1000.0
+    },
+    {
+      "kind": "gate",
+      "id": "G-2",
+      "option_id": "opt-a",
+      "reasons": [
+        "documented only"
+      ],
+      "priority": 1000.0
+    },
+    {
+      "kind": "requirement",
+      "id": "N-01",
+      "option_id": "opt-a",
+      "reasons": [
+        "medium confidence"
+      ],
+      "score": 4,
+      "priority": 40.91
+    },
+    {
+      "kind": "requirement",
+      "id": "N-01",
+      "option_id": "opt-b",
+      "reasons": [
+        "low confidence"
+      ],
+      "score": 2,
+      "priority": 40.91
+    },
+    {
+      "kind": "requirement",
+      "id": "F-02",
+      "option_id": "opt-a",
+      "reasons": [
+        "medium confidence"
+      ],
+      "score": 3,
+      "priority": 37.5
+    },
+    {
+      "kind": "requirement",
+      "id": "F-02",
+      "option_id": "opt-b",
+      "reasons": [
+        "medium confidence"
+      ],
+      "score": 4,
+      "priority": 37.5
+    },
+    {
+      "kind": "requirement",
+      "id": "F-01",
+      "option_id": "opt-a",
+      "reasons": [
+        "medium confidence"
+      ],
+      "score": 4,
+      "priority": 31.25
+    },
+    {
+      "kind": "requirement",
+      "id": "F-01",
+      "option_id": "opt-b",
+      "reasons": [
+        "medium confidence"
+      ],
+      "score": 4,
+      "priority": 31.25
+    },
+    {
+      "kind": "requirement",
+      "id": "C-01",
+      "option_id": "opt-a",
+      "reasons": [
+        "medium confidence"
+      ],
+      "score": 3,
+      "priority": 25.0
+    },
+    {
+      "kind": "requirement",
+      "id": "C-01",
+      "option_id": "opt-b",
+      "reasons": [
+        "medium confidence"
+      ],
+      "score": 4,
+      "priority": 25.0
+    },
+    {
+      "kind": "requirement",
+      "id": "C-02",
+      "option_id": "opt-a",
+      "reasons": [
+        "medium confidence"
+      ],
+      "score": 4,
+      "priority": 22.5
+    },
+    {
+      "kind": "requirement",
+      "id": "C-02",
+      "option_id": "opt-b",
+      "reasons": [
+        "low confidence"
+      ],
+      "score": 2,
+      "priority": 22.5
+    },
+    {
+      "kind": "requirement",
+      "id": "N-03",
+      "option_id": "opt-a",
+      "reasons": [
+        "medium confidence"
+      ],
+      "score": 4,
+      "priority": 13.64
+    },
+    {
+      "kind": "requirement",
+      "id": "N-03",
+      "option_id": "opt-b",
+      "reasons": [
+        "medium confidence"
+      ],
+      "score": 4,
+      "priority": 13.64
+    },
+    {
+      "kind": "requirement",
+      "id": "N-02",
+      "option_id": "opt-a",
+      "reasons": [
+        "low confidence"
+      ],
+      "score": 0,
+      "priority": 8.18
+    },
+    {
+      "kind": "requirement",
+      "id": "N-02",
+      "option_id": "opt-b",
+      "reasons": [
+        "low confidence"
+      ],
+      "score": 2,
+      "priority": 8.18
+    }
+  ]
+}
