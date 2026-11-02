@@ -25,7 +25,8 @@
     "text": "Metrics and health endpoints for monitoring",
     "priority": "must",
     "gate": false,
-    "verification_note": "Documentation or demo"
+    "verification_note": "Documentation or demo",
+    "evidence_class": "feature"
   },
   {
     "id": "N-02",
@@ -34,7 +35,8 @@
     "text": "Web dashboard for inspecting jobs",
     "priority": "could",
     "gate": false,
-    "verification_note": "Demo or screenshots"
+    "verification_note": "Demo or screenshots",
+    "evidence_class": "feature"
   },
   {
     "id": "C-01",
@@ -43,7 +45,8 @@
     "text": "Predictable pricing at 5 million jobs per month",
     "priority": "must",
     "gate": false,
-    "verification_note": "Published pricing"
+    "verification_note": "Published pricing",
+    "evidence_class": "feature"
   },
   {
     "id": "C-02",
@@ -52,7 +55,8 @@
     "text": "A usable free tier for development",
     "priority": "should",
     "gate": false,
-    "verification_note": "Published pricing"
+    "verification_note": "Published pricing",
+    "evidence_class": "feature"
   },
   {
     "id": "N-03",
@@ -62,6 +66,7 @@
     "priority": "must",
     "gate": true,
     "gate_scope": "Every component of the package; no vendor-hosted service",
-    "verification_note": "Offline install guide or POC test"
+    "verification_note": "Offline install guide or POC test",
+    "evidence_class": "feature"
   }
 ]

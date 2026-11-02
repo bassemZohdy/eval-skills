@@ -1,0 +1,107 @@
+{
+  "currency": "USD",
+  "horizon_months": 36,
+  "assumptions": [
+    {
+      "id": "A-01",
+      "name": "Requests per month",
+      "value": 20000000,
+      "unit": "requests/month",
+      "scales": true
+    },
+    {
+      "id": "A-02",
+      "name": "Sites",
+      "value": 3,
+      "unit": "sites",
+      "scales": false
+    }
+  ],
+  "options": {
+    "opt-1": {
+      "components": [
+        {
+          "id": "1-licence",
+          "name": "Enterprise subscription per site",
+          "kind": "fixed_monthly",
+          "price_unknown": true
+        }
+      ]
+    },
+    "opt-2": {
+      "components": [
+        {
+          "id": "2-licence",
+          "name": "Enterprise subscription per site",
+          "kind": "fixed_monthly",
+          "price_unknown": true
+        }
+      ]
+    }
+  },
+  "results": {
+    "currency": "USD",
+    "horizon_months": 36,
+    "options": {
+      "opt-1": {
+        "monthly": 0.0,
+        "one_time": 0.0,
+        "tco": 0.0,
+        "incomplete": true,
+        "evidence_gaps": [
+          "1-licence"
+        ],
+        "assumed": [],
+        "components": [
+          {
+            "id": "1-licence",
+            "name": "Enterprise subscription per site",
+            "monthly": 0.0,
+            "one_time": 0.0
+          }
+        ],
+        "scenarios": {
+          "low": 0.0,
+          "high": 0.0
+        },
+        "index_vs_cheapest": null
+      },
+      "opt-2": {
+        "monthly": 0.0,
+        "one_time": 0.0,
+        "tco": 0.0,
+        "incomplete": true,
+        "evidence_gaps": [
+          "2-licence"
+        ],
+        "assumed": [],
+        "components": [
+          {
+            "id": "2-licence",
+            "name": "Enterprise subscription per site",
+            "monthly": 0.0,
+            "one_time": 0.0
+          }
+        ],
+        "scenarios": {
+          "low": 0.0,
+          "high": 0.0
+        },
+        "index_vs_cheapest": null
+      }
+    },
+    "scenarios": [
+      "low",
+      "high"
+    ],
+    "ranking": [
+      "opt-1",
+      "opt-2"
+    ],
+    "cheapest": null,
+    "cheapest_by_scenario": {
+      "low": null,
+      "high": null
+    }
+  }
+}

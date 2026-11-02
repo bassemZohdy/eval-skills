@@ -60,6 +60,12 @@ Incumbent role: replace (the team has no queue today).
 
 ## Excluded options
 
+| Option | Reason |
+| --- | --- |
+| Gamma Queue | Fails F-01: no at-least-once delivery (E-010) |
+
+Gamma Queue fails the delivery gate (at-most-once only).
+
 ## Criteria and weights
 
 | Criterion | Weight | Requirements |
@@ -128,11 +134,6 @@ The cells that decide the result; check them by hand before relying on it.
 - Gate G-2 for Alpha Queue: PASS (documented).
 - Gate G-2 for Beta Queue: PASS (vendor_confirmed).
 - N-01: Alpha Queue scores 4 against 2 for Beta Queue (+5.5 points).
-| Option | Reason |
-| --- | --- |
-| Gamma Queue | Fails F-01: no at-least-once delivery (E-010) |
-
-Gamma Queue fails the delivery gate (at-most-once only).
 
 ## Feature-by-feature comparison
 

@@ -150,7 +150,7 @@
     "source_url": "https://beta.example.com/support/confirmation-42",
     "source_date": "2026-09-20",
     "gathered_on": "2026-10-01",
-    "confidence": "CONFIRMED",
+    "confidence": "PRIMARY",
     "source_kind": "vendor",
     "pin": "snapshot 2026-10-01",
     "source_class": "primary"

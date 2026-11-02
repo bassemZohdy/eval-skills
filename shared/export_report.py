@@ -867,7 +867,11 @@ def write_xlsx(D, path):
 # ---- PDF ----------------------------------------------------------------
 
 def find_browser():
-    for n in ("msedge", "chrome", "google-chrome", "chromium", "chromium-browser"):
+    """EVAL_BROWSER (a path to Edge, Chrome or chrome-headless-shell) wins; otherwise the first browser found."""
+    env = os.environ.get("EVAL_BROWSER", "").strip()
+    if env:
+        return env if os.path.exists(env) else shutil.which(env)
+    for n in ("msedge", "chrome", "google-chrome", "chromium", "chromium-browser", "chrome-headless-shell"):
         p = shutil.which(n)
         if p:
             return p
@@ -879,6 +883,11 @@ def find_browser():
     return None
 
 
+def browser_flags():
+    """Chrome refuses to start as root without --no-sandbox (containers, CI runners)."""
+    return ["--no-sandbox"] if hasattr(os, "geteuid") and os.geteuid() == 0 else []
+
+
 def write_pdf(html_path, pdf_path):
     browser = find_browser()
     if not browser:
@@ -886,7 +895,7 @@ def write_pdf(html_path, pdf_path):
     for _attempt in range(2):
         # a fresh profile avoids clashing with a browser the user already has open
         profile = tempfile.mkdtemp()
-        cmd = [browser, "--headless", "--disable-gpu", "--no-pdf-header-footer", "--user-data-dir=" + profile,
+        cmd = [browser, "--headless", "--disable-gpu", *browser_flags(), "--no-pdf-header-footer", "--user-data-dir=" + profile,
                "--print-to-pdf=" + os.path.abspath(pdf_path), pathlib.Path(html_path).resolve().as_uri()]
         try:
             subprocess.run(cmd, capture_output=True, timeout=120)
@@ -938,7 +947,7 @@ def browser_problems(page):
             f.write(probe)
         for width, height in ((1400, 900), (390, 844)):
             profile = tempfile.mkdtemp(dir=tmp)
-            cmd = [browser, "--headless", "--disable-gpu", "--user-data-dir=" + profile, "--window-size=%d,%d" % (width, height), "--virtual-time-budget=4000",
+            cmd = [browser, "--headless", "--disable-gpu", *browser_flags(), "--user-data-dir=" + profile, "--window-size=%d,%d" % (width, height), "--virtual-time-budget=4000",
                    "--dump-dom", pathlib.Path(path).resolve().as_uri()]
             try:
                 dom = subprocess.run(cmd, capture_output=True, timeout=120).stdout.decode("utf-8", "replace")

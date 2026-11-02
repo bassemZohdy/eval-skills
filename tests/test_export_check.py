@@ -90,7 +90,7 @@ class WhatIf(unittest.TestCase):
         try:
             path = os.path.join(tmp, "p.html")
             open(path, "w", encoding="utf-8").write(self.page)
-            cmd = [export_report.find_browser(), "--headless", "--disable-gpu", "--user-data-dir=" + os.path.join(tmp, "prof"), "--window-size=1400,900",
+            cmd = [export_report.find_browser(), "--headless", "--disable-gpu", *export_report.browser_flags(), "--user-data-dir=" + os.path.join(tmp, "prof"), "--window-size=1400,900",
                    "--virtual-time-budget=4000", "--dump-dom", pathlib.Path(path).resolve().as_uri()]
             dom = subprocess.run(cmd, capture_output=True, timeout=120).stdout.decode("utf-8", "replace")
         finally:

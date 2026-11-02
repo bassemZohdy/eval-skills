@@ -66,7 +66,9 @@ Each skill bundles `scripts/eval_calc.py` (Python 3, standard library only) for 
 - `changed eval weights --reason "..."` is the form to use once scores exist; only the latest reason is kept and the report states the late change.
 - `features eval` renders `eval/features.md` from `eval/features.json`, the descriptive feature table that never feeds the scores.
 
-`eval-report` also bundles `scripts/report_draft.py`: `draft eval --prose FILE` writes the computed sections of `eval/report.md` from the evaluation files plus the judgment text in a JSON file, and `check eval` verifies the finished report against `scores.json` (leader, scores, confidence wording, excluded options).
+`eval-report` also bundles `scripts/report_draft.py`: `draft eval --prose FILE` writes the computed sections of `eval/report.md` from the evaluation files plus the judgment text in a JSON file, and `check eval` verifies the finished report against `scores.json` (the provenance line, the decision table's order and scores, a recommendation that names the leader first and quotes the lead correctly, no "decisive" wording on a near-tie, confidence wording, every excluded option under "Excluded options" and never recommended, every factor not assessed).
+
+`validate` also checks evidence dates (`gathered_on` not in the future, `source_date` not after it), that a score or feature cell cites evidence about its own option, that every gate has a rubric and every option still in play has a verdict and a `gate_status` for it, that judged gate clauses cite evidence, that steps complete in order, that labels fit the source (a lone vendor page is not CONFIRMED), and warns about vague requirements and options named in requirements. With `--before report` it also recomputes the scores and fails when `scores.json` is out of date. `score` lowers any confidence the evidence does not support (contract rule 13) and warns, and warns when it caps a score or when a score of 0 has no evidence.
 
 `eval-report` also bundles `scripts/export_report.py` (`--check` verifies the page: totals match `scores.json`, no total from an earlier run is still shown, and with Edge or Chrome no script errors or sideways scroll at 1400 and 390 px; the HTML also has a what-if panel for weights, a strict-scope toggle for the feature table and sources numbered by first citation), which writes the finished evaluation to `eval/export/` as `report.html`, `report.xlsx` (editable weights and live totals) and `report.pdf` (printed from a fully expanded copy of the HTML by headless Edge or Chrome, skipped if neither is installed). The HTML has a section index, collapsible sections, a source filter, and adapts to phone, tablet and desktop widths. The `examples/task-queue/export/` folder shows the output.
 
@@ -81,6 +83,20 @@ The contract and the script each have one source in `shared/`. After editing the
 ```bash
 python -m unittest discover -s tests -v
 ```
+
+### Scorecard
+
+`scripts/scorecard.py` scores the skills themselves, out of 100:
+
+- **Defect detection (50%).** Each case copies a sample evaluation, injects one defect the contract or a skill's quality rules forbid (weights that do not sum to 100, a PASS with an unmet clause, a score citing another option's evidence, a confidence the evidence does not support, `scores.json` edited after scoring, a report whose decision table or lead disagrees with `scores.json`, and so on), runs what a skill would run (`validate --before report`, `score`, `report_draft.py check`) and counts the defect as caught when a new error or a matching warning appears. Both samples must pass clean.
+- **Instruction lint (30%).** Static checks on every `SKILL.md` and the contract: frontmatter, step numbering, script commands and bundled files that exist, thresholds that agree across skills and `scoring.md`, contract keys listed once.
+- **Tests (20%).** The unit-test pass rate.
+
+```bash
+python scripts/scorecard.py --md scorecard.md        # add --skip-tests for the fast part only
+```
+
+CI fails below 98. `tests/test_scorecard.py` keeps every case caught. The browser checks need Edge or Chrome; in a container set `EVAL_BROWSER` to a browser path (`chrome-headless-shell` works) and the scripts add `--no-sandbox` when running as root.
 
 ## License
 

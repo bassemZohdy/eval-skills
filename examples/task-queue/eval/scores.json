@@ -110,10 +110,8 @@
       "N-02": {
         "score": 2,
         "confidence": "low",
-        "rationale": "Vendor claim only, not confirmed: Web dashboard for inspecting jobs.",
-        "evidence_ids": [
-          "E-008"
-        ],
+        "rationale": "No source found on a dashboard; held at the weak-evidence cap until the vendor answers.",
+        "evidence_ids": [],
         "capped": false,
         "overridden": false
       },
