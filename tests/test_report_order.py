@@ -19,7 +19,7 @@ class ReportOrder(unittest.TestCase):
         self.d = os.path.join(self.tmp, "eval")
         shutil.copytree(SAMPLE, self.d)
         self.path = os.path.join(self.d, "report.md")
-        report_draft.draft(self.d, {"recommendation": "Choose Alpha Queue.", "confidence": "medium", "confidence_why": "Clear lead.", "options": {"opt-a": ["s1", "g1"], "opt-b": ["s2", "g2"]}, "bias": "b", "cost": "c",
+        report_draft.draft(self.d, {"recommendation": "Alpha Queue leads Beta Queue in a near-tie, so the choice is not clear-cut.", "confidence": "medium", "confidence_why": "The lead is under the meaningful gap.", "options": {"opt-a": ["s1", "g1"], "opt-b": ["s2", "g2"]}, "bias": "b", "cost": "c",
                                     "sensitivity": "s", "next_steps": ["n"], "risks": ["r"], "excluded": "e"})
         self.text = open(self.path, encoding="utf-8").read()
 

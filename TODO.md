@@ -281,3 +281,28 @@ Use it in tests for A–E.
 
 ### [x] F3 (P3) Keep the README in sync
 Update the README's file table, script list and "Scope and packages" section for every contract change above, and keep the `sync_shared.py --check` CI step.
+
+---
+
+## G. Scorecard findings (2026-11-02)
+
+`scripts/scorecard.py` measured the skills at 73.3 / 100 (defect detection 63.2%, instruction lint 90.1%) before these changes, and found:
+
+### [x] G1 (P1) Confidence was trusted, not checked
+`score` took the written confidence as given. It now computes what the evidence supports (rule 13), lowers an overclaim and warns. DISPUTED rows count as no source. Both samples overclaimed; capability-type non-functional requirements now carry `evidence_class: feature`.
+
+### [x] G2 (P1) Silent edits after scoring
+A weight or score changed after `score` went unnoticed by eval-report. `validate --before report` now recomputes and fails when `scores.json` is out of date.
+
+### [x] G3 (P1) Report check accepted a wrong leader, edited table scores and "decisive" near-ties
+`check` now verifies the provenance line, the decision table's order and scores, that the recommendation names the leader first, quotes the lead correctly, never calls a near-tie decisive and never recommends an excluded option. It also read the matrix legend as the confidence statement; it now reads the recommendation only.
+
+### [x] G4 (P1) Draft put the excluded options under "Verify before deciding"
+The excluded-options table was written after the "Verify before deciding" heading, so "Excluded options" was empty in the sample report. Fixed in `draft` and in the sample.
+
+### [x] G5 (P2) Evidence and gate integrity
+Dates, empty findings or URLs, a score or feature cell citing another option's evidence, gates without a rubric, options in play without a verdict or gate_status, judged clauses without evidence, labels that do not fit the source, steps completed out of order, report dated before the evaluation.
+
+### [x] G6 (P2) Instruction drift
+eval-report numbered six steps "3"; eval-compare described per-criterion scoring and a 3-point near-tie although the anchored model scores requirements and uses `meaningful_gap` (5); the contract listed `package` twice. The gateway sample had no `cost.json`, so it failed its own step's precondition.
+

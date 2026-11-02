@@ -35,7 +35,8 @@
     "priority": "must",
     "gate": true,
     "verification_note": "Documentation, vendor confirmation or a POC test",
-    "gate_scope": "All components of the package"
+    "gate_scope": "All components of the package",
+    "evidence_class": "feature"
   },
   {
     "id": "P-02",
@@ -45,7 +46,8 @@
     "priority": "must",
     "gate": true,
     "verification_note": "Documentation, vendor confirmation or a POC test",
-    "gate_scope": "No vendor-hosted service"
+    "gate_scope": "No vendor-hosted service",
+    "evidence_class": "feature"
   },
   {
     "id": "P-03",
@@ -55,7 +57,8 @@
     "priority": "must",
     "gate": true,
     "verification_note": "Documentation, vendor confirmation or a POC test",
-    "gate_scope": "Cold start included"
+    "gate_scope": "Cold start included",
+    "evidence_class": "feature"
   },
   {
     "id": "S-01",
@@ -65,7 +68,8 @@
     "priority": "must",
     "gate": true,
     "verification_note": "Documentation, vendor confirmation or a POC test",
-    "gate_scope": "Local or regional presence"
+    "gate_scope": "Local or regional presence",
+    "evidence_class": "feature"
   },
   {
     "id": "S-02",
@@ -75,7 +79,8 @@
     "priority": "must",
     "gate": true,
     "verification_note": "Documentation, vendor confirmation or a POC test",
-    "gate_scope": "Written entitlement map"
+    "gate_scope": "Written entitlement map",
+    "evidence_class": "feature"
   },
   {
     "id": "C-01",
@@ -84,7 +89,8 @@
     "text": "Predictable pricing at 20 million requests per month",
     "priority": "must",
     "gate": false,
-    "verification_note": "Documentation, vendor confirmation or a POC test"
+    "verification_note": "Documentation, vendor confirmation or a POC test",
+    "evidence_class": "feature"
   },
   {
     "id": "C-02",
@@ -93,6 +99,7 @@
     "text": "A usable free or development tier",
     "priority": "should",
     "gate": false,
-    "verification_note": "Documentation, vendor confirmation or a POC test"
+    "verification_note": "Documentation, vendor confirmation or a POC test",
+    "evidence_class": "feature"
   }
 ]

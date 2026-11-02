@@ -163,11 +163,6 @@ def draft(d, prose=None):
     if P.get("changes"):
         md += ["", "### Changes since evidence was gathered", "", P["changes"], ""]
     md += ["", "## Excluded options", ""]
-    dc = D.scores.get("deciding_cells") or {}
-    if dc.get("requirements") or dc.get("gates"):
-        md += ["", "## Verify before deciding", "", "The cells that decide the result; check them by hand before relying on it.", ""]
-        md += ["- Gate %s for %s: %s%s." % (g["gate"], D.name.get(g["option_id"], g["option_id"]).split(" (")[0], g["verdict"], " (" + g["basis"] + ")" if g["basis"] else "") for g in dc.get("gates", [])]
-        md += ["- %s: %s scores %s against %s for %s (%+.1f points)." % (x["requirement_id"], short(x["leader"]), x["leader_score"], x["runner_up_score"], short(x["runner_up"]), x["points"]) for x in dc.get("requirements", [])]
     failed = [x for x in sc["excluded"] if x["reason"] != "not profiled"]
     if failed:
         md += table(["Option", "Reason"], [[D.name[x["option_id"]], x["reason"]] for x in failed]) + [""]
@@ -175,6 +170,11 @@ def draft(d, prose=None):
     skipped = [o["name"] for o in D.opts if o.get("not_profiled")]  # listed in scores.json as excluded with the reason "not profiled"
     if skipped:
         md += ["", "Listed but not profiled: " + ", ".join(skipped) + "."]
+    dc = D.scores.get("deciding_cells") or {}
+    if dc.get("requirements") or dc.get("gates"):
+        md += ["", "## Verify before deciding", "", "The cells that decide the result; check them by hand before relying on it.", ""]
+        md += ["- Gate %s for %s: %s%s." % (g["gate"], D.name.get(g["option_id"], g["option_id"]).split(" (")[0], g["verdict"], " (" + g["basis"] + ")" if g["basis"] else "") for g in dc.get("gates", [])]
+        md += ["- %s: %s scores %s against %s for %s (%+.1f points)." % (x["requirement_id"], short(x["leader"]), x["leader_score"], x["runner_up_score"], short(x["runner_up"]), x["points"]) for x in dc.get("requirements", [])]
     md += ["", "## Gates", ""] + _gates_md(D)
     oi = _load(d, "open_items.json") if os.path.exists(os.path.join(d, "open_items.json")) else []
     pocs = [x for x in oi if x["owner_type"] == "poc_test"]
@@ -291,16 +291,22 @@ def check(d):
     na = D.crit.get("not_assessed") or []
     if na and "Not assessed:" not in text:
         problems.append("criteria.json lists decision factors that are not assessed (%s) but the report has no 'Not assessed:' line" % "; ".join(na))
+    elif na:
+        line = next(ln for ln in text.splitlines() if "Not assessed:" in ln).lower()
+        left = [f for f in na if f.lower() not in line]
+        if left:
+            problems.append("the 'Not assessed:' line leaves out %s, which criteria.json lists as not assessed" % "; ".join(left))
     sec = re.search(r"^##\s+Decision recommendation\s*\n(.*?)(?=^##\s)", text, re.M | re.S)
     rec = sec.group(1) if sec else ""
     lead = D.ranking[0]
     if lead and D.name[lead].split(" (")[0] not in rec:
         problems.append("the recommendation does not name the top-ranked option (%s)" % D.name[lead].split(" (")[0])
-    if not re.search(r"\bConfidence:\s*\**\s*(high|medium|low)\b", text, re.I):
+    # the confidence statement lives in the recommendation; the matrix legend also says "Confidence: high = ..." and must not count
+    if not re.search(r"\bConfidence:\s*\**\s*(high|medium|low)\b", rec, re.I):
         problems.append("the recommendation states no confidence level (high, medium or low)")
     if re.search(r"[Cc]onfidence[^.\n]{0,40}\d+\s*%", text):
         problems.append("confidence is given as a percentage; use high, medium or low")
-    m = re.search(r"\bConfidence:\s*\**\s*(high|medium|low)\b", text, re.I)
+    m = re.search(r"\bConfidence:\s*\**\s*(high|medium|low)\b", rec, re.I)
     if m and m.group(1).lower() == "high":
         changed = D.scores.get("order_changes", "0 of 0")
         gap, need = D.scores.get("lead"), D.scores.get("meaningful_gap")
@@ -311,14 +317,77 @@ def check(d):
     for o in D.ranking:
         if "%.1f" % D.scores["totals"][o] not in text:
             problems.append("the score of %s (%.1f) is not in the report" % (D.name[o].split(" (")[0], D.scores["totals"][o]))
+    problems += _provenance_problems(text, D)
+    problems += _decision_table_problems(text, D)
+    problems += _recommendation_problems(rec, D)
     for x in (x for x in D.scores["excluded"] if x["reason"] != "not profiled"):
-        if D.name[x["option_id"]].split(" (")[0] not in text:
+        short = D.name[x["option_id"]].split(" (")[0]
+        for sent in re.split(r"(?<=[.!?])\s+", rec):
+            if short in sent and not re.search(r"exclud|fail|not eligible|ineligible|gate|not met|ruled out", sent, re.I):
+                problems.append("the recommendation mentions %s, which is excluded, without saying it failed a gate: '%s'" % (short, sent.strip()[:120]))
+    exc = re.search(r"^##\s+Excluded options\s*\n(.*?)(?=^##\s|\Z)", text, re.M | re.S)
+    for x in (x for x in D.scores["excluded"] if x["reason"] != "not profiled"):
+        short = D.name[x["option_id"]].split(" (")[0]
+        if short not in text:
             problems.append("excluded option %s is not mentioned" % D.name[x["option_id"]])
-    if D.scores["ties"] and not re.search(r"near-tie|tie|not clear-cut|undecided", rec + text, re.I):
-        problems.append("the scores are a near-tie but the report does not say the choice is not clear-cut")
+        elif exc is None or short not in exc.group(1):
+            problems.append("excluded option %s is not listed under 'Excluded options' with the gate it failed" % short)
+    if D.scores["ties"] and not re.search(r"near-tie|\btie\b|not clear-cut|undecided", rec, re.I):
+        problems.append("the scores are a near-tie but the recommendation does not say the choice is not clear-cut")
     if D.scores.get("could_overtake_leader") and not re.search(r"unknown|overtake|undecided", rec, re.I):
         problems.append("unknown requirements could change the leader but the recommendation does not say so")
     return problems
+
+
+DECISIVE = re.compile(r"\b(decisive(ly)?|clear(ly)? (winner|best|ahead|better)|by a wide margin|comfortably|undisputed|outright)\b", re.I)
+
+
+def _provenance_problems(text, D):
+    """The first line under the title is `Evaluation date <date>. Scale 0 to <n>. Cost mode: <mode>.` and agrees with the files."""
+    body = [ln for ln in text.splitlines()[1:] if ln.strip()]
+    first = body[0] if body else ""
+    want = "Evaluation date %s. Scale 0 to %s. Cost mode: %s" % (D.status.get("evaluation_date", "n/a"), D.mx, D.crit["cost_mode"])
+    if not first.startswith(want):
+        return ["the report does not open with the provenance line '%s.'" % want]
+    return []
+
+
+def _decision_table_problems(text, D):
+    """The decision table lists the ranked options in the scorer's order with the scorer's totals."""
+    sec = re.search(r"^##\s+Decision table\s*\n(.*?)(?=^##\s|\Z)", text, re.M | re.S)
+    if not sec:
+        return []
+    rows = [[c.strip() for c in ln.strip().strip("|").split("|")] for ln in sec.group(1).splitlines() if re.match(r"^\|\s*\d+\s*\|", ln)]
+    out = []
+    names = [D.name[o].split(" (")[0] for o in D.ranking]
+    if [r[1] for r in rows] != names:
+        out.append("the decision table order (%s) is not the scorer's ranking (%s)" % (", ".join(r[1] for r in rows), ", ".join(names)))
+    for r, o in zip(rows, D.ranking):
+        want = "%.1f" % D.scores["totals"][o]
+        if len(r) > 2 and r[2] != want:
+            out.append("the decision table gives %s a score of %s; scores.json has %s" % (r[1], r[2], want))
+    return out
+
+
+def _recommendation_problems(rec, D):
+    """The recommendation leads with the top-ranked option, never calls a near-tie decisive, and quotes the lead correctly."""
+    out = []
+    if not D.ranking or not rec.strip():
+        return out
+    names = {o: D.name[o].split(" (")[0] for o in D.ranking}
+    first = min(((rec.find(n), o) for o, n in names.items() if rec.find(n) >= 0), default=None)
+    if first and first[1] != D.ranking[0]:
+        out.append("the recommendation names %s first, but %s is ranked first" % (names[first[1]], names[D.ranking[0]]))
+    lead, gap = D.scores.get("lead"), D.scores.get("meaningful_gap")
+    close = bool(D.scores.get("ties")) or (lead is not None and gap is not None and lead < gap) or not str(D.scores.get("order_changes", "0 of")).startswith("0 of")
+    m = DECISIVE.search(rec)
+    if close and m:
+        out.append("the lead is %s points (meaningful gap %s) or the order changes under sensitivity, but the recommendation calls it '%s'" % (lead, gap, m.group(0)))
+    if lead is not None:
+        for m in re.finditer(r"\bby (?:about |around |roughly )?(\d+(?:\.\d+)?) points?\b", rec):
+            if abs(float(m.group(1)) - lead) > 0.55:
+                out.append("the recommendation says the lead is %s points; scores.json has %s" % (m.group(1), lead))
+    return out
 
 
 def main(argv=None):

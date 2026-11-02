@@ -16,6 +16,7 @@ Commands:
                               append one evidence row with the next free id and print the id
 """
 import argparse
+import datetime
 import json
 import math
 import os
@@ -72,6 +73,12 @@ STALE_MAP = {  # what changed -> steps that depend on it (contract rule 8)
 }
 CAP = 2
 TIE_MARGIN = 3.0
+ISO_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+ISO_DATE_OR_MONTH = re.compile(r"^\d{4}-\d{2}(-\d{2})?$")
+# words that make a requirement untestable unless a number or an explicit placeholder pins them down (eval-define quality rule)
+VAGUE = re.compile(r"\b(fast|quick(ly)?|secure|scalable|robust|performant|user[- ]friendly|easy to use|intuitive|high[- ]performance|reliable|efficient|flexible|modern|seamless(ly)?)\b", re.I)
+THRESHOLD = re.compile(r"\d|TBD|\bto be (set|agreed|confirmed)\b|<[^>]+>|\[[^\]]+\]", re.I)
+CONF_RANK = {"low": 0, "medium": 1, "high": 2}
 REQ_KEYS = ["id", "type", "category", "text", "priority", "gate", "verification_note"]
 OPT_KEYS = ["option_id", "name", "source_links", "excluded", "exclusion_reason", "not_profiled", "gate_status"]
 EV_KEYS = ["evidence_id", "option_id", "finding", "source_url", "source_date", "gathered_on", "confidence", "source_kind"]
@@ -143,6 +150,20 @@ def _check_status(status, rep):
     for key in ("completed_steps", "stale_steps"):
         if not isinstance(status[key], list) or any(s not in STEPS for s in status[key]):
             rep.err("status.json %s must be a list of step names (%s)" % (key, ", ".join(STEPS)))
+            return
+    ev_date, rp_date = str(status.get("evaluation_date") or ""), str(status.get("report_date") or "")
+    for key, val in (("evaluation_date", ev_date), ("report_date", rp_date)):
+        if val and not ISO_DATE.match(val):
+            rep.err("status.json %s must be a date (YYYY-MM-DD), not '%s'" % (key, val))
+    if ISO_DATE.match(ev_date) and ISO_DATE.match(rp_date) and rp_date < ev_date:
+        rep.err("status.json report_date %s is before evaluation_date %s" % (rp_date, ev_date))
+    done = status["completed_steps"]
+    for i, step in enumerate(STEPS):
+        if step in done:
+            missing = [p for p in STEPS[:i] if p not in done]
+            if missing:
+                rep.err("status.json: %s is complete but earlier step(s) %s are not; steps complete in order (run eval-%s)" % (step, ", ".join(missing), missing[0]))
+                break
 
 
 def _check_requirements(reqs, rep):
@@ -169,6 +190,10 @@ def _check_requirements(reqs, rep):
             rep.err("%s: evidence_class must be feature or measure" % where)
         if r.get("basis") not in (None, "stated", "assumed"):
             rep.err("%s: basis must be stated or assumed" % where)
+        if VAGUE.search(str(r["text"])) and not THRESHOLD.search(str(r["text"])):
+            rep.warn("%s (%s): '%s' is vague; give a measurable threshold or an explicit placeholder such as TBD" % (where, r["id"], VAGUE.search(str(r["text"])).group(0)))
+        if not str(r["text"]).strip():
+            rep.err("%s: text is empty" % where)
         if not isinstance(r["gate"], bool):
             rep.err("%s: gate must be true or false" % where)
         elif r["gate"] and not str(r.get("gate_scope", "")).strip():
@@ -230,6 +255,19 @@ def _check_gates(crit, gate_ids, opt_ids, ev_ids, opts, rep):
         rep.err("criteria.json gates must be a list")
         return
     status = {o["option_id"]: (o.get("gate_status") or {}) for o in opts or [] if isinstance(o, dict) and "option_id" in o}
+    # an option excluded by one gate gets no further research (eval-discover step 4), so only the options still in play are judged on every gate
+    profiled = [o["option_id"] for o in opts or [] if isinstance(o, dict) and "option_id" in o and not o.get("not_profiled") and not o.get("excluded")]
+    rubric_for = {g.get("requirement_id") for g in gates if isinstance(g, dict)}
+    for rid in sorted(gate_ids - rubric_for - rep.retired):
+        rep.err("gate requirement %s has no rubric in criteria.json gates; eval-analyze writes one for every gate" % rid)
+    for g in gates:
+        if not isinstance(g, dict) or not isinstance(g.get("verdicts"), dict):
+            continue
+        for oid in profiled:
+            if oid not in g["verdicts"]:
+                rep.err("criteria.json gate %s has no verdict for %s; every option still in play is judged against every gate" % (g.get("id"), oid))
+            if g.get("requirement_id") not in status.get(oid, {}):
+                rep.err("options.json %s has no gate_status for %s; record pass, fail, unverified or waived_by_user" % (oid, g.get("requirement_id")))
     seen = set()
     for i, g in enumerate(gates):
         where = "criteria.json gate %d" % i
@@ -262,6 +300,8 @@ def _check_gates(crit, gate_ids, opt_ids, ev_ids, opts, rep):
                     rep.err("%s: clause %d needs met (true, false or null) and a note" % (w, j + 1))
                     continue
                 met.append(c["met"])
+                if c["met"] is not None and not c.get("evidence_ids"):
+                    rep.err("%s: clause %d is judged %s but cites no evidence; a clause is judged only from evidence rows" % (w, j + 1, "met" if c["met"] else "not met"))
                 for eid in c.get("evidence_ids", []):
                     if ev_ids and eid not in ev_ids:
                         rep.err("%s: clause %d cites unknown evidence id %s" % (w, j + 1, eid))
@@ -371,7 +411,7 @@ def _check_package(pkg, where, rep):
 
 
 def _check_options(opts, gate_ids, rep):
-    ids = set()
+    ids, names = set(), set()
     if not isinstance(opts, list):
         rep.err("options.json must be a list")
         return ids
@@ -382,6 +422,10 @@ def _check_options(opts, gate_ids, rep):
         if o["option_id"] in ids:
             rep.err("%s: duplicate option_id %s" % (where, o["option_id"]))
         ids.add(o["option_id"])
+        nm = str(o["name"]).strip().lower()
+        if nm in names:
+            rep.err("%s: duplicate option name %s; every option needs a distinct name for the report" % (where, o["name"]))
+        names.add(nm)
         if "provider" in o and not (isinstance(o["provider"], str) and o["provider"].strip()):
             rep.err("%s: provider must be a non-empty string naming the company or foundation behind the option" % where)
         if "package" in o:
@@ -415,6 +459,14 @@ def _check_evidence(ev, opt_ids, req_ids, crit_ids, rep):
             rep.err("%s: needs requirement_id and/or criterion_id" % where)
         if e["confidence"] not in LABELS:
             rep.err("%s: confidence must be one of %s" % (where, ", ".join(sorted(LABELS))))
+        if e["confidence"] == "CONFIRMED" and e["source_kind"] == "vendor":
+            rep.warn("%s (%s): CONFIRMED means two or more independent sources agree; a vendor statement on its own is PRIMARY (as an attributed statement)" % (where, e["evidence_id"]))
+        if e["confidence"] == "PRIMARY" and e["source_kind"] == "independent":
+            rep.warn("%s (%s): PRIMARY is the source itself (official documentation, a filing); one independent source is PROBABLE, two that agree are CONFIRMED" % (where, e["evidence_id"]))
+        for key in ("finding", "source_url"):
+            if not str(e[key]).strip():
+                rep.err("%s (%s): %s is empty; every row states what was found and where" % (where, e["evidence_id"], key))
+        _check_evidence_dates(e, where, rep)
         if e["source_kind"] not in SOURCE_KINDS:
             rep.err("%s: source_kind must be vendor, independent, oss_project_docs or source_code" % where)
         if e["source_kind"] == "source_code":
@@ -433,6 +485,23 @@ def _check_evidence(ev, opt_ids, req_ids, crit_ids, rep):
         if e.get("criterion_id") and crit_ids and e["criterion_id"] not in crit_ids:
             rep.err("%s: unknown criterion_id %s" % (where, e["criterion_id"]))
     return ids
+
+
+def _check_evidence_dates(e, where, rep, today=None):
+    """gathered_on is a real date that is not in the future; source_date is a date, a month or unknown, and not after gathered_on."""
+    today = today or datetime.date.today().isoformat()
+    g, sd = str(e.get("gathered_on", "")), str(e.get("source_date", ""))
+    if not ISO_DATE.match(g):
+        rep.err("%s (%s): gathered_on must be a date (YYYY-MM-DD), not '%s'" % (where, e.get("evidence_id"), g))
+        g = None
+    elif g > today:
+        rep.err("%s (%s): gathered_on %s is in the future" % (where, e.get("evidence_id"), g))
+    if sd.lower() == "unknown":
+        return
+    if not ISO_DATE_OR_MONTH.match(sd):
+        rep.err("%s (%s): source_date must be YYYY-MM-DD, YYYY-MM or unknown, not '%s'" % (where, e.get("evidence_id"), sd))
+    elif g and sd[:len(g)] > g[:len(sd)]:
+        rep.err("%s (%s): source_date %s is after gathered_on %s; a source cannot be read before it exists" % (where, e.get("evidence_id"), sd, g))
 
 
 def model_of(scores):
@@ -675,6 +744,8 @@ def _check_component(comp, where, aids, ev_ids, rep):
             ups = [t["up_to"] for t in tiers]
             if ups[-1] is not None or any(u is None for u in ups[:-1]) or ups[:-1] != sorted(ups[:-1]):
                 rep.err("%s: tiers must have ascending up_to and end with up_to null" % where)
+            if any(not _num(t["unit_price"]) or t["unit_price"] < 0 for t in tiers):
+                rep.err("%s: tier unit_price must be a non-negative number" % where)
         if comp.get("tier_mode", "graduated") not in ("graduated", "volume"):
             rep.err("%s: tier_mode must be graduated or volume" % where)
 
@@ -776,7 +847,84 @@ def validate(d, before=None):
                     rep.warn("gate %s is marked %s for %s without an evidence row for that requirement" % (gid, st, o.get("name", o.get("option_id"))))
     if cost is not None:
         _check_cost(cost, opts if isinstance(opts, list) else None, ev_ids, rep)
+    if isinstance(opts, list):
+        _check_option_names(opts, reqs if isinstance(reqs, list) else [], crit if isinstance(crit, dict) else {}, rep)
+    if isinstance(scores, dict) and isinstance(ev, list) and isinstance(opts, list):
+        _check_score_citations(scores, ev, opts, reqs if isinstance(reqs, list) else [], crit if isinstance(crit, dict) else {}, rep)
+    if isinstance(opts, list) and isinstance(ev, list):
+        # oss_base null means "checked, none"; a missing key means "not checked", which bias_checks reports
+        none = {o.get("option_id") for o in opts if isinstance(o, dict) and "oss_base" in o and not o["oss_base"]}
+        for e in ev:
+            if isinstance(e, dict) and e.get("inherited_from_oss") and e.get("option_id") in none:
+                rep.err("evidence %s is marked inherited_from_oss but option %s records oss_base null (no open-source base to inherit from)" % (e.get("evidence_id"), e.get("option_id")))
+        feats = _read_json(d, "features.json", Report()) if os.path.exists(os.path.join(d, "features.json")) else None
+        owner = {e.get("evidence_id"): e.get("option_id") for e in ev if isinstance(e, dict)}
+        for f in feats if isinstance(feats, list) else []:
+            for oid, cell in ((f.get("cells") or {}).items() if isinstance(f, dict) else []):
+                for eid in (cell or {}).get("evidence_ids", []) if isinstance(cell, dict) else []:
+                    if eid in owner and owner[eid] != oid:
+                        rep.err("features.json %s/%s cites %s, which is evidence about %s" % (f.get("id"), oid, eid, owner[eid]))
+    if before == "report" and not rep.errors and isinstance(scores, dict) and isinstance(scores.get("totals"), dict):
+        _check_scores_current(d, scores, rep)
     return rep
+
+
+def _check_scores_current(d, scores, rep):
+    """The computed part of scores.json still follows from the inputs: nothing was edited after the last `score` run."""
+    crep, fresh = compute(d, write=False)
+    if fresh is None:
+        rep.err("scores.json cannot be recomputed (%s); rerun eval-compare" % "; ".join(crep.errors[:2]))
+        return
+    old, new = scores.get("totals", {}), fresh.get("totals", {})
+    diff = sorted(o for o in set(old) | set(new) if o not in old or o not in new or abs(old[o] - new[o]) > 0.05)
+    if diff or scores.get("ranking") != fresh.get("ranking"):
+        rep.err("scores.json is out of date: recomputing gives %s instead of %s; weights, scores or evidence changed after scoring. "
+                "Run `eval_calc.py changed eval <topic>` and rerun eval-compare" % (
+                    ", ".join("%s %.1f" % (o, new[o]) for o in fresh.get("ranking", [])), ", ".join("%s %.1f" % (o, old[o]) for o in scores.get("ranking", []) if o in old)))
+
+
+def _name_pattern(o):
+    names = [str(o.get("name", "")).strip()]
+    return [re.compile(r"(?<![\w-])%s(?![\w-])" % re.escape(n), re.I) for n in names if len(n) >= 3]
+
+
+def _check_option_names(opts, reqs, crit, rep):
+    """Requirements and criteria describe needs, never a candidate (eval-define and eval-analyze quality rules)."""
+    pats = [(o.get("name"), p) for o in opts if isinstance(o, dict) for p in _name_pattern(o)]
+    for r in reqs:
+        if isinstance(r, dict):
+            for n, p in pats:
+                if p.search(str(r.get("text", ""))):
+                    rep.warn("requirement %s names the option %s; a requirement describes the need, not a product" % (r.get("id"), n))
+    for c in crit.get("criteria", []) if isinstance(crit.get("criteria"), list) else []:
+        if not isinstance(c, dict):
+            continue
+        text = " ".join([str(c.get("name", ""))] + [str(v) for v in (c.get("anchors") or {}).values()])
+        for n, p in pats:
+            if p.search(text):
+                rep.err("criterion %s names the option %s; no criterion may mention a specific option" % (c.get("id"), n))
+
+
+def _check_score_citations(scores, ev, opts, reqs, crit, rep):
+    """A score cites evidence about the same option and, when the row names one, the same requirement or its criterion."""
+    by_id = {e["evidence_id"]: e for e in ev if isinstance(e, dict) and "evidence_id" in e}
+    crit_of = {}
+    for c in crit.get("criteria", []) if isinstance(crit.get("criteria"), list) else []:
+        for rid in c.get("requirement_ids", []) if isinstance(c, dict) else []:
+            crit_of[rid] = c.get("id")
+    excluded = {o["option_id"] for o in opts if isinstance(o, dict) and (o.get("excluded") or o.get("not_profiled"))}
+    for oid, rows in (scores.get("requirement_scores") or {}).items():
+        if oid in excluded:
+            rep.warn("scores.json scores %s, which is excluded or not profiled; its scores are ignored and it is never ranked" % oid)
+        for rid, row in (rows or {}).items():
+            for eid in (row or {}).get("evidence_ids", []) if isinstance(row, dict) else []:
+                e = by_id.get(eid)
+                if not e:
+                    continue
+                if e.get("option_id") != oid:
+                    rep.err("scores.json %s/%s cites %s, which is evidence about %s; cite evidence about the option scored" % (oid, rid, eid, e.get("option_id")))
+                elif e.get("requirement_id") and e["requirement_id"] != rid and e.get("criterion_id") != crit_of.get(rid):
+                    rep.warn("scores.json %s/%s cites %s, which is evidence for requirement %s" % (oid, rid, eid, e["requirement_id"]))
 
 
 # ---- cost model ----------------------------------------------------------
@@ -1152,9 +1300,22 @@ def _independent_sources(rows):
     for r in rows:
         if r["confidence"] in WEAK:
             continue
-        if r["source_kind"] in ("independent", "oss_project_docs"):
+        if r["source_kind"] in ("independent", "oss_project_docs", "source_code"):
             keys.add(r["source_kind"] + ":" + urlparse(r["source_url"]).netloc.lower())
     return len(keys)
+
+
+def supported_confidence(rows, requirement):
+    """The highest confidence the cited evidence supports (contract rule 13).
+
+    Independent organisations count one each; the vendor's own documentation counts once more, and only for what a
+    product provides. Weak and DISPUTED rows count for nothing: conflicting sources confirm nothing.
+    """
+    usable = [r for r in rows if r.get("confidence") not in WEAK and r.get("confidence") != "DISPUTED" and r.get("scope") != "out_of_scope"]
+    n = _independent_sources(usable)
+    if _is_feature(requirement) and any(r.get("source_kind") == "vendor" for r in usable):
+        n += 1
+    return "high" if n >= 2 else "medium" if n == 1 else "low"
 
 
 def _is_feature(r):
@@ -1233,10 +1394,21 @@ def _anchored_option(o, name, req, criteria, scores, ev_by_id, mx, rep):
         if row["score"] >= 1 and cited and all(ev_by_id.get(i, {}).get("scope") == "out_of_scope" for i in cited):
             rep.err("%s / %s is scored %s but every source behind it is out of scope (a component the gate excludes); score it 0" % (name[o], rid, row["score"]))
         weak = not any(i in ev_by_id and ev_by_id[i]["confidence"] not in WEAK for i in cited)
+        if not row.get("missing"):
+            supported = supported_confidence([ev_by_id[i] for i in cited if i in ev_by_id], req.get(rid))
+            claimed = row.get("confidence")
+            if claimed in CONF_RANK and CONF_RANK[claimed] > CONF_RANK[supported]:
+                rep.warn("%s / %s claims %s confidence but its evidence supports %s (contract rule 13: two sources high, one medium, none low); lowered to %s" % (name[o], rid, claimed, supported, supported))
+                row["confidence"] = supported
         if cited and all(ev_by_id.get(i, {}).get("inherited_from_oss") for i in cited) and row.get("confidence") == "high":
-            row["confidence"] = "medium"  # inherited open-source evidence alone never gives high confidence
+            rep.warn("%s / %s rests only on inherited open-source evidence, which never gives high confidence; lowered to medium" % (name[o], rid))
+            row["confidence"] = "medium"
+        if row["score"] == 0 and not cited and not row.get("missing"):
+            rep.warn("%s / %s is scored 0 with no evidence; 'not met' needs a source saying the capability is absent. "
+                     "If nothing could be read, leave it unscored (unknown) and research it" % (name[o], rid))
         row["capped"] = False
         if weak and row["score"] > CAP and not row.get("missing"):
+            rep.warn("%s / %s is scored %s but rests on no evidence above UNVERIFIED; capped at %d" % (name[o], rid, row["score"], CAP))
             row["score"], row["capped"] = CAP, True
         x = ovr.get((o, rid))
         row["overridden"] = bool(x)
@@ -1333,7 +1505,8 @@ def _deciding_cells(ranking, rscores, criteria, req, scores, crit, share=0.8):
     return out
 
 
-def compute(d):
+def compute(d, write=True):
+    """Score the evaluation. With write=False nothing is written: used to check that scores.json is current."""
     rep = validate(d)
     reqs = _read_json(d, "requirements.json", rep, True)
     crit = _read_json(d, "criteria.json", rep, True)
@@ -1344,7 +1517,7 @@ def compute(d):
         return rep, None
     cost_summary = None
     if os.path.exists(os.path.join(d, "cost.json")):
-        crep, cres = compute_cost(d)
+        crep, cres = compute_cost(d, write=write)
         rep.errors += crep.errors
         if cres:
             cost_summary = {"currency": cres["currency"], "horizon_months": cres["horizon_months"], "cheapest": cres["cheapest"],
@@ -1541,6 +1714,8 @@ def compute(d):
         "excluded": [{"option_id": o["option_id"], "reason": o["exclusion_reason"] or "not profiled"} for o in excluded],
         "must_summary": must_summary, "evidence_coverage": coverage, "unknown_bounds": unknown_bounds, "could_overtake_leader": overtake, "sensitivity": sens, "confidence_tests": conf_tests, "warnings": rep.warnings,
     })
+    if not write:
+        return rep, out
     _note_earlier_totals(d, totals)
     with open(os.path.join(d, "scores.json"), "w", encoding="utf-8", newline="\n") as f:
         json.dump(out, f, indent=2, ensure_ascii=False)
