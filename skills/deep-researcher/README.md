@@ -12,7 +12,7 @@ to unresolved-requirement wording and within-case source reuse have not been app
 | Path | Purpose |
 |---|---|
 | `SKILL.md` | The only discoverable skill entry point |
-| `references/` | Claim-specific checks, numeric-confidence guidance, and delegation contract |
+| `references/` | Claim-specific checks, numeric-confidence guidance, delegation contract, and the eval-skills handoff |
 | `tests/` | Twenty regression cases, synthetic source replay, evaluator, recording tool, and unit tests |
 | `tests/TESTING.md` | Behavioral test procedure, quality gates, and limitations |
 | `tests/results/skill-smoke-2026-11-01/` | Recorded answers, source traces, reviews, observations, and evaluation |
@@ -115,7 +115,21 @@ Checksums establish integrity relative to this archive, not publisher authentici
 Packaging checks, evaluator unit tests, and reviewed model behavior are separate results.
 Read [the testing guide](tests/TESTING.md) before interpreting a pass.
 
+## Use from the eval skills
+
+The eval skills in this repository (`eval-define` to `eval-report`) use this skill first for
+research, fall back to `deep-research` when it is not installed, and research directly under
+the same rules when neither is. When called that way, section 8.3 loads
+[`references/eval-handoff.md`](references/eval-handoff.md): the caller supplies the option,
+requirements, scope and budget, and this skill returns findings as `evidence.json` rows with
+its verdicts mapped to the eval labels. The eval skill keeps the labels, budgets and scores.
+
 ## Included evidence and known limitations
+
+The recorded smoke comparison predates section 8.3 and the eval handoff reference, so the
+current `SKILL.md` hash differs from the recorded candidate. The 20 cases do not exercise
+the handoff; it is covered only by the eval skills' packaging checks.
+
 
 The recorded synthetic smoke comparison passed **20 scenarios and 35 reviewed criteria
 per arm**. Revised answers used 1,696 words versus 2,271 for the baseline, but made

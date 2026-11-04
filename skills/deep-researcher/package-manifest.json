@@ -8,13 +8,13 @@
   "files": [
     {
       "path": "README.md",
-      "bytes": 6234,
-      "sha256": "1c1a7b7a907e508fb9c0dbc19ea309764840642a5199cb147c330b12669dc783"
+      "bytes": 7077,
+      "sha256": "dd81283c37082db6a8a75a3e334a3377e10c9a568f3e0e8932c38ec1fc003e1a"
     },
     {
       "path": "SKILL.md",
-      "bytes": 18181,
-      "sha256": "08bc2249f0925ac2fb04bf417d1b70c8d4d27c5b39151c108e1ab653df034b53"
+      "bytes": 18466,
+      "sha256": "8b47587c03fe103fc685cf4eb92b51141561d9b92ffd5b08d0c42889e2d8a12c"
     },
     {
       "path": "references/claim-specific-checks.md",
@@ -27,14 +27,19 @@
       "sha256": "3cf1fad275734cf76ed4e0b2dda0f93dbd6de2d2016d3306d386e06f8fdb0182"
     },
     {
+      "path": "references/eval-handoff.md",
+      "bytes": 3972,
+      "sha256": "194c594e3b58540bb45f07eddb54b66e4230a7745c045430e659f8ebc77df10d"
+    },
+    {
       "path": "references/quantified-confidence.md",
       "bytes": 3137,
       "sha256": "f039e56c29a5200e273f6aca6ab2479a4fcdef059f88cd561527b9019afb0824"
     },
     {
       "path": "scripts/package_skill.py",
-      "bytes": 5934,
-      "sha256": "1086885c1c986d159b8e4623345652bf09e5854634da0a742fadf4297b2506ba"
+      "bytes": 5968,
+      "sha256": "58b4f3f3f81f12b49204d4d2121364e97126c1d9533d9e5fc6b35527a5ecc1c3"
     },
     {
       "path": "tests/TESTING.md",

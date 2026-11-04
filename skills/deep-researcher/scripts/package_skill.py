@@ -18,6 +18,7 @@ FILES = (
     "SKILL.md",
     "references/claim-specific-checks.md",
     "references/delegation.md",
+    "references/eval-handoff.md",
     "references/quantified-confidence.md",
     "scripts/package_skill.py",
     "tests/TESTING.md",

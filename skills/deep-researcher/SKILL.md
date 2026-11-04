@@ -280,6 +280,12 @@ the coordinator owns cross-claim synthesis and origin regrouping. Directly inspe
 source content and verify citation entailment before using it, regardless of model identity.
 If that inspection is unavailable, disclose the gap rather than relying on delegated assurance.
 
+### 8.3 Called by an eval skill
+
+When an eval skill (eval-define, eval-analyze, eval-discover, eval-compare or eval-report)
+asks for research, load [eval handoff](references/eval-handoff.md) and return findings in
+its row format. The eval skill keeps the labels, budgets, and scores.
+
 ## 9. Output
 
 ### Quick

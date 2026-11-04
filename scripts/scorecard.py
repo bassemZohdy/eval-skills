@@ -941,6 +941,44 @@ def lint():
         check("report_draft.py --help documents prose key %s" % k, re.search(r"\b%s\b" % k, helptext))
         check("eval-report documents prose key %s" % k, re.search(r"\b%s\b" % k, report))
 
+    # research route: deep-researcher first, deep-research and direct research as fallbacks (contract rule 16)
+    check("contract rule 16 names deep-researcher, deep-research and direct research in that order",
+          re.search(r"16\. Research skill\..*`deep-researcher`.*`deep-research`.*research directly", contract))
+    for sk, text in all_text.items():
+        for sent in re.split(r"(?<=[.!?])\s+", text):
+            if re.search(r"\bdeep-research\b(?!er)", sent):
+                check("%s: deep-research is named only as a fallback to deep-researcher" % sk, "deep-researcher" in sent, sent.strip()[:120])
+        if re.search(r"\bresearch (skill|directly)|\blook-ups?\b", text):
+            check("%s: research goes through contract rule 16" % sk, "rule 16" in text or sk == "eval-orchestrator" and "deep-researcher" in text)
+    dr = os.path.join(ROOT, "skills", "deep-researcher")
+    handoff = os.path.join(dr, "references", "eval-handoff.md")
+    check("deep-researcher: eval handoff reference exists", os.path.exists(handoff))
+    if os.path.exists(handoff):
+        ho, dr_skill = _read(handoff), _read(os.path.join(dr, "SKILL.md"))
+        check("deep-researcher: SKILL.md links the eval handoff", "](references/eval-handoff.md)" in dr_skill)
+        check("deep-researcher: the handoff is in the package allowlist", '"references/eval-handoff.md"' in _read(os.path.join(dr, "scripts", "package_skill.py")))
+        table = ho[ho.find("## Verdict to eval label"):ho.find("## Gates")]
+        for label in ("PRIMARY", "CONFIRMED", "PROBABLE", "UNVERIFIED", "COULD NOT VERIFY", "DISPUTED"):
+            check("deep-researcher handoff maps to %s" % label, re.search(r"\| %s\b" % label, table))
+        sec = dr_skill[dr_skill.find("### 5.4"):dr_skill.find("### 5.5")]
+        verdicts = [v for v in re.findall(r"^\| ([A-Z][a-z ]+?) \|", sec, re.M) if v != "Verdict"]
+        check("deep-researcher: section 5.4 lists its verdicts", len(verdicts) >= 5, str(verdicts))
+        for v in verdicts:
+            check("deep-researcher handoff covers the verdict %s" % v, re.search(r"\b%s\b" % re.escape(v), table, re.I))
+        for g in ("PASS", "FAIL", "UNKNOWN", "NOT MET", "UNVERIFIED"):
+            check("deep-researcher handoff maps gate result %s" % g, g in ho[ho.find("## Gates"):])
+        kinds = re.findall(r"`(vendor|independent|oss_project_docs|source_code)`", ho)
+        check("deep-researcher handoff maps every source_kind", set(kinds) == {"vendor", "independent", "oss_project_docs", "source_code"})
+    sums = os.path.join(dr, "SHA256SUMS")
+    bad = []
+    import hashlib
+    for ln in _read(sums).splitlines():
+        digest, name = ln.split("  ", 1)
+        fp = os.path.join(dr, name)
+        if name not in ("SHA256SUMS",) and (not os.path.exists(fp) or hashlib.sha256(open(fp, "rb").read()).hexdigest() != digest):
+            bad.append(name)
+    check("deep-researcher: SHA256SUMS match the files (rebuild after editing)", not bad, ", ".join(bad))
+
     # sync: the bundled copies match the shared sources
     rc, out = run([os.path.join(ROOT, "scripts", "sync_shared.py"), "--check"])
     check("bundled scripts and contract match shared/", rc == 0, out.strip()[:200])
