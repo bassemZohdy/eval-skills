@@ -720,6 +720,7 @@ CASES += [
     ("report-high-overtake", "tq", "confidence cannot be high while unknowns could change the leader", _report_high_could_overtake, r"overtake|unknown|high"),
     ("report-not-assessed", "tq", "factors not assessed are named on a 'Not assessed:' line", _report_not_assessed, r"Not assessed"),
     ("report-eligibility", "tq", "the eligibility count matches the gates", _report_eligibility_wrong, r"Eligibility"),
+    ("status-sees-edit", "tq", "the orchestrator's status sees scores edited after scoring and reruns compare", _weights_changed_silently, r"out of date|stale", "status"),
 ]
 
 
@@ -747,6 +748,14 @@ def pipeline(d, has_report, stage="compare"):
     report: validate and report check only, the way eval-report finds the files; nothing is rescored.
     """
     steps = []
+    if stage == "status":  # what eval-orchestrator reads: its problems and the steps it would rerun
+        rc, out = run([CALC, "status", d])
+        try:
+            st = json.loads(out)
+            msgs = ["ERROR: " + p for p in st.get("problems", [])] + ["stale: " + x for x in st.get("stale_steps", [])]
+        except ValueError:
+            msgs = [out]
+        return [("status", rc, "\n".join(msgs))]
     steps.append(("validate",) + run([CALC, "validate", d, "--before", "report"]))
     if stage == "report":
         if has_report:
@@ -785,6 +794,7 @@ def detection(verbose=False, only=None):
             d = fresh_copy(ex, tmp)
             has_report = os.path.exists(os.path.join(d, "report.md"))
             steps = pipeline(d, has_report)
+            steps += pipeline(d, has_report, "status")
             baseline[ex] = {name: (rc, messages(out)) for name, rc, out in steps}
             bad = [(n, out.strip()[:300]) for n, rc, out in steps if rc != 0]
             if bad:
@@ -913,6 +923,23 @@ def lint():
             top = [k for k in top if re.fullmatch(r"[a-z_]+", k)]
             dup = sorted({k for k in top if top.count(k) > 1})
             check("contract: %s keys listed once each" % m.group(1), not dup, "repeated: %s" % dup if dup else "")
+
+    # eval-report's section list follows the order report_draft.py check and the exporter enforce
+    sys.path.insert(0, os.path.join(ROOT, "shared"))
+    import export_report  # noqa: E402
+    report = all_text["eval-report"]
+    listing = report[report.find("The sections, in"):report.find("**Check the report.**")]
+    named = re.findall(r"\*\*([A-Z][A-Za-z ]+?)(?::)?\*\*", listing)
+    ranks = [export_report.section_rank(n) for n in named]
+    check("eval-report: every listed section exists", named and None not in ranks, str([n for n, r in zip(named, ranks) if r is None]))
+    check("eval-report: sections are listed in the enforced order", [r for r in ranks if r is not None] == sorted(r for r in ranks if r is not None), str(named))
+    # every prose key report_draft.py reads is documented in its --help and in eval-report
+    draft_src = _read(DRAFT)
+    keys = sorted(set(re.findall(r'(?:P\.get\(|_prose\(P, )"([a-z_]+)"', draft_src)))
+    helptext = run([DRAFT, "--help"])[1]
+    for k in keys:
+        check("report_draft.py --help documents prose key %s" % k, re.search(r"\b%s\b" % k, helptext))
+        check("eval-report documents prose key %s" % k, re.search(r"\b%s\b" % k, report))
 
     # sync: the bundled copies match the shared sources
     rc, out = run([os.path.join(ROOT, "scripts", "sync_shared.py"), "--check"])

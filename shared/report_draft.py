@@ -9,7 +9,8 @@ must-have summary, sensitivity, excluded, sources) from the evaluation files, so
 number is typed by hand. The judgment text comes from a prose JSON file with these keys:
 recommendation, confidence (high, medium or low), confidence_why, profiles (optional; option id to a short text of strengths, blockers and risks), options (option id to
 [main strength, main gap]), bias, cost, sensitivity, next_steps (list), risks (list),
-excluded. A key left out is written as `TODO(prose): <key>` and `check` fails until it is
+excluded, and optionally changes (what is new since the evidence was gathered) and provenance
+(the reruns and how the evidence was gathered, added to the opening line). A key left out is written as `TODO(prose): <key>` and `check` fails until it is
 replaced; `excluded` is only required when an option was excluded. Python 3, standard library only.
 """
 import argparse

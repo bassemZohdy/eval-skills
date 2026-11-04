@@ -1237,6 +1237,11 @@ def status_report(d):
     status = _read_json(d, "status.json", rep) or {}
     done = [s for s in STEPS if s in status.get("completed_steps", [])]
     stale = [s for s in STEPS if s in status.get("stale_steps", [])]
+    scores_now = _read_json(d, "scores.json", Report())
+    if "compare" in done and not rep.errors and isinstance(scores_now, dict) and isinstance(scores_now.get("totals"), dict):
+        _check_scores_current(d, scores_now, rep)  # an edit after scoring that nobody marked stale
+        if rep.errors and "compare" not in stale:
+            stale = [s for s in STEPS if s in stale or s in ("compare", "report")]
     if stale:
         action, step = "rerun", stale[0]
     else:
