@@ -13,15 +13,17 @@ A chain of five Claude skills for evaluating options for a solution (products, p
 
 All skills share one workspace folder, `eval/`. The contract is in each skill's `references/workspace-contract.md`.
 
-## Dependency: deep-research
+## Research: deep-researcher, with fallbacks
 
-Evidence gathering uses the `deep-research` skill (`anthropic-skills:deep-research`) that ships with Claude. It is referenced by name only and is **not copied into this repo**, so its licence terms are not affected. Install or enable it separately. It coordinates subagents; without the Agent tool, the eval skills research directly instead.
+Every eval skill that researches uses the first route available (contract rule 16):
 
-`deep-research` does not emit the evidence labels used here. The eval skills apply the labels themselves (PRIMARY, CONFIRMED, PROBABLE, UNVERIFIED, COULD NOT VERIFY, DISPUTED) when recording each finding in `eval/evidence.json`, and enforce the look-up budgets stated in each skill.
+1. **`deep-researcher`**, bundled in `skills/deep-researcher/`. It groups sources into independent evidence origins, tests counter-evidence and gives claim-level verdicts. When an eval skill calls it, it loads `references/eval-handoff.md` and returns findings as `evidence.json` rows, with its verdicts mapped to the eval labels (Supported by two independent origins is CONFIRMED, Disputed is DISPUTED, Could not verify is COULD NOT VERIFY, and so on).
+2. **`deep-research`** (`anthropic-skills:deep-research`), which ships with Claude. It is referenced by name only and not copied here. It does not emit the evidence labels, so the eval skill applies them itself.
+3. **Direct research** with the host's search and fetch tools, under the same rules: open the page before recording it, one row per claim, the six labels, the step's look-up budget.
 
-## Bundled: deep-researcher
+Whatever the route, the eval skill owns the labels (PRIMARY, CONFIRMED, PROBABLE, UNVERIFIED, COULD NOT VERIFY, DISPUTED), the look-up budgets and every score. `eval-discover` records the route in `eval/options.md`, and the report's opening line says how the evidence was gathered.
 
-`skills/deep-researcher/` is a separate, general research skill (evidence origins, counter-evidence, claim-level verdicts) with its own regression cases. It is not part of the eval chain and no eval skill calls it. Install the whole folder, not just `SKILL.md`. The package ships without a licence (see its `README.md`), so choose one before redistributing this repo publicly.
+`deep-researcher` is also a general research skill with its own regression cases; install the whole folder, not just `SKILL.md`. The package ships without a licence (see its `README.md`), so choose one before redistributing this repo publicly. After editing it, rebuild its `package-manifest.json` and `SHA256SUMS` (see its README); the scorecard checks them.
 
 ## Optional: market context
 
@@ -29,7 +31,7 @@ For market-level questions, `eval-discover` may use `sector-overview` from the m
 
 ## Install
 
-Copy the five folders in `skills/` into your skills directory (for example `~/.claude/skills/`). Start with `eval-define`; each step tells you which skill to run next. Evaluation files are written to `eval/` in your project root.
+Copy the six eval folders in `skills/` and `skills/deep-researcher/` (recommended; the chain falls back to `deep-research` or direct research without it) into your skills directory (for example `~/.claude/skills/`). Start with `eval-define`; each step tells you which skill to run next. Evaluation files are written to `eval/` in your project root.
 
 ## Cost model
 

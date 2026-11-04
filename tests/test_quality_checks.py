@@ -190,6 +190,18 @@ class GatesAndStatus(Base):
         self.assertFalse(any("out of date" in e for e in self.errors()))  # only the report step demands current scores
 
 
+class OrchestratorStatus(Base):
+    def test_an_edit_after_scoring_is_not_done(self):
+        self.assertEqual(eval_calc.status_report(self.d)["action"], "done")
+        c = read(self.d, "criteria.json")
+        c["criteria"][0]["weight"] -= 20
+        c["criteria"][1]["weight"] += 20
+        write(self.d, "criteria.json", c)
+        st = eval_calc.status_report(self.d)
+        self.assertEqual((st["action"], st["next_step"]), ("rerun", "compare"))
+        self.assertTrue(any("out of date" in p for p in st["problems"]))
+
+
 class ReportCheck(Base):
     def edit(self, old, new):
         p = os.path.join(self.d, "report.md")

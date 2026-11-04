@@ -32,9 +32,17 @@ class RepoTest(unittest.TestCase):
             self.assertIn("scripts/eval_calc.py", text("skills", s, "SKILL.md"), s)
             self.assertTrue(os.path.exists(os.path.join(ROOT, "skills", s, "scripts", "eval_calc.py")), s)
 
-    def test_no_dangling_deep_researcher_name(self):
+    def test_deep_researcher_is_bundled_and_has_fallbacks(self):
+        # the eval skills name deep-researcher first (contract rule 16); it must ship here, with deep-research and direct research behind it
+        self.assertTrue(os.path.exists(os.path.join(ROOT, "skills", "deep-researcher", "SKILL.md")))
+        self.assertTrue(os.path.exists(os.path.join(ROOT, "skills", "deep-researcher", "references", "eval-handoff.md")))
+        contract = text("shared", "workspace-contract.md")
+        self.assertRegex(contract, r"(?s)16\. Research skill\..*`deep-researcher`.*`deep-research`.*research directly")
         for s in SKILLS:
-            self.assertNotIn("deep-researcher", text("skills", s, "SKILL.md"), s)
+            body = text("skills", s, "SKILL.md")
+            for sent in re.split(r"(?<=[.!?])\s+", body):
+                if re.search(r"\bdeep-research\b(?!er)", sent):
+                    self.assertIn("deep-researcher", sent, (s, sent))
 
     def test_orchestrator_only_routes_to_existing_skills(self):
         body = text("skills", "eval-orchestrator", "SKILL.md")
