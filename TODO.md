@@ -306,3 +306,31 @@ Dates, empty findings or URLs, a score or feature cell citing another option's e
 ### [x] G6 (P2) Instruction drift
 eval-report numbered six steps "3"; eval-compare described per-criterion scoring and a 3-point near-tie although the anchored model scores requirements and uses `meaningful_gap` (5); the contract listed `package` twice. The gateway sample had no `cost.json`, so it failed its own step's precondition.
 
+
+---
+
+## H. Publishing and distribution
+
+### [ ] H1 (P1) Claude Code and Codex manifests (#3)
+**Problem.** The repo has no `.claude-plugin/` or `.codex-plugin/`, so it cannot be installed with `/plugin marketplace add` or as a Codex plugin, and the Anthropic directory cannot list it. Each skill folder is already self-contained because `sync_shared.py` copies `shared/` into it, so single-skill installs work.
+**Change.**
+- Add `.claude-plugin/plugin.json` and `marketplace.json` (`source: ./`), and `.codex-plugin/plugin.json` with `.agents/plugins/marketplace.json`. Codex reads `.agents/skills`, not a top-level `skills/`, so decide between a mirror and a symlink.
+- Pin both manifest versions to one value and check them in CI next to `sync_shared.py --check`.
+**Files.** `.claude-plugin/`, `.codex-plugin/`, `.agents/plugins/`, `tests/`, `.github/workflows/test.yml`, `README.md`.
+**Done when.** The manifests parse, CI fails when their versions differ, and the seven skills show up after a plugin install in Claude Code.
+
+### [ ] H2 (P1) Rename or namespace generic skill names (#4)
+**Problem.** `deep-researcher` is already a published skill name (it appears in this Claude environment as `anthropic-skills:deep-researcher`), and the `eval-*` names are generic enough to collide with other packs. A collision makes one of the two skills shadow the other.
+**Change.** Rename `deep-researcher` (for example `eval-deep-research`) or document the plugin namespace in the README, and update every reference in skills, tests and examples.
+**Files.** `skills/deep-researcher/`, `skills/*/SKILL.md`, `README.md`, `tests/`.
+**Done when.** No skill name equals a name in the Anthropic skills set, and `python scripts/sync_shared.py --check` and the tests pass.
+
+### [ ] H3 (P2) Repository hygiene for a public listing (#5)
+**Problem.** There is no GitHub description or topics, and no SECURITY.md or CONTRIBUTING.md. Registries and reviewers look for them.
+**Change.** Set the description and topics (for example agent-skills, evaluation, decision-analysis, claude-code). Add SECURITY.md (what the scripts read and write, how to report an issue) and CONTRIBUTING.md (the `shared/` then `sync_shared.py` flow).
+**Done when.** Both files exist and are linked from the README, and `gh api repos/bassemZohdy/eval-skills --jq '.description, .topics'` returns values.
+
+### [ ] H4 (P2) Verify single-skill install and submit (#6)
+**Problem.** The `shared/` files (`eval_calc.py`, `workspace-contract.md`) are duplicated into each skill by design. That has not been checked against `npx skills add` single-skill installs, and the Anthropic directory submission needs the owner's login and terms acceptance.
+**Change.** Run `npx skills add bassemZohdy/eval-skills --skill eval-compare` in a clean directory and confirm it can run `eval_calc.py`. Record the install line in the README. After H1 to H3, the owner submits to the Anthropic plugin directory and records the reference.
+**Done when.** The single-skill install works from a clean directory and the README lists the install line and the submission reference.
