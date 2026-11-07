@@ -1,0 +1,11 @@
+{
+  "name": "eval-skills",
+  "version": "0.1.0",
+  "description": "Evaluate options for a solution (products, platforms, libraries, approaches): a chain of skills that captures requirements, sets weighted criteria and gates, researches candidates with sourced evidence, scores them, and writes a report.",
+  "author": { "name": "Bassem Zohdy" },
+  "homepage": "https://github.com/bassemZohdy/eval-skills",
+  "repository": "https://github.com/bassemZohdy/eval-skills",
+  "license": "Apache-2.0",
+  "skills": "./skills/",
+  "keywords": ["evaluation", "decision-analysis", "research", "agent-skills"]
+}

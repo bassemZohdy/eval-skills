@@ -1,0 +1,7 @@
+{
+  "name": "eval-skills",
+  "owner": { "name": "Bassem Zohdy" },
+  "plugins": [
+    { "name": "eval-skills", "source": "./", "description": "Evaluate options for a solution (products, platforms, libraries, approaches): a chain of skills that captures requirements, sets weighted criteria and gates, researches candidates with sourced evidence, scores them, and writes a report." }
+  ]
+}

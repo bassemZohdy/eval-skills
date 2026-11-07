@@ -13,17 +13,19 @@ A chain of five Claude skills for evaluating options for a solution (products, p
 
 All skills share one workspace folder, `eval/`. The contract is in each skill's `references/workspace-contract.md`.
 
-## Research: deep-researcher, with fallbacks
+See [SECURITY.md](SECURITY.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Research: eval-deep-research, with fallbacks
 
 Every eval skill that researches uses the first route available (contract rule 16):
 
-1. **`deep-researcher`**, bundled in `skills/deep-researcher/`. It groups sources into independent evidence origins, tests counter-evidence and gives claim-level verdicts. When an eval skill calls it, it loads `references/eval-handoff.md` and returns findings as `evidence.json` rows, with its verdicts mapped to the eval labels (Supported by two independent origins is CONFIRMED, Disputed is DISPUTED, Could not verify is COULD NOT VERIFY, and so on).
+1. **`eval-deep-research`**, bundled in `skills/eval-deep-research/`. It groups sources into independent evidence origins, tests counter-evidence and gives claim-level verdicts. When an eval skill calls it, it loads `references/eval-handoff.md` and returns findings as `evidence.json` rows, with its verdicts mapped to the eval labels (Supported by two independent origins is CONFIRMED, Disputed is DISPUTED, Could not verify is COULD NOT VERIFY, and so on).
 2. **`deep-research`** (`anthropic-skills:deep-research`), which ships with Claude. It is referenced by name only and not copied here. It does not emit the evidence labels, so the eval skill applies them itself.
 3. **Direct research** with the host's search and fetch tools, under the same rules: open the page before recording it, one row per claim, the six labels, the step's look-up budget.
 
 Whatever the route, the eval skill owns the labels (PRIMARY, CONFIRMED, PROBABLE, UNVERIFIED, COULD NOT VERIFY, DISPUTED), the look-up budgets and every score. `eval-discover` records the route in `eval/options.md`, and the report's opening line says how the evidence was gathered.
 
-`deep-researcher` is also a general research skill with its own regression cases; install the whole folder, not just `SKILL.md`. The package ships without a licence (see its `README.md`), so choose one before redistributing this repo publicly. After editing it, rebuild its `package-manifest.json` and `SHA256SUMS` (see its README); the scorecard checks them.
+`eval-deep-research` is also a general research skill with its own regression cases; install the whole folder, not just `SKILL.md`. The package ships without a licence (see its `README.md`), so choose one before redistributing this repo publicly. After editing it, rebuild its `package-manifest.json` and `SHA256SUMS` (see its README); the scorecard checks them.
 
 ## Optional: market context
 
@@ -31,7 +33,18 @@ For market-level questions, `eval-discover` may use `sector-overview` from the m
 
 ## Install
 
-Copy the six eval folders in `skills/` and `skills/deep-researcher/` (recommended; the chain falls back to `deep-research` or direct research without it) into your skills directory (for example `~/.claude/skills/`). Start with `eval-define`; each step tells you which skill to run next. Evaluation files are written to `eval/` in your project root.
+**Claude Code plugin:**
+
+```
+/plugin marketplace add bassemZohdy/eval-skills
+/plugin install eval-skills --marketplace bassemZohdy/eval-skills
+```
+
+**Codex:** `codex plugin marketplace add bassemZohdy/eval-skills`, then `codex plugin add eval-skills@eval-skills`.
+
+**Any skills.sh-compatible agent:** `npx skills add bassemZohdy/eval-skills` installs the seven skills (add `--skill <name>` for one; each folder carries its own copy of the shared script and contract). Install all of them together: each step tells you which skill to run next.
+
+**By hand:** copy the six eval folders in `skills/` and `skills/eval-deep-research/` (recommended; the chain falls back to `deep-research` or direct research without it) into your skills directory (for example `~/.claude/skills/`). Start with `eval-define`; each step tells you which skill to run next. Evaluation files are written to `eval/` in your project root.
 
 ## Cost model
 

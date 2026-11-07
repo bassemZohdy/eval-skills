@@ -1,5 +1,5 @@
 {
-  "schema": "deep-researcher-replay/1",
+  "schema": "eval-deep-research-replay/1",
   "notice": "Every entity, date, source, and claim here is synthetic. This is a closed, read-only replay, not live research. Source titles and snippets are discovery leads; use open to inspect decisive content. Search covers the complete replay index for the selected case, not the real world.",
   "cases": {
     "triggering": {

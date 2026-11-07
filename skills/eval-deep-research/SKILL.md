@@ -1,5 +1,5 @@
 ---
-name: deep-researcher
+name: eval-deep-research
 description: >-
   Evidence-led research and verification using external or user-supplied sources. Use for
   explicit research, fact-checking, current-status checks, contested claims, source-grounded

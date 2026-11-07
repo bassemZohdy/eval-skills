@@ -27,26 +27,45 @@ class RepoTest(unittest.TestCase):
             self.assertEqual(m.group(1), s)
             self.assertLessEqual(len(m.group(2)), 1024, s)
 
+    def test_plugin_manifests_parse_and_versions_match(self):
+        import json
+        claude = json.loads(text(".claude-plugin", "plugin.json"))
+        codex = json.loads(text(".codex-plugin", "plugin.json"))
+        json.loads(text(".claude-plugin", "marketplace.json"))
+        json.loads(text(".agents", "plugins", "marketplace.json"))
+        self.assertEqual(claude["version"], codex["version"])
+        self.assertEqual(claude["name"], "eval-skills")
+
+    def test_every_skill_frontmatter_is_valid_yaml(self):
+        try:
+            import yaml
+        except ImportError:
+            self.skipTest("PyYAML not installed")
+        skills_dir = os.path.join(ROOT, "skills")
+        for name in sorted(os.listdir(skills_dir)):
+            body = text("skills", name, "SKILL.md").replace("\r\n", "\n")
+            yaml.safe_load(body.split("---\n")[1])
+
     def test_every_skill_uses_the_script_and_it_exists(self):
         for s in SKILLS:
             self.assertIn("scripts/eval_calc.py", text("skills", s, "SKILL.md"), s)
             self.assertTrue(os.path.exists(os.path.join(ROOT, "skills", s, "scripts", "eval_calc.py")), s)
 
     def test_deep_researcher_is_bundled_and_has_fallbacks(self):
-        # the eval skills name deep-researcher first (contract rule 16); it must ship here, with deep-research and direct research behind it
-        self.assertTrue(os.path.exists(os.path.join(ROOT, "skills", "deep-researcher", "SKILL.md")))
-        self.assertTrue(os.path.exists(os.path.join(ROOT, "skills", "deep-researcher", "references", "eval-handoff.md")))
+        # the eval skills name eval-deep-research first (contract rule 16); it must ship here, with deep-research and direct research behind it
+        self.assertTrue(os.path.exists(os.path.join(ROOT, "skills", "eval-deep-research", "SKILL.md")))
+        self.assertTrue(os.path.exists(os.path.join(ROOT, "skills", "eval-deep-research", "references", "eval-handoff.md")))
         contract = text("shared", "workspace-contract.md")
-        self.assertRegex(contract, r"(?s)16\. Research skill\..*`deep-researcher`.*`deep-research`.*research directly")
+        self.assertRegex(contract, r"(?s)16\. Research skill\..*`eval-deep-research`.*`deep-research`.*research directly")
         for s in SKILLS:
             body = text("skills", s, "SKILL.md")
             for sent in re.split(r"(?<=[.!?])\s+", body):
                 if re.search(r"\bdeep-research\b(?!er)", sent):
-                    self.assertIn("deep-researcher", sent, (s, sent))
+                    self.assertIn("eval-deep-research", sent, (s, sent))
 
     def test_orchestrator_only_routes_to_existing_skills(self):
         body = text("skills", "eval-orchestrator", "SKILL.md")
-        named = set(re.findall(r"eval-[a-z]+", body)) - {"eval-archive"}
+        named = set(re.findall(r"eval-[a-z]+(?:-[a-z]+)*", body)) - {"eval-archive", "eval-deep-research"}
         self.assertTrue(named <= set(SKILLS), named - set(SKILLS))
         for step in ("eval-define", "eval-analyze", "eval-discover", "eval-compare", "eval-report"):
             self.assertIn(step, body)

@@ -27,23 +27,23 @@ class PackageTests(unittest.TestCase):
     def test_manifest_and_checksums_cover_the_payload(self):
         content, count = PACKAGE.build_archive(self.payload)
         with zipfile.ZipFile(io.BytesIO(content)) as archive:
-            manifest = json.loads(archive.read("deep-researcher/package-manifest.json"))
+            manifest = json.loads(archive.read("eval-deep-research/package-manifest.json"))
             self.assertEqual(len(archive.namelist()), count)
             for record in manifest["files"]:
-                actual = archive.read(f"deep-researcher/{record['path']}")
+                actual = archive.read(f"eval-deep-research/{record['path']}")
                 self.assertEqual(len(actual), record["bytes"])
                 self.assertEqual(hashlib.sha256(actual).hexdigest(), record["sha256"])
-            for line in archive.read("deep-researcher/SHA256SUMS").decode().splitlines():
+            for line in archive.read("eval-deep-research/SHA256SUMS").decode().splitlines():
                 digest, name = line.split("  ", 1)
                 self.assertEqual(
-                    hashlib.sha256(archive.read(f"deep-researcher/{name}")).hexdigest(), digest
+                    hashlib.sha256(archive.read(f"eval-deep-research/{name}")).hexdigest(), digest
                 )
 
     def test_historical_input_does_not_add_another_skill_entry(self):
         content, _ = PACKAGE.build_archive(self.payload)
         with zipfile.ZipFile(io.BytesIO(content)) as archive:
             entries = [name for name in archive.namelist() if name.endswith("/SKILL.md")]
-            self.assertEqual(entries, ["deep-researcher/SKILL.md"])
+            self.assertEqual(entries, ["eval-deep-research/SKILL.md"])
             self.assertTrue(any(name.endswith("/baseline-source.md") for name in archive.namelist()))
 
     def test_missing_or_escaping_reference_is_rejected(self):

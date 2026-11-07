@@ -1,5 +1,5 @@
 {
-  "schema": "deep-researcher-cases/1",
+  "schema": "eval-deep-research-cases/1",
   "instructions": "All examples are synthetic. Run each input against the skill using supplied records or a read-only source replay; do not make real external requests. Record actual responses and replay tool traces. Review each criterion against those records. Missing tools or observations are unexecuted, not passes. Never fabricate a trace to satisfy a criterion.",
   "cases": [
     {

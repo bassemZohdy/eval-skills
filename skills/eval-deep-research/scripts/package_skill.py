@@ -11,7 +11,7 @@ import zipfile
 
 
 ROOT = Path(__file__).resolve().parent.parent
-NAME = "deep-researcher"
+NAME = "eval-deep-research"
 RESULTS = "tests/results/skill-smoke-2026-11-01"
 FILES = (
     "README.md",

@@ -61,7 +61,7 @@ def read_json(path):
 
 def load_cases(path):
     data = read_json(path)
-    if not isinstance(data, dict) or data.get("schema") != "deep-researcher-cases/1":
+    if not isinstance(data, dict) or data.get("schema") != "eval-deep-research-cases/1":
         raise ValueError("Unsupported fixture schema")
     if not isinstance(data.get("instructions"), str) or not data["instructions"].strip():
         raise ValueError("Fixture execution instructions are required")
@@ -95,7 +95,7 @@ def skill_hash(skill_path):
     if not text.startswith("---\n") or "\n---\n" not in text[4:]:
         raise ValueError("SKILL.md must have a delimited frontmatter block")
     frontmatter = text.split("---\n", 2)[1]
-    if not re.search(r"^name: deep-researcher$", frontmatter, re.MULTILINE):
+    if not re.search(r"^name: eval-deep-research$", frontmatter, re.MULTILINE):
         raise ValueError("Unexpected skill name")
     if not re.search(r"^description: >-\n\s+\S", frontmatter, re.MULTILINE):
         raise ValueError("Missing folded description")

@@ -89,7 +89,7 @@ def main():
             response = {"text": (args.skill.parent / "references" / name).read_text()}
         else:
             data = json.loads(DATA.read_text())
-            if data.get("schema") != "deep-researcher-replay/1":
+            if data.get("schema") != "eval-deep-research-replay/1":
                 raise ValueError("Unsupported replay schema")
             if args.case not in data["cases"]:
                 raise ValueError(f"Unknown case: {args.case}")
