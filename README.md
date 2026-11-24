@@ -42,7 +42,7 @@ For market-level questions, `eval-discover` may use `sector-overview` from the m
 
 **Codex:** `codex plugin marketplace add bassemZohdy/eval-skills`, then `codex plugin add eval-skills@eval-skills`.
 
-**Any skills.sh-compatible agent:** `npx skills add bassemZohdy/eval-skills` installs the seven skills (add `--skill <name>` for one; each folder carries its own copy of the shared script and contract). Install all of them together: each step tells you which skill to run next.
+**Any skills.sh-compatible agent:** install the seven skills from this repository with that tool's own instructions (see skills.sh); a single skill can be installed alone, since each folder carries its own copy of the shared script and contract). Install all of them together: each step tells you which skill to run next.
 
 **By hand:** copy the six eval folders in `skills/` and `skills/eval-deep-research/` (recommended; the chain falls back to `deep-research` or direct research without it) into your skills directory (for example `~/.claude/skills/`). Start with `eval-define`; each step tells you which skill to run next. Evaluation files are written to `eval/` in your project root.
 
