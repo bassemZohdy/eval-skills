@@ -1,0 +1,173 @@
+{
+ "scoring_model": "anchored",
+ "priority_points": {
+  "must": 6,
+  "should": 2,
+  "could": 1
+ },
+ "requirement_scores": {
+  "opt-1": {
+   "F-01": {
+    "score": 4,
+    "confidence": "medium",
+    "rationale": "F-01 scored 4 for Gateway One from the cited finding.",
+    "evidence_ids": [
+     "E-1-F-01"
+    ]
+   },
+   "F-02": {
+    "score": 4,
+    "confidence": "high",
+    "rationale": "F-02 scored 4 for Gateway One from the cited finding.",
+    "evidence_ids": [
+     "E-1-F-02",
+     "E-1-F-02b"
+    ]
+   },
+   "F-03": {
+    "score": 4,
+    "confidence": "medium",
+    "rationale": "F-03 scored 3 for Gateway One from the cited finding.",
+    "evidence_ids": [
+     "E-1-F-03"
+    ]
+   },
+   "P-01": {
+    "score": 3,
+    "confidence": "medium",
+    "rationale": "P-01 scored 3 for Gateway One from the cited finding.",
+    "evidence_ids": [
+     "E-1-P-01"
+    ]
+   },
+   "P-02": {
+    "score": 4,
+    "confidence": "medium",
+    "rationale": "P-02 scored 4 for Gateway One from the cited finding.",
+    "evidence_ids": [
+     "E-1-P-02"
+    ]
+   },
+   "P-03": {
+    "score": 4,
+    "confidence": "medium",
+    "rationale": "P-03 scored 4 for Gateway One from the cited finding.",
+    "evidence_ids": [
+     "E-1-P-03"
+    ]
+   },
+   "S-01": {
+    "score": 4,
+    "confidence": "medium",
+    "rationale": "S-01 scored 4 for Gateway One from the cited finding.",
+    "evidence_ids": [
+     "E-1-S-01"
+    ]
+   },
+   "S-02": {
+    "score": 3,
+    "confidence": "medium",
+    "rationale": "S-02 scored 3 for Gateway One from the cited finding.",
+    "evidence_ids": [
+     "E-1-S-02"
+    ]
+   },
+   "C-01": {
+    "score": 3,
+    "confidence": "medium",
+    "rationale": "C-01 scored 3 for Gateway One from the cited finding.",
+    "evidence_ids": [
+     "E-1-C-01"
+    ]
+   },
+   "C-02": {
+    "score": 2,
+    "confidence": "medium",
+    "rationale": "C-02 scored 2 for Gateway One from the cited finding.",
+    "evidence_ids": [
+     "E-1-C-02"
+    ]
+   }
+  },
+  "opt-2": {
+   "F-01": {
+    "score": 4,
+    "confidence": "high",
+    "rationale": "F-01 scored 3 for Gateway Two from the cited finding.",
+    "evidence_ids": [
+     "E-2-F-01"
+    ]
+   },
+   "F-02": {
+    "score": 4,
+    "confidence": "medium",
+    "rationale": "F-02 scored 4 for Gateway Two from the cited finding.",
+    "evidence_ids": [
+     "E-2-F-02"
+    ]
+   },
+   "F-03": {
+    "score": 4,
+    "confidence": "medium",
+    "rationale": "F-03 scored 4 for Gateway Two from the cited finding.",
+    "evidence_ids": [
+     "E-2-F-03"
+    ]
+   },
+   "P-01": {
+    "score": 4,
+    "confidence": "medium",
+    "rationale": "P-01 scored 4 for Gateway Two from the cited finding.",
+    "evidence_ids": [
+     "E-2-P-01"
+    ]
+   },
+   "P-02": {
+    "score": 4,
+    "confidence": "medium",
+    "rationale": "P-02 scored 4 for Gateway Two from the cited finding.",
+    "evidence_ids": [
+     "E-2-P-02"
+    ]
+   },
+   "S-01": {
+    "score": 2,
+    "confidence": "medium",
+    "rationale": "S-01 scored 2 for Gateway Two from the cited finding.",
+    "evidence_ids": [
+     "E-2-S-01"
+    ]
+   },
+   "S-02": {
+    "score": 0,
+    "confidence": "low",
+    "rationale": "No source read.",
+    "evidence_ids": []
+   },
+   "C-01": {
+    "score": 4,
+    "confidence": "medium",
+    "rationale": "C-01 scored 4 for Gateway Two from the cited finding.",
+    "evidence_ids": [
+     "E-2-C-01"
+    ]
+   },
+   "C-02": {
+    "score": 4,
+    "confidence": "medium",
+    "rationale": "C-02 scored 4 for Gateway Two from the cited finding.",
+    "evidence_ids": [
+     "E-2-C-02"
+    ]
+   }
+  }
+ },
+ "overrides": [
+  {
+   "option_id": "opt-1",
+   "requirement_id": "P-01",
+   "score": 4,
+   "reason": "Verified in a demo."
+  }
+ ]
+}

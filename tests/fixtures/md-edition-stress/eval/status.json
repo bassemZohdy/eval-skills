@@ -1,0 +1,15 @@
+{
+  "current_step": "compare",
+  "completed_steps": [
+    "define",
+    "analyze",
+    "discover",
+    "compare"
+  ],
+  "stale_steps": [],
+  "stale_evidence": [],
+  "evaluation_date": "2026-10-01",
+  "report_date": "",
+  "solution_slug": "gateway-like",
+  "weights_locked_on": "2026-10-01"
+}

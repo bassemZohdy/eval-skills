@@ -1,0 +1,51 @@
+---
+name: eval-report
+description: Writes the final options evaluation report with the weighted score ranking, the feature-by-feature comparison, a decision recommendation, risks, and sources, and saves the evaluation record. Use after eval-compare when the user wants the final report, an export, or the recommendation from a completed evaluation, or asks "so which one do we pick" about options already scored. Do not use before scoring is complete, and do not use to start a new evaluation (eval-define).
+---
+
+# eval-report
+
+Final step of the eval chain: define, analyze, discover, compare, report. Reads every eval file and writes the report that supports the decision. Start the report with a short provenance line: the evaluation date, the scale used, the cost mode, and which steps were rerun after weights or evidence changed. Follow the workspace contract in references/workspace-contract.md.
+
+## Process
+
+1. **Check status.** Read `eval/status.json`. Check the files with `references/validation.md` ('Before report') and, if it reports a problem, stop and follow its message. If compare is not complete or any step is stale, stop and say which skill to rerun.
+2. **Read everything.** Solution, requirements, criteria, options, evidence, scores, features, and the staleness flags in `eval/status.json`.
+3. **Open with eligibility.** If any profiled option fails or has an unverified gate, the report opens with "Eligibility: N of M options pass every gate" and the blockers per option, before any score (`references/report-guide.md` gives the exact wording). If no option passes, the recommendation is to shortlist and close the blockers, never to choose an option. The decision table shows the basis (documented, vendor_confirmed or tested) beside each gate pass.
+4. **Compare with an earlier assessment (optional).** If the user has another assessment to reconcile with, follow 'Reconcile with an earlier assessment' in `references/procedures.md` with their criteria, weights and per-option ratings plus a mapping from their criteria to our requirement ids. Report both totals, our ratings under their weights, the per-criterion differences, then the factual disagreements and which side the evidence supports, under "Comparison with an earlier assessment". Do not link to the other report: the evaluation stays independent.
+5. **List what to verify.** The report includes the "Verify before deciding" cells from `deciding_cells` in `scores.json`, the POC tests and the open verification items from `eval/open_items.json`; caveats do not repeat them.
+6. **Run a freshness sweep.** Before writing, use the research skill (contract rule 16) for at most 5 look-ups per must-have standard and per package component for anything new since the evidence was gathered (a new spec version, a release candidate, a release with breaking changes, a security fix that raises a minimum version). Put what you find under "Changes since evidence was gathered" in the risks (the `changes` key of the prose file) and do not change scores without re-running eval-compare. Also name every `not_assessed` factor on a "Not assessed:" line and say whether it could decide a close call; the self-check fails when one is left out.
+7. **Keep decision order.** Sections run: eligibility and decision summary (bottom line, scores, blockers, next steps), gates, requirements, weights and scores (category view, sensitivity, per-requirement table), option profiles (strengths, blockers and risks only), POC tests, open items, feature comparison, caveats (at most 10, none repeating a gate or an open item), sources. State each fact in one place. The method history lives in `eval/status.json`, never in the report: do not write "this round" or "re-checked". The self-check in `references/report-guide.md` enforces the order, the caveat limit and the banned wording.
+8. **Write the report** to `eval/report.md` by hand, following `references/report-guide.md` for the exact section order, headings, table columns and number formats. Copy every number from `eval/scores.json`, `eval/cost.json` and the other eval files; never recompute a number in the report, and never type one from memory. If a number looks wrong, fix the evaluation file and rerun the step. Write the judgment text yourself: recommendation, confidence, why, per-option strength and gap, profiles, bias, cost, sensitivity, next steps, risks, excluded options, and optionally changes since the evidence was gathered. The sections, in the order the guide enforces, and what each holds:
+   - **Eligibility:** only when an option fails or has an unverified gate: "Eligibility: N of M options pass every gate" and the blockers.
+   - **Decision recommendation:** the recommended option, named first, in one or two sentences, with the confidence level, stated as high, medium, or low and never as a percentage, and the main condition under which the recommendation would change. High means a clear margin that holds under every sensitivity test and the key scores rest on independent evidence, medium means the margin holds but some key scores are low-confidence, and low means a near-tie, a flip under sensitivity, more than half of the total weight resting on low-confidence scores, or unknown requirements that could let another option overtake the leader (`could_overtake_leader` in `eval/scores.json`).
+   - **Decision table:** options ranked by weighted score, with gate status and basis, low-confidence flags, and one line on each option's main strength and main gap.
+   - **Context:** the solution, who it is for, and the incumbent role.
+   - **Packages scored:** the components, versions and lifecycle evaluated for each option.
+   - **Recommended next steps:** two to four concrete actions that follow from the decision, such as a proof of concept on the riskiest requirement, questions to put to the vendor, or evidence to refresh before committing.
+   - **Gates** and **Excluded options:** each gate's rubric and verdicts; each excluded option with the gate it failed and the evidence.
+   - **Criteria and weights**, **Weighted score matrix** and **Sensitivity:** the approved weights, the per-category scores and contributions, and whether the ranking holds when influential weights move.
+   - **Bias and assumptions:** from `bias_checks` in `eval/scores.json`: the providers behind the candidates, any requirement based on an assumption, how many findings are vendor-published against independent, and how many options the cost comparison covers. Say plainly what these limit about the recommendation.
+   - **Cost:** the assumptions, the total cost of ownership per option over the horizon, the volume scenarios and which option is cheapest in each, and any component priced from unverified or missing evidence.
+   - **Option profiles**, **POC tests**, **Open verification items** and **Verify before deciding:** strengths, blockers and risks per option, then everything still to verify, each in one place.
+   - **Feature comparison** and **Candidate requirements:** the descriptive table from `eval/features.json`, labelled as an inventory that does not feed the scores, with a must-have summary; and requirements found in research, never scored.
+   - **Risks and open questions:** unverified claims that touch the recommendation, assumptions, evidence flagged stale with its gathered date, "Changes since evidence was gathered", and the "Not assessed:" line.
+   - **Sources:** every source used, listed by evidence id, with date, confidence label and the date evidence was gathered.
+9. **Check the report.** Run the 'Self-check before review' list in `references/report-guide.md` line by line and fix every problem it finds (unfinished prose, a missing section, a missing or wrong provenance line, a decision table whose order or scores disagree with `eval/scores.json`, a recommendation that names another option first or quotes the wrong lead, a near-tie called decisive, a confidence given as a percentage, an excluded option missing from 'Excluded options'). Say in the review that the self-check was run.
+10. **Be honest about the recommendation.** Confidence is high only if no scenario in `scores.json` `scenarios` changes the leader and the lead is at least `meaningful_gap`; the self-check enforces it. If weights were changed after scoring, `status.json` has `post_scoring_weight_change` and the report states it with the reason. If the top two options are within the tie margin, or the result flips under sensitivity, say the choice is not clear-cut and name what would settle it. Never present a narrow win as decisive.
+11. **Review with the user.** Present the recommendation and the decision table. Apply requested edits to wording; changes to scores or weights go back through eval-analyze or eval-compare.
+12. **Save the record.** Update `eval/status.json` by following 'Completing a step' in `references/procedures.md` (step `report`), which records the report date. The evaluation stays active in `eval/` until a new evaluation starts, at which point it is archived to `eval-archive/<solution-slug>-<YYYY-MM-DD>/`.
+13. **No exports.** This edition writes `eval/report.md` only. If the user asks for HTML, a spreadsheet or a PDF, say so and suggest converting the Markdown with a tool of their choice; do not try to generate those files.
+
+## Quality rules
+
+- The report adds no facts that are not in the evidence file, apart from context the user supplied in the solution file.
+- Keep the recommendation and the evidence consistent. Anything marked UNVERIFIED that the recommendation depends on appears under risks.
+- Quote sources briefly. Do not reproduce long passages.
+- The self-check in `references/report-guide.md` is the gate before review.
+- Tables under the decision table, matrices, cost, sensitivity, excluded and sources headings are copies of the computed files: never fix a number in the report by hand; change the evaluation files and rerun the step.
+- Open the report's first line with `Evaluation date <date>. Scale 0 to <n>. Cost mode: <mode>.` followed by the reruns and how the evidence was gathered.
+
+## Output
+
+Reply in a few sentences: the recommendation, how confident it is, the single biggest risk, and where the report is saved.

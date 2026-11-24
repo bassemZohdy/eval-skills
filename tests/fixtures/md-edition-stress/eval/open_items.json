@@ -1,0 +1,30 @@
+[
+  {
+    "id": "OI-1",
+    "option": "opt-2",
+    "linked": "F-01",
+    "question": "Does the supported release pass the protocol conformance suite?",
+    "owner_type": "poc_test",
+    "test_id": "P1",
+    "owner": "platform team",
+    "status": "open"
+  },
+  {
+    "id": "OI-2",
+    "option": "opt-1",
+    "linked": "P-01",
+    "question": "Is the second component supported on OpenShift 4.16?",
+    "owner_type": "vendor_question",
+    "owner": "procurement",
+    "status": "open"
+  },
+  {
+    "id": "OI-3",
+    "option": "opt-2",
+    "linked": "S-01",
+    "question": "Which contract term covers on-site support in the customer's country?",
+    "owner_type": "contract_term",
+    "owner": "legal",
+    "status": "open"
+  }
+]

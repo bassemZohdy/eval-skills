@@ -8,6 +8,19 @@
       "name": "eval-skills",
       "source": "./",
       "description": "Evaluate options for a solution (products, platforms, libraries, approaches): a chain of skills that captures requirements, sets weighted criteria and gates, researches candidates with sourced evidence, scores them, and writes a report."
+    },
+    {
+      "name": "option-evaluator",
+      "source": "./plugins/option-evaluator",
+      "description": "Markdown-only edition of the option evaluation skills: requirements, weighted criteria, sourced research, scoring with a verified calculation protocol, and a final report. No scripts.",
+      "version": "0.1.0",
+      "category": "productivity",
+      "keywords": [
+        "evaluation",
+        "decision-analysis",
+        "comparison",
+        "scoring"
+      ]
     }
   ],
   "metadata": {

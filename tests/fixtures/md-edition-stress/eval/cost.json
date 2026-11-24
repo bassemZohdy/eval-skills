@@ -1,0 +1,167 @@
+{
+ "currency": "USD",
+ "horizon_months": 24,
+ "assumptions": [
+  {
+   "id": "A-01",
+   "name": "Requests per month",
+   "value": 20000000,
+   "unit": "requests/month",
+   "scales": true
+  },
+  {
+   "id": "A-02",
+   "name": "Sites",
+   "value": 3,
+   "unit": "sites",
+   "scales": false
+  },
+  {
+   "id": "A-03",
+   "name": "Users",
+   "value": 120,
+   "unit": "users",
+   "scales": true
+  }
+ ],
+ "options": {
+  "opt-1": {
+   "components": [
+    {
+     "id": "1-sub",
+     "name": "Subscription per site per year",
+     "kind": "fixed_monthly",
+     "amount": 12000,
+     "per": "year",
+     "quantity_driver": "A-02",
+     "evidence_id": "E-1-C-01"
+    },
+    {
+     "id": "1-hour",
+     "name": "Hosted node per hour",
+     "kind": "fixed_monthly",
+     "amount": 0.4,
+     "per": "hour",
+     "quantity": 2,
+     "evidence_id": "E-1-C-01"
+    },
+    {
+     "id": "1-setup",
+     "name": "Setup",
+     "kind": "one_time",
+     "amount": 5000,
+     "evidence_id": "E-1-C-02"
+    },
+    {
+     "id": "1-use",
+     "name": "Requests over free tier",
+     "kind": "usage",
+     "driver": "A-01",
+     "unit_price": 2e-06,
+     "included_free": 5000000,
+     "evidence_id": "E-1-C-02"
+    },
+    {
+     "id": "1-tier",
+     "name": "Graduated user fee",
+     "kind": "tiered",
+     "driver": "A-03",
+     "tier_mode": "graduated",
+     "tiers": [
+      {
+       "up_to": 50,
+       "unit_price": 10
+      },
+      {
+       "up_to": 200,
+       "unit_price": 7
+      },
+      {
+       "up_to": null,
+       "unit_price": 5
+      }
+     ],
+     "evidence_id": "E-1-C-01"
+    }
+   ]
+  },
+  "opt-2": {
+   "components": [
+    {
+     "id": "2-day",
+     "name": "Daily managed fee",
+     "kind": "fixed_monthly",
+     "amount": 20,
+     "per": "day",
+     "evidence_id": "E-2-C-01"
+    },
+    {
+     "id": "2-vol",
+     "name": "Volume priced requests",
+     "kind": "tiered",
+     "driver": "A-01",
+     "tier_mode": "volume",
+     "tiers": [
+      {
+       "up_to": 10000000,
+       "unit_price": 1.5e-06
+      },
+      {
+       "up_to": 50000000,
+       "unit_price": 1e-06
+      },
+      {
+       "up_to": null,
+       "unit_price": 7e-07
+      }
+     ],
+     "evidence_id": "E-2-C-01"
+    },
+    {
+     "id": "2-nodes",
+     "name": "Nodes grow with requests",
+     "kind": "fixed_monthly",
+     "amount": 300,
+     "quantity_driver": "A-01",
+     "quantity_steps": [
+      {
+       "up_to": 15000000,
+       "quantity": 2
+      },
+      {
+       "up_to": 60000000,
+       "quantity": 4
+      },
+      {
+       "up_to": null,
+       "quantity": 9
+      }
+     ],
+     "evidence_id": "E-2-C-02"
+    },
+    {
+     "id": "2-ops",
+     "name": "Operations time (assumed)",
+     "kind": "fixed_monthly",
+     "amount": 1500,
+     "assumed": true,
+     "assumption_note": "0.2 FTE at internal rate"
+    }
+   ]
+  }
+ },
+ "scenarios": [
+  {
+   "name": "half",
+   "multiplier": 0.5
+  },
+  {
+   "name": "double",
+   "multiplier": 2
+  },
+  {
+   "name": "tenx",
+   "multiplier": 10
+  }
+ ]
+}

@@ -40,6 +40,14 @@ For market-level questions, `eval-discover` may use `sector-overview` from the m
 /plugin install eval-skills --marketplace bassemZohdy/eval-skills
 ```
 
+**Markdown-only edition (no scripts), the one submitted to the plugin directory:**
+
+```
+/plugin install option-evaluator --marketplace bassemZohdy/eval-skills
+```
+
+It lives in `plugins/option-evaluator/`: the same six skills plus `eval-deep-research`, with the calculations written as rules (`references/calculation.md`) and a 3 to 5 pass review protocol instead of `eval_calc.py`, and a Markdown report instead of HTML, spreadsheet and PDF exports. See its README.
+
 **Codex:** `codex plugin marketplace add bassemZohdy/eval-skills`, then `codex plugin add eval-skills@eval-skills`.
 
 **Any skills.sh-compatible agent:** install the seven skills from this repository with that tool's own instructions (see skills.sh); a single skill can be installed alone, since each folder carries its own copy of the shared script and contract). Install all of them together: each step tells you which skill to run next.

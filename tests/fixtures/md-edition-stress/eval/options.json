@@ -1,0 +1,130 @@
+[
+  {
+    "option_id": "opt-1",
+    "name": "Gateway One",
+    "provider": "Northwind Software",
+    "source_links": [
+      "https://opt-1.example.com"
+    ],
+    "excluded": false,
+    "exclusion_reason": "",
+    "not_profiled": false,
+    "gate_status": {
+      "F-01": "pass",
+      "P-01": "pass",
+      "P-02": "pass",
+      "P-03": "pass",
+      "S-01": "pass",
+      "S-02": "pass"
+    },
+    "oss_base": {
+      "project": "meshgate",
+      "ref": "v1.8.0",
+      "source": "https://github.com/example/meshgate"
+    },
+    "package": {
+      "components": [
+        {
+          "name": "Gateway One control plane",
+          "version": "3.1.0",
+          "release_date": "2026-05-20",
+          "lifecycle": "supported",
+          "newest_release": "3.2.0",
+          "compatibility": "Data plane 3.1.x"
+        },
+        {
+          "name": "Gateway One data plane",
+          "version": "3.1.2",
+          "release_date": "2026-06-02",
+          "lifecycle": "supported",
+          "newest_release": "3.1.2",
+          "compatibility": "Control plane 3.1.x"
+        }
+      ]
+    }
+  },
+  {
+    "option_id": "opt-2",
+    "name": "Gateway Two",
+    "provider": "Open Mesh Foundation",
+    "source_links": [
+      "https://opt-2.example.com"
+    ],
+    "excluded": false,
+    "exclusion_reason": "",
+    "not_profiled": false,
+    "gate_status": {
+      "F-01": "pass",
+      "P-01": "pass",
+      "P-02": "pass",
+      "P-03": "pass",
+      "S-01": "pass",
+      "S-02": "pass"
+    },
+    "oss_base": {
+      "project": "meshgate",
+      "ref": "v1.9.2",
+      "source": "https://github.com/example/meshgate"
+    },
+    "package": {
+      "components": [
+        {
+          "name": "Gateway Two control plane",
+          "version": "3.1.0",
+          "release_date": "2026-05-20",
+          "lifecycle": "supported",
+          "newest_release": "3.2.0",
+          "compatibility": "Data plane 3.1.x"
+        },
+        {
+          "name": "Gateway Two data plane",
+          "version": "3.1.2",
+          "release_date": "2026-06-02",
+          "lifecycle": "lts",
+          "newest_release": "3.1.2",
+          "compatibility": "Control plane 3.1.x"
+        }
+      ]
+    }
+  },
+  {
+    "option_id": "opt-3",
+    "name": "Gateway Three",
+    "provider": "Contoso Cloud",
+    "source_links": [
+      "https://opt-3.example.com"
+    ],
+    "excluded": true,
+    "exclusion_reason": "Fails P-02: licence validation needs a vendor-hosted service",
+    "not_profiled": false,
+    "gate_status": {
+      "F-01": "pass",
+      "P-01": "pass",
+      "P-02": "fail",
+      "P-03": "pass",
+      "S-01": "pass",
+      "S-02": "pass"
+    },
+    "oss_base": null,
+    "package": {
+      "components": [
+        {
+          "name": "Gateway Three control plane",
+          "version": "3.1.0",
+          "release_date": "2026-05-20",
+          "lifecycle": "supported",
+          "newest_release": "3.2.0",
+          "compatibility": "Data plane 3.1.x"
+        },
+        {
+          "name": "Gateway Three data plane",
+          "version": "3.1.2",
+          "release_date": "2026-06-02",
+          "lifecycle": "supported",
+          "newest_release": "3.1.2",
+          "compatibility": "Control plane 3.1.x"
+        }
+      ]
+    }
+  }
+]

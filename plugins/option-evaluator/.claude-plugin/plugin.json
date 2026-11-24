@@ -1,0 +1,11 @@
+{
+  "name": "option-evaluator",
+  "displayName": "Option Evaluator",
+  "version": "0.1.0",
+  "description": "Evaluate options for a solution with Markdown-only skills: capture requirements, set weighted criteria and gates, research candidates with sourced evidence, score them with a verified calculation protocol, and write the report.",
+  "author": { "name": "Bassem Zohdy" },
+  "homepage": "https://github.com/bassemZohdy/eval-skills",
+  "repository": "https://github.com/bassemZohdy/eval-skills",
+  "license": "Apache-2.0",
+  "keywords": ["evaluation", "decision-analysis", "comparison", "scoring", "research"]
+}

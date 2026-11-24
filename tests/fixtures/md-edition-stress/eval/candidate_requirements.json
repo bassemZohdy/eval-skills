@@ -1,0 +1,10 @@
+[
+  {
+    "id": "CR-1",
+    "text": "Token counts reconcile with the incumbent's spend ledger",
+    "suggested_priority": "must",
+    "suggested_category": "Core",
+    "why": "Found while profiling: two options count cached tokens differently",
+    "source": "E-1-F-02"
+  }
+]
