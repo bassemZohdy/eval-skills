@@ -3,13 +3,13 @@
   "name": "eval-deep-research",
   "entrypoint": "SKILL.md",
   "python_minimum": "3.9",
-  "license": "UNSPECIFIED",
+  "license": "Apache-2.0",
   "evidence_status": "conditional-smoke-pass",
   "files": [
     {
       "path": "README.md",
-      "bytes": 7116,
-      "sha256": "c9043ba161a92463dc9bfe2cfee7f9512416adef1e9a2283457804e206ea24b8"
+      "bytes": 7066,
+      "sha256": "568c77c02c1825f8ffed1dc247a1f067dc130ed7e777cee483c8740f499b5250"
     },
     {
       "path": "SKILL.md",
@@ -38,8 +38,8 @@
     },
     {
       "path": "scripts/package_skill.py",
-      "bytes": 5971,
-      "sha256": "24d502209e1320a61ba1b4a7544612a79afd9ed747537b97e679ec23b6ff3502"
+      "bytes": 5970,
+      "sha256": "febb9557a381fd55eca172514d297772e86409aa396c7cf1f292174a8c0fd77d"
     },
     {
       "path": "tests/TESTING.md",

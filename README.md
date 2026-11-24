@@ -25,7 +25,7 @@ Every eval skill that researches uses the first route available (contract rule 1
 
 Whatever the route, the eval skill owns the labels (PRIMARY, CONFIRMED, PROBABLE, UNVERIFIED, COULD NOT VERIFY, DISPUTED), the look-up budgets and every score. `eval-discover` records the route in `eval/options.md`, and the report's opening line says how the evidence was gathered.
 
-`eval-deep-research` is also a general research skill with its own regression cases; install the whole folder, not just `SKILL.md`. The package ships without a licence (see its `README.md`), so choose one before redistributing this repo publicly. After editing it, rebuild its `package-manifest.json` and `SHA256SUMS` (see its README); the scorecard checks them.
+`eval-deep-research` is also a general research skill with its own regression cases; install the whole folder, not just `SKILL.md`. It is covered by the repository's Apache-2.0 licence. After editing it, rebuild its `package-manifest.json` and `SHA256SUMS` (see its README); the scorecard checks them.
 
 ## Optional: market context
 

@@ -159,6 +159,6 @@ Existing output is refused unless replacement is explicitly requested with `--re
 
 ## License
 
-No distribution license has been assigned, and no `LICENSE` file is included. The content
-owner should choose an appropriate license before public redistribution. Packaging does
-not itself grant additional licensing rights.
+Licensed under the Apache License, Version 2.0, the same licence as the
+eval-skills repository this folder is distributed in (see the `LICENSE` file at the
+repository root).

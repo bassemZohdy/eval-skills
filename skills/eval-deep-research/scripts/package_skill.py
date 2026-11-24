@@ -88,7 +88,7 @@ def build_archive(payload):
         "name": NAME,
         "entrypoint": "SKILL.md",
         "python_minimum": "3.9",
-        "license": "UNSPECIFIED",
+        "license": "Apache-2.0",
         "evidence_status": "conditional-smoke-pass",
         "files": [
             {"path": name, "bytes": len(content),
