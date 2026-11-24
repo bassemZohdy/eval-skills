@@ -170,7 +170,7 @@ A list, otherwise **Error**. Required keys per row: `evidence_id`, `option_id`, 
 | compare is complete (in `completed_steps`) and an evidence row is cited by no gate clause, no requirement score and no feature cell | Error |
 
 ### 1.6 scores.json (anchored model only)
-Must be an object, otherwise **Error**. `cell_midpoint` is **not supported in this edition**: `scoring_model` must be exactly `anchored`; a missing `scoring_model` or any other value is an Error ("rerun eval-compare"). Data under `cell_values` is not used here.
+Run this section only when `scores.json` exists. It is first written by eval-compare, so skip it at every step before compare. Must be an object, otherwise **Error**. `cell_midpoint` is **not supported in this edition**: `scoring_model` must be exactly `anchored`; a missing `scoring_model` or any other value is an Error ("rerun eval-compare"). Data under `cell_values` is not used here.
 
 | Rule | Level |
 | --- | --- |
@@ -253,7 +253,7 @@ A list, otherwise **Error**. Required keys: `id`, `category`, `name`, `cells`.
 A list, otherwise **Error**. Required keys: `id`, `text`, `suggested_priority`, `suggested_category`, `why`, `source`. `suggested_priority` is `must`, `should` or `could` (**Error**).
 
 ## 2. Before step X
-Run section 0 existence rules first. "Before X" means: every step earlier than X must be finished. Steps in order: define, analyze, discover, compare, report. For each earlier step: **all** its files must exist (**Error** "<file> is missing; it is written by eval-<step>") and the step must be in `completed_steps` (**Error** "step <step> is not complete; run eval-<step>"). Also, `status.json` itself must exist (**Error**), `stale_steps` must be empty (**Error** "stale steps: <list>; rerun the earliest one first"), and every file that exists passes its section 1 checks.
+Run section 0 existence rules first. Run a section 1 check only on a file that exists and that the step has already produced (never demand `scores.json`, `features.md` or `report.md` before the step that writes them). "Before X" means: every step earlier than X must be finished. Steps in order: define, analyze, discover, compare, report. For each earlier step: **all** its files must exist (**Error** "<file> is missing; it is written by eval-<step>") and the step must be in `completed_steps` (**Error** "step <step> is not complete; run eval-<step>"). Also, `status.json` itself must exist (**Error**), `stale_steps` must be empty (**Error** "stale steps: <list>; rerun the earliest one first"), and every file that exists passes its section 1 checks.
 
 | Step files | Files |
 | --- | --- |

@@ -46,7 +46,7 @@ class MarkdownEditionTest(unittest.TestCase):
                 raw.decode("utf-8")  # must be valid UTF-8
 
     def test_no_script_references(self):
-        bad = re.compile(r"eval_calc|report_draft|export_report|scripts/|\bpython3?\b|\.py\b|\bnpx\b|\bpip\b", re.I)
+        bad = re.compile(r"eval_calc|report_draft|export_report|scripts/|\bpython3?\b|\.py\b|\bnpx\b|\bpip\b|\bgit clone\b|\bclone the\b|\bcurl\b|\bwget\b|\bdownload|API_KEY|\$[A-Z_]{3,}", re.I)
         for p in files():
             if p.endswith((".md", ".json")):
                 m = bad.search(read(p))
